@@ -1,6 +1,7 @@
 #include "../../inc/minishell.h"
 
-void    exit(char  *input)
+void    exit_clean(t_data *data)
 {
-
+	(void)data;
+	exit(2);
 }

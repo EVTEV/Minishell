@@ -21,7 +21,7 @@ SRC = main.c \
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror #-g -gdwarf-4
+CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4
 RM = @rm -rf
 AR = ar -rcs
 

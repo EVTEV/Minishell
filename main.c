@@ -1,14 +1,14 @@
 #include "inc/minishell.h"
 
-int	main(char **env)
+int	main(int ac, char **av, char **env)
 {
-	char	*input;
+	t_data	*data;
 
+	data = init_data(ac, av, env);
 	while (1)
 	{
-		ft_printf("minishell$ ");
-		input = get_next_line(0);
-		free(input);
+		ft_printf("minishell: ");
+		read_input(data);
 	}
 	return (0);
 }
