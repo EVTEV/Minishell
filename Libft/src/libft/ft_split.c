@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acaes <acaes@student.s19.be>               +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 20:00:16 by acaes             #+#    #+#             */
-/*   Updated: 2024/12/03 18:32:29 by acaes            ###   ########.fr       */
+/*   Updated: 2025/03/08 17:22:49 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ static char	*ft_copy(const char *s, char c)
 	int		i;
 	int		l;	
 
+	if (ft_strncmp(s, "<", 1) == 0 || ft_strncmp(s, "|", 1) == 0
+			|| ft_strncmp(s, ">", 1) == 0 || ft_strncmp(s, ">>", 2) == 0
+			|| ft_strncmp(s, "<<", 2) == 0)
+		return ("");
 	i = 0;
 	l = 0;
 	while (s[l] && s[l] != c)
