@@ -1,8 +1,14 @@
 #include "inc/minishell.h"
 
-int	main(int ac, char **av)
+int	main(char **env)
 {
-	if (av[0] && ac > 0)
-		return (0);
-	return (2);
+	char	*input;
+
+	while (1)
+	{
+		ft_printf("minishell$ ");
+		input = get_next_line(0);
+		free(input);
+	}
+	return (0);
 }
