@@ -6,93 +6,92 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 20:00:16 by acaes             #+#    #+#             */
-/*   Updated: 2025/03/08 17:22:49 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:50:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/libft.h"
 
-static int	word_count(const char *s, char c)
+static void	*ft_free_tab(char **str, int len)
 {
-	int	count;
 	int	i;
 
-	count = 0;
 	i = 0;
+	while (i < len)
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+	return (NULL);
+}
+
+static int	ft_countword(char *s, char c)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
 	while (s[i])
 	{
-		while (s[i] && s[i] == c)
+		while (s[i] == c && s[i] != '\0')
 			i++;
 		if (s[i])
 			count++;
-		while (s[i] && s[i] != c)
+		while (s[i] != c && s[i] != '\0')
 			i++;
 	}
 	return (count);
 }
 
-static char	*ft_copy(const char *s, char c)
+static char	*ft_dostr(char *s, char c)
 {
-	char	*word;
 	int		i;
-	int		l;	
+	int		j;
+	char	*str;
 
-	if (ft_strncmp(s, "<", 1) == 0 || ft_strncmp(s, "|", 1) == 0
-			|| ft_strncmp(s, ">", 1) == 0 || ft_strncmp(s, ">>", 2) == 0
-			|| ft_strncmp(s, "<<", 2) == 0)
-		return ("");
 	i = 0;
-	l = 0;
-	while (s[l] && s[l] != c)
-		l++;
-	word = (char *)malloc(sizeof(char) * (l + 1));
-	if (!word)
+	j = 0;
+	while (s[j] != c && s[j])
+		j++;
+	str = (char *)malloc(sizeof(char) * j + 1);
+	if (!str)
 		return (NULL);
-	while (i < l)
+	while (i < j)
 	{
-		word[i] = s[i];
+		str[i] = s[i];
 		i++;
 	}
-	word[i] = '\0';
-	return (word);
+	str[i] = '\0';
+	return (str);
 }
 
-static void	*free_split(char **tab, int count)
+char	**ft_split(char const *s, char c)
 {
-	int	i;
+	char	**strs;
+	size_t	i;
 
-	i = 0;
-	while (i < count)
-		free(tab[i++]);
-	free(tab);
-	return (NULL);
-}
-
-char	**ft_split(const char *s, char c)
-{
-	char	**tab;
-	int		j;
-
-	j = 0;
 	if (!s)
 		return (NULL);
-	tab = (char **)malloc(sizeof(char *) * (word_count(s, c) + 1));
-	if (!tab)
+	strs = (char **)malloc(sizeof(char *) * (ft_countword((char *)s, c) + 1));
+	if (!strs)
 		return (NULL);
+	i = 0;
 	while (*s)
 	{
 		while (*s && *s == c)
 			s++;
 		if (*s)
 		{
-			tab[j] = ft_copy(s, c);
-			if (!tab[j])
-				return (free_split(tab, j));
-			j++;
+			strs[i] = ft_dostr((char *)s, c);
+			if (!strs[i])
+				return (ft_free_tab(strs, i));
+			i++;
 		}
 		while (*s != c && *s)
 			s++;
 	}
-	tab[j] = (NULL);
-	return (tab);
+	strs[i] = 0;
+	return (strs);
 }
