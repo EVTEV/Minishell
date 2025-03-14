@@ -9,12 +9,12 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		data->input = NULL;
-		ft_printf("minishell: ");
 		data->input = read_input(data);
 		if (data->input)
 		{
 			ast = pars_command(data->input);
-			ft_echo(ast->left->args);
+			if (ast && ast->left && ast->left->args)
+				ft_echo(ast->left->args);
 		}
 	}
 	return (0);

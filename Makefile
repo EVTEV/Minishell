@@ -28,7 +28,7 @@ AR = ar -rcs
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME) -lreadline
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
