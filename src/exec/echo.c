@@ -1,45 +1,41 @@
 #include "../../inc/minishell.h"
 
-static int	check_args(char	**args, int	*start)
+int	is_flag(char *s)
 {
 	int	i;
+
+	i = 0;
+	if (s[0] == '-')
+	{
+		i++;
+		while (s[i] && s[i] == 'n')
+			i++;
+		if (!s[i])
+			return (1);
+	}
+	return (0);
+}
+
+void	ft_echo(char **av)
+{
+	int	i;
+	int	nl;
 
 	i = 1;
-	while (args[i] && ft_strcmp(str, "-n") == 0)
-		i++;
-	*start = i;
-	if (i > 1)
-		return (1);
-	return (0);
-}
-
-static void	write_args(char **args, int start, int newline)
-{
-	int	i;
-
-	i = start;
-	while (args[i])
+	nl = 1;
+	while (av[i] && is_flag(av[i]))
 	{
-		ft_printf("%s", args[i]);
-		if (args[i + 1])
+		i++;
+		nl = 0;
+	}
+	while (av[i])
+	{
+		ft_printf("%s", av[i]);
+		i++;
+		if (av[i])
 			ft_printf(" ");
-		i++;
 	}
-	if (newline)
+	if (nl)
 		ft_printf("\n");
-}
-
-int	ft_echo(int ac, char **av)
-{
-	int	newline;
-	int	start;
-
-	if (ac < 2)
-	{
-		ft_printf("\n");
-		return (0);
-	}
-	newline = !check_args(av, &start);
-	write_args(av, start, newline);
-	return (0);
+	free_tab(av);
 }

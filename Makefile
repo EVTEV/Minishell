@@ -14,9 +14,9 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 SRC = main.c \
-	  $(wildcard $(SRC_DIR)/Exec/*.c) \
-	  $(wildcard $(SRC_DIR)/Pars/*.c) \
-	  $(wildcard $(SRC_DIR)/Utils/*.c)
+	  $(wildcard $(SRC_DIR)/exec/*.c) \
+	  $(wildcard $(SRC_DIR)/pars/*.c) \
+	  $(wildcard $(SRC_DIR)/utils/*.c)
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

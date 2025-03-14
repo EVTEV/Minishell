@@ -14,8 +14,7 @@ int	main(int ac, char **av, char **env)
 		if (data->input)
 		{
 			ast = pars_command(data->input);
-			print_nodes(ast);
-			//free_tab(data->input);
+			ft_echo(ast->left->args);
 		}
 	}
 	return (0);

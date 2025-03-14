@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/11 18:37:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 13:59:45 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define MINISHELL_H
 
 # include "../Libft/inc/libft.h"
+# include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <sys/types.h>
+# include <sys/file.h>
+# include <sys/stat.h>
+# include <sys/errno.h>
 
 # define CMD 1
 # define PIPE 2
@@ -50,7 +57,7 @@ int		assign_redirect_type(char *redirect);
 
 // -------------------- Exec -------------------- //
 void    exit_clean(t_data *data);
-int		ft_echo(int ac, char **av);
+void	ft_echo(char **av);
 int		ft_cd(char **av, t_env *env);
 
 // -------------------- Utils -------------------- //
