@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 13:59:45 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 16:07:59 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ typedef	struct s_data
     char    **input;
 	char	**env;
 	char	*path;
-	
 }	t_data;
 
 typedef	struct s_ast
@@ -56,13 +55,14 @@ t_ast	*pars_command(char **token);
 int		assign_redirect_type(char *redirect);
 
 // -------------------- Exec -------------------- //
-void    exit_clean(t_data *data);
+void    exit_clean(t_data *data, t_ast **ast);
 void	ft_echo(char **av);
 int		ft_cd(char **av, t_env *env);
 
 // -------------------- Utils -------------------- //
 t_data	*init_data(int ac, char **av, char **env);
 t_ast	*create_node(int type, char *file, t_ast *root);
+void	free_nodes(t_ast *root);
 char	**realloc_args(char **args, char *new_arg);
 void	print_tab(char **tab);
 void	print_nodes(t_ast *root);

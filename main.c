@@ -13,9 +13,15 @@ int	main(int ac, char **av, char **env)
 		if (data->input)
 		{
 			ast = pars_command(data->input);
+			if (ast && ast->args[0]
+				&& ft_strncmp(ast->args[0], "exit", 4) == 0)
+				exit_clean(data, &ast);
 			if (ast && ast->left && ast->left->args)
-				ft_echo(ast->left->args);
+				print_tab(ast->left->args);
+			//execution(ast);
 		}
 	}
+	clear_history();
+	free_nodes(ast);
 	return (0);
 }

@@ -6,11 +6,26 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:09:50 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/11 18:31:53 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 16:00:25 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+
+void	free_nodes(t_ast *root)
+{
+	if (root->left)
+		free_nodes(root->left);
+	if (root->right)
+		free_nodes(root->right);
+	if (root->file)
+	{
+		free(root->file);
+		root->file = NULL;
+	}
+	if (root->args)
+		free_tab(root->args);
+}
 
 void	print_nodes(t_ast *root)
 {
