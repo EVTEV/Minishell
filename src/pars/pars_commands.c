@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:33:47 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/11 18:28:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:48:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ int	assign_redirect_type(char *redirect)
 	return (-1);
 }
 
-t_ast	*handle_pipe(char **token, int i, t_ast *root)
+t_ast	*handle_pipe(char **token, int i, t_ast *root, t_data *data)
 {
 	t_ast	*node;
 
 	node = create_node(PIPE, NULL, root);
 	if (!node)
 		return (NULL);
-	node->right = pars_command(&token[i + 1]);
+	node->right = pars_command(&token[i + 1], data);
 	return (node);
 }
 
@@ -41,14 +41,20 @@ t_ast	*handle_redirect(char **token, int *i, t_ast *root)
 	return (create_node(REDIR, token[++(*i)], root));
 }
 
-void	add_arg_to_cmd(t_ast **root, char *arg)
+int	add_arg_to_cmd(t_data *data, t_ast **root, char *arg)
 {
 	if (!*root)
+	{
 		*root = create_node(CMD, NULL, NULL);
+		return (0);
+	}
 	(*root)->args = realloc_args((*root)->args, arg);
+	if (!(*root)->args)
+		return (exit_clean(data, *root), 0);
+	return (1);
 }
 
-t_ast	*pars_command(char **token)
+t_ast	*pars_command(char **token, t_data *data)
 {
 	t_ast	*root;
 	int		i;
@@ -58,11 +64,11 @@ t_ast	*pars_command(char **token)
 	while (token[i])
 	{
 		if (ft_strncmp(token[i], "|", 1) == 0)
-			return (handle_pipe(token, i, root));
+			return (handle_pipe(token, i, root, data));
 		else if (assign_redirect_type(token[i]) != -1)
 			root = handle_redirect(token, &i, root);
-		else
-			add_arg_to_cmd(&root, token[i]);
+		else if (!add_arg_to_cmd(data, &root, token[i]) && root)
+			free_nodes(root);
 		i++;
 	}
 	return (root);

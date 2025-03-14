@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 16:07:59 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:37:37 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ typedef	struct s_ast
 }	t_ast;
 
 // -------------------- Pars --------------------- //
-char	**read_input(t_data *data);
-t_ast	*pars_command(char **token);
+char	**read_input();
+t_ast	*pars_command(char **token, t_data *data);
 int		assign_redirect_type(char *redirect);
 
 // -------------------- Exec -------------------- //
-void    exit_clean(t_data *data, t_ast **ast);
+void    exit_clean(t_data *data, t_ast *ast);
 void	ft_echo(char **av);
 int		ft_cd(char **av, t_env *env);
 
