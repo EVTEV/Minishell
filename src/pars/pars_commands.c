@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 15:33:47 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 17:48:19 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 19:27:56 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ int	add_arg_to_cmd(t_data *data, t_ast **root, char *arg)
 	if (!*root)
 	{
 		*root = create_node(CMD, NULL, NULL);
-		return (0);
+		if (!(*root))
+			return (0);
 	}
 	(*root)->args = realloc_args((*root)->args, arg);
 	if (!(*root)->args)
@@ -68,7 +69,7 @@ t_ast	*pars_command(char **token, t_data *data)
 		else if (assign_redirect_type(token[i]) != -1)
 			root = handle_redirect(token, &i, root);
 		else if (!add_arg_to_cmd(data, &root, token[i]) && root)
-			free_nodes(root);
+			exit_clean(data, root);
 		i++;
 	}
 	return (root);
