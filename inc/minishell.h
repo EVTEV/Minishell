@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 17:37:37 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 18:04:54 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int		ft_cd(char **av, t_env *env);
 
 // -------------------- Utils -------------------- //
 t_data	*init_data(int ac, char **av, char **env);
-t_ast	*create_node(int type, char *file, t_ast *root);
+t_ast	*create_node(int type, char *file, t_ast *root, t_data *data);
 void	free_nodes(t_ast *root);
 char	**realloc_args(char **args, char *new_arg);
 void	print_tab(char **tab);

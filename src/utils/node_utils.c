@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:09:50 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 17:57:57 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 18:05:22 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,20 @@ char	**realloc_args(char **args, char *new_arg)
 	return (new_args);
 }
 
-t_ast	*create_node(int type, char *file, t_ast *root)
+t_ast	*create_node(int type, char *file, t_ast *root, t_data *data)
 {
 	t_ast	*node;
 
 	node = (t_ast *)malloc(sizeof(t_ast));
 	if (!node)
-		return (NULL);
+		return (exit_clean(data, root), NULL);
 	node->type = type;
 	node->args = NULL;
 	if (file)
 	{
 		node->file = ft_strdup(file);
 		if (!node->file)
-			return (NULL);
+			return (exit_clean(data, root), NULL);
 	}
 	else
 		node->file = NULL;
