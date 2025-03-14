@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:09:50 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 16:47:30 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:57:57 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,20 @@ void	free_nodes(t_ast *root)
 		free_tab(root->args);
 }
 
-void	print_nodes(t_ast *root)
-{
-	if (!root)
-		return ;
-	ft_printf("type = 1:cmd | 2:pipe | 3:redirect:\n");
-	ft_printf("type: %d\n", root->type);
-	print_tab(root->args);
-	if (root->file)
-		ft_printf("file: %s\n", root->file);
-	if (root->right)
-		print_nodes(root->right);
-	if (root->left)
-		print_nodes(root->left);
-}
+// void	print_nodes(t_ast *root)
+// {
+// 	if (!root)
+// 		return ;
+// 	ft_printf("type = 1:cmd | 2:pipe | 3:redirect:\n");
+// 	ft_printf("type: %d\n", root->type);
+// 	print_tab(root->args);
+// 	if (root->file)
+// 		ft_printf("file: %s\n", root->file);
+// 	if (root->right)
+// 		print_nodes(root->right);
+// 	if (root->left)
+// 		print_nodes(root->left);
+// }
 
 char	**realloc_args(char **args, char *new_arg)
 {
