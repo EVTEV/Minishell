@@ -7,6 +7,8 @@ int	main(int ac, char **av, char **env)
 
 	ast = NULL;
 	data = init_data(ac, av, env);
+	if (!data)
+		return (0);
 	while (1)
 	{
 		if (ast)

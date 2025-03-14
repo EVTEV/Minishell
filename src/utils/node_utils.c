@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:09:50 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/14 17:57:57 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/14 19:36:12 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	free_nodes(t_ast *root)
 	}
 	if (root->args)
 		free_tab(root->args);
+	free(root);
+	root = NULL;
 }
 
 // void	print_nodes(t_ast *root)
