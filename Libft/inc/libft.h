@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:08:44 by acaes             #+#    #+#             */
-/*   Updated: 2025/03/08 10:47:34 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/03/26 08:35:07 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "ptf.h"
 # include "gnl.h"
 
+int 	ft_isspace(char c);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isalnum(int c);
