@@ -71,5 +71,8 @@ t_data	*init_data(int ac, char **av, char **env)
 	data->path = get_path(data->env);
 	if (!data->path)
 		return (NULL);
+	data->cmd_list = NULL;
+	data->exit_status = 0;
+	data->pipes = NULL;
 	return (data);
 }
