@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/02 18:31:01 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/02 19:40:53 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_token	*create_token(char *value, t_token_type type)
@@ -37,32 +49,45 @@ char	*get_next_word(char *input, int *start)
 {
 	int		i;
 	int		len;
+	char	quote;
 
+	if (!input || !*input)
+		return (NULL);
 	while (input[*start] && input[*start] == ' ')
 		(*start)++;
 	i = *start;
-	while (input[i] && input[i] != ' ')
+	quote = 0;
+	while (input[i] && (quote || input[i] != ' '))
+	{
+		if (!quote && (input[i] == '\'' || input[i] == '"'))
+			quote = input[i];
+		else if (quote && input[i] == quote)
+			quote = 0;
 		i++;
+	}
 	len = i - *start;
 	if (len <= 0)
 		return (NULL);
-	*start = i; // Update the start index to the next position after the word
+	*start = i;
 	return (ft_substr(input, *start - len, len));
 }
 
 t_token	*lexer(char *input)
 {
 	t_token	*head;
+	t_token	*new_token;
 	char	*current_word;
 	int		start;
 
 	head = NULL;
 	start = 0;
-	while ((current_word = get_next_word(input, &start)))
+	current_word = get_next_word(input, &start);
+	while (current_word)
 	{
-		add_token(&head, create_token(current_word, WORD));
+		new_token = create_token(current_word, WORD);
+		add_token(&head, new_token);
 		free(current_word);
-		start += ft_strlen(current_word);
+		current_word = get_next_word(input, &start);
 	}
 	return (head);
 }
