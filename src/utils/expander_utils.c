@@ -6,13 +6,13 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:42:25 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 20:16:30 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/02 20:19:47 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*expand_var_in_quotes(char *result, char *input, int *i, t_env *env)
+char	*expand_var_in_quo(char *result, char *input, int *i, t_env *env)
 {
 	int		start;
 	char	*var_name;

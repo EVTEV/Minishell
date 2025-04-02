@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:31:03 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 20:16:24 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/02 20:19:51 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	*expand_double_quotes(char *input, t_env *env)
 	while (input[i])
 	{
 		if (input[i] == '$')
-			result = expand_var_in_quotes(result, input, &i, env);
+			result = expand_var_in_quo(result, input, &i, env);
 		else
 			result = append_character(result, input[i]);
 		i++;
