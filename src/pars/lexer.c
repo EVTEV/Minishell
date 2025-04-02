@@ -1,113 +1,91 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 20:35:20 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/26 21:07:51 by lowatell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "minishell.h"
 
-#include "../../inc/minishell.h"
-
-static int	is_op_char(char c)
+t_token	*create_token(char *value, t_token_type type)
 {
-	return (c == '|' || c == '<' || c == '>');
-}
+	t_token	*token;
 
-static char	*extract_word(const char *s, int *i)
-{
-	int		start;
-	int		len;
-	char	*res;
-
-	start = *i;
-	while (s[*i] && !ft_isspace(s[*i]) && !is_op_char(s[*i])
-		&& s[*i] != '"' && s[*i] != '\'')
-		(*i)++;
-	len = *i - start;
-	res = ft_strndup(s + start, len);
-	if (!res)
+	token = malloc(sizeof(t_token));
+	if (!token)
 		return (NULL);
-	return (res);
-}
-
-static char	*collect_full_word(const char *s, int *i)
-{
-	char	*res;
-	char	*part;
-	char	*tmp;
-
-	res = ft_strdup("");
-	if (!res)
-		return (NULL);
-	while (s[*i] && !ft_isspace(s[*i]) && !is_op_char(s[*i]))
+	token->value = ft_strdup(value);
+	if (!token->value)
 	{
-		if (s[*i] == '\'' || s[*i] == '"')
-			part = extract_quoted(s, i, s[*i]);
-		else
-			part = extract_word(s, i);
-		if (!part)
-			return (free(res), NULL);
-		tmp = res;
-		res = ft_strjoin(tmp, part);
-		if (!res)
-			return (free(tmp), free(part), NULL);
-		free(tmp);
-		free(part);
+		free(token);
+		return (NULL);
 	}
-	return (res);
+	token->type = type;
+	token->next = NULL;
+	return (token);
 }
 
-static void	handle_operator(const char *s, int *i, t_token **lst)
+void	add_token(t_token **head, t_token *new_token)
 {
-	char	op[3];
+	t_token	*current;
 
-	if (s[*i] == '|')
+	if (!*head)
 	{
-		op[0] = '|';
-		op[1] = '\0';
-		add_operator_token(lst, op);
-		(*i)++;
+		*head = new_token;
 		return ;
 	}
-	op[0] = s[*i];
-	op[1] = '\0';
-	op[2] = '\0';
-	if (s[*i + 1] == s[*i])
-	{
-		op[1] = s[*i];
-		(*i)++;
-	}
-	(*i)++;
-	add_operator_token(lst, op);
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
 }
 
-t_token	*tokenize(char *line)
+char	*get_next_word(char *input, int *start)
 {
-	t_token	*lst;
-	char	*word;
 	int		i;
+	int		len;
 
-	i = 0;
-	lst = NULL;
-	while (line[i])
+	while (input[*start] && input[*start] == ' ')
+		(*start)++;
+	i = *start;
+	while (input[i] && input[i] != ' ')
+		i++;
+	len = i - *start;
+	if (len <= 0)
+		return (NULL);
+	*start = i; // Update the start index to the next position after the word
+	return (ft_substr(input, *start - len, len));
+}
+
+t_token	*lexer(char *input)
+{
+	t_token	*head;
+	char	*current_word;
+	int		start;
+
+	head = NULL;
+	start = 0;
+	while ((current_word = get_next_word(input, &start)))
 	{
-		while (ft_isspace(line[i]))
-			i++;
-		if (!line)
-			break ;
-		if (is_op_char(line[i]))
-			handle_operator(line, &i, &lst);
-		else
+		add_token(&head, create_token(current_word, WORD));
+		free(current_word);
+		start += ft_strlen(current_word);
+	}
+	return (head);
+}
+
+void	free_tokens(t_token *head)
+{
+	t_token	*tmp;
+
+	if (!head)
+		return ;
+	while (head)
+	{
+		tmp = head;
+		head = head->next;
+		if (tmp->value)
 		{
-			word = collect_full_word(line, &i);
-			if (!word)
-				return (ft_printf("%s", QUOTE_ERR), free(lst), NULL);
-			add_token(&lst, create_token(word, WORD));
+			free(tmp->value);
+			tmp->value = NULL;
+		}
+		if (tmp)
+		{
+			free(tmp);
+			tmp = NULL;
 		}
 	}
-	return (lst);
 }

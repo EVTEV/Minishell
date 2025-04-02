@@ -1,31 +1,51 @@
 #include "inc/minishell.h"
 
-int	main(int ac, char **av, char **env)
+int	main(void)
 {
-	t_data	*data;
-	t_ast	*ast;
+	char		*input;
+	t_token		*tokens;
+	t_ast_node	*ast;
+	t_env		*env;
 
-	ast = NULL;
-	data = init_data(ac, av, env);
-	if (!data)
-		return (0);
+	// Initialize a simple environment for testing
+	env = malloc(sizeof(t_env));
+	env->key = ft_strdup("USER");
+	env->value = ft_strdup("lowatell");
+	env->next = NULL;
+
 	while (1)
 	{
-		if (ast)
-			free_nodes(ast);
-		data->input = NULL;
-		data->input = read_input();
-		if (data->input && data->input[0]
-			&& ft_strncmp(data->input[0], "exit", 4) == 0)
-			exit_clean(data, ast);
-		if (data->input)
-		{
-			ast = pars_command(data->input, data);
-			if (ast && !ast->type)
-				exit_clean(data, ast);
-			if (ast && ast->left && ast->left->args)
-				print_tab(ast->left->args);
-		}
+		input = readline("minishell> ");
+		if (!input)
+			break;
+		if (*input)
+			add_history(input);
+
+		// Lexer
+		tokens = lexer(input);
+		printf("Tokens:\n");
+		for (t_token *tmp = tokens; tmp; tmp = tmp->next)
+			printf("Value: %s, Type: %d\n", tmp->value, tmp->type);
+
+		// Expander
+		expand_tokens(tokens, env);
+		printf("Expanded Tokens:\n");
+		for (t_token *tmp = tokens; tmp; tmp = tmp->next)
+			printf("Value: %s, Type: %d\n", tmp->value, tmp->type);
+
+		// Parser
+		ast = parser(tokens);
+		printf("AST Root Token: %s\n", ast ? ast->token->value : "NULL");
+
+		// Free resources
+		free_ast(ast);
+		free_tokens(tokens);
+		free(input);
 	}
+
+	// Free environment
+	free(env->key);
+	free(env->value);
+	free(env);
 	return (0);
 }

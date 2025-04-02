@@ -16,19 +16,20 @@ OBJ_DIR = obj
 SRC = main.c \
 	  $(wildcard $(SRC_DIR)/exec/*.c) \
 	  $(wildcard $(SRC_DIR)/pars/*.c) \
-	  $(wildcard $(SRC_DIR)/utils/*.c)
+	  $(wildcard $(SRC_DIR)/utils/*.c) \
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4
+CFLAGS = -Wall -Wextra -Werror -g -I/usr/include/readline #-gdwarf-4
+LDFLAGS = -L/usr/lib -lreadline
 RM = @rm -rf
 AR = ar -rcs
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME) -lreadline
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)

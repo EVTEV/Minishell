@@ -1,103 +1,50 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 21:31:38 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/26 22:34:20 by lowatell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "minishell.h"
 
-#include "../../inc/minishell.h"
-
-char	*append_and_free(char *s1, char *s2)
+int	is_valid_env_char(char c, int is_first)
 {
-	char	*new;
-
-	new = ft_strjoin(s1, s2);
-	if (!new)
-		return (NULL);
-	free(s1);
-	return (new);
+	if (is_first)
+		return (ft_isalpha(c) || c == '_'); // First character must be a letter or '_'
+	return (ft_isalnum(c) || c == '_'); // Subsequent characters can be alphanumeric or '_'
 }
 
-char	*get_var_name(const char *s, int *i)
+char	*expand_variable(char *input, t_env *env)
 {
-	int		start;
-	int		len;
-	char	*name;
+	char	*expanded;
+	char	*value;
 
-	if (s[*i] == '$')
-		(*i)++;
-	if (s[*i] == '?')
-	{
-		(*i)++;
-		name = ft_strdup("?");
-		if (!name)
-			return (NULL);
-		return (name);
-	}
-	start = *i;
-	while (s[*i] && (ft_isalnum(s[*i]) || s[*i] == '_'))
-		(*i)++;
-	len = *i - start;
-	name = ft_substr(s, start, len);
-	if (!name)
-		return (NULL);
-	return (name);
+	if (ft_isdigit(input[1])) // If the first character after '$' is a digit
+		return (ft_strdup(input + 2)); // Skip both '$' and the digit
+	if (!is_valid_env_char(input[1], 1)) // Check if the first character after '$' is valid
+		return (ft_strdup(input + 1)); // Skip the '$' and treat the rest as normal text
+	value = get_env_value(env, input + 1);
+	if (!value)
+		return (ft_strdup(""));
+	expanded = ft_strdup(value);
+	return (expanded);
 }
 
-char	*get_var_value(char *name, t_env *env, int status)
+char	*expand_token(char *input, t_env *env)
 {
-	char	*res;
-	char	*tmp;
+	char	*expanded;
 
-	if (!ft_strncmp(name, "?", 1))
-	{
-		tmp = ft_itoa(status);
-		if (!tmp)
-			return (NULL);
-		res = ft_strdup(tmp);
-		if (!res)
-			return (free(tmp), NULL);
-		return (free(tmp), free(name), res);
-	}
-	while (env)
-	{
-		if (!ft_strncmp(env->key, name, ft_strlen(name)))
-		{
-			res = ft_strdup(env->value);
-			if (!res)
-				return (NULL);
-			return (free(name), res);
-		}
-		env = env->next;
-	}
-	return (free(name), ft_strdup(""));
+	if (input[0] == '\'' && input[ft_strlen(input) - 1] == '\'') // Check for single quotes
+		return (ft_substr(input, 1, ft_strlen(input) - 2)); // Remove the quotes without expanding
+	if (input[0] == '$')
+		expanded = expand_variable(input, env);
+	else
+		expanded = ft_strdup(input);
+	return (expanded);
 }
 
-int	expand_tokens(t_token *tokens, t_env *env, int last_status)
+void	expand_tokens(t_token *tokens, t_env *env)
 {
 	char	*expanded;
 
 	while (tokens)
 	{
-		if (tokens->type == WORD && tokens->value)
-		{
-			expanded = expand_string(tokens->value, env, last_status);
-			if (!expanded)
-				return (0);
-			free(tokens->value);
-			tokens->value = expanded;
-		}
+		expanded = expand_token(tokens->value, env);
+		free(tokens->value);
+		tokens->value = expanded;
 		tokens = tokens->next;
 	}
-	return (1);
-}
-
-int	is_var_start(char c)
-{
-	return (ft_isalnum(c) || c == '_' || c == '?');
 }

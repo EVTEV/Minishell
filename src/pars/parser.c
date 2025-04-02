@@ -1,107 +1,78 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 22:03:40 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/26 22:10:29 by lowatell         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/minishell.h"
 
-void	add_redir(t_redir **list, t_redir *new)
+t_token	*duplicate_token(t_token *token)
 {
-	t_redir	*tmp;
+	t_token	*new_token;
 
-	if (!*list)
-	{
-		*list = new;
-		return ;
-	}
-	tmp = *list;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new;
-}
-
-int	count_args(t_token *token)
-{
-	int	count;
-
-	count = 0;
-	while (token && token->type != PIPE)
-	{
-		if (token->type == WORD)
-			count++;
-		else if (token->type >= REDIR_IN && token->type <= HEREDOC)
-			token = token->next;
-		token = token->next;
-	}
-	return (count);
-}
-
-char	**fill_args(t_token **tok, t_env *env, int status, int count)
-{
-	char	**args;
-	int		i;
-
-	i = 0;
-	args = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!args)
+	if (!token)
 		return (NULL);
-	while (*tok && (*tok)->type != PIPE)
+	new_token = malloc(sizeof(t_token));
+	if (!new_token)
+		return (NULL);
+	new_token->value = ft_strdup(token->value);
+	if (!new_token->value)
 	{
-		if ((*tok)->type == WORD)
-		{
-			args[i] = expand_string((*tok)->value, env, status);
-			if (!args[i])
-				return (free_args(args), NULL);
-			i++;
-		}
-		else if ((*tok)->type >= REDIR_IN && (*tok)->type <= HEREDOC)
-			*tok = (*tok)->next;
-		*tok = (*tok)->next;
+		free(new_token);
+		return (NULL);
 	}
-	args[i] = NULL;
-	return (args);
+	new_token->type = token->type;
+	new_token->next = NULL;
+	return (new_token);
 }
 
-char	**extract_args(t_token **tok, t_env *env, int status)
+t_ast_node	*create_ast_node(t_token *token)
 {
-	int	count;
+	t_ast_node	*node;
 
-	count = count_args(*tok);
-	return (fill_args(tok, env, status, count));
+	node = malloc(sizeof(t_ast_node));
+	if (!node)
+		return (NULL);
+	node->token = duplicate_token(token); // Duplicate the token
+	if (!node->token)
+	{
+		free(node);
+		return (NULL);
+	}
+	node->left = NULL;
+	node->right = NULL;
+	return (node);
 }
 
-t_redir	*extract_redirs(t_token **tok)
+t_ast_node	*parse_command(t_token **tokens)
 {
-	t_redir			*list;
-	t_redir			*new;
-	char			*file;
-	t_token_type	type;
+	t_ast_node	*node;
 
-	list = NULL;
-	while (*tok && (*tok)->type != PIPE)
+	if (!*tokens)
+		return (NULL);
+	node = create_ast_node(*tokens);
+	*tokens = (*tokens)->next;
+	return (node);
+}
+
+t_ast_node	*parser(t_token *tokens)
+{
+	t_ast_node	*root;
+
+	root = parse_command(&tokens);
+	return (root);
+}
+
+void	free_ast(t_ast_node *root)
+{
+	if (!root)
+		return ;
+	free_ast(root->left);
+	free_ast(root->right);
+	if (root->token)
 	{
-		if ((*tok)->type >= REDIR_IN && (*tok)->type <= HEREDOC)
+		if (root->token->value)
 		{
-			type = (*tok)->type;
-			*tok = (*tok)->next;
-			if (!*tok || (*tok)->type != WORD)
-				return (NULL);
-			file = ft_strdup((*tok)->value);
-			if (!file)
-				return (NULL);
-			new = create_redir(file, type);
-			if (!new)
-				return (NULL);
-			add_redir(&list, new);
+			free(root->token->value);
+			root->token->value = NULL; // Set to NULL after freeing
 		}
-		*tok = (*tok)->next;
+		free(root->token);
+		root->token = NULL; // Set to NULL after freeing
 	}
-	return (list);
+	free(root);
+	root = NULL; // Set to NULL after freeing
 }
