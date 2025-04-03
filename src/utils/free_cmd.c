@@ -12,6 +12,7 @@
 
 #include "../../inc/minishell.h"
 
+/* Libère la liste des redirections d'une commande */
 static void	free_redirections(t_redir *redirections)
 {
 	t_redir	*current;
@@ -28,6 +29,7 @@ static void	free_redirections(t_redir *redirections)
 	}
 }
 
+/* Libère la liste complète des commandes et leurs redirections */
 void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*current;

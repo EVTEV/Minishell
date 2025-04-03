@@ -12,71 +12,62 @@
 
 #include "../../inc/minishell.h"
 
+/* Vérifie si une commande est une commande interne */
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (ft_strcmp(cmd, "echo") == 0)
+	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "cd") == 0)
+	if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "pwd") == 0)
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "export") == 0)
+	if (ft_strncmp(cmd, "export", 7) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "unset") == 0)
+	if (ft_strncmp(cmd, "unset", 6) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "env") == 0)
+	if (ft_strncmp(cmd, "env", 4) == 0)
 		return (1);
-	if (ft_strcmp(cmd, "exit") == 0)
+	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (1);
 	return (0);
 }
 
+/* Calcule la longueur d'un tableau de chaînes */
+static int	ft_tablen(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab && tab[i])
+		i++;
+	return (i);
+}
+
+/* Exécute une commande interne */
 int	execute_builtin(t_cmd *cmd, t_data *data)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
-	if (ft_strcmp(cmd->args[0], "echo") == 0)
+	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (ft_echo(ft_tablen(cmd->args), cmd->args));
-	else if (ft_strcmp(cmd->args[0], "cd") == 0)
-		return (ft_cd(cmd->args, NULL)); // Remplacer NULL par l'environnement
-	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		exit_clean(data);
-	else if (ft_strcmp(cmd->args[0], "env") == 0)
+	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
+		return (ft_cd(cmd->args, data->env_list));
+	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
+		return (ft_pwd());
+	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
+		return (ft_export(cmd->args, &data->env_list));
+	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+		return (ft_unset(cmd->args, &data->env_list));
+	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (print_tab(data->env), 0);
-	// Ajouter les autres commandes internes (pwd, export, unset)
+	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
+		exit_clean(data);
 	return (1);
 }
 
-char	*find_command_path(char *cmd, t_data *data)
-{
-	char	**paths;
-	char	*tmp;
-	char	*cmd_path;
-	int		i;
-
-	if (!cmd || !data || !data->path)
-		return (NULL);
-	if (cmd[0] == '/' || cmd[0] == '.')
-		return (ft_strdup(cmd));
-	paths = ft_split(data->path + 5, ':'); // Skip "PATH="
-	if (!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		tmp = ft_strjoin(paths[i], "/");
-		cmd_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(cmd_path, X_OK) == 0)
-			return (free_tab(paths), cmd_path);
-		free(cmd_path);
-		i++;
-	}
-	return (free_tab(paths), NULL);
-}
-
+/* Exécute une commande externe dans un processus enfant */
 int	execute_external(t_cmd *cmd, t_data *data)
 {
 	char	*cmd_path;
@@ -109,6 +100,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	return (1);
 }
 
+/* Exécute une commande unique (interne ou externe) */
 int	execute_single_command(t_cmd *cmd, t_data *data)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -120,15 +112,12 @@ int	execute_single_command(t_cmd *cmd, t_data *data)
 		return (execute_external(cmd, data));
 }
 
+/* Exécute la liste des commandes avec ou sans pipes */
 int	execute_commands(t_data *data)
 {
 	if (!data || !data->cmd_list)
 		return (1);
-	
-	// Si une seule commande, pas besoin de pipes
 	if (!data->cmd_list->next)
 		return (execute_single_command(data->cmd_list, data));
-	
-	// Sinon, utiliser la fonction qui gère les pipes
 	return (execute_piped_commands(data));
 } 

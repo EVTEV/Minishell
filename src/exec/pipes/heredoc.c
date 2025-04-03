@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/minishell.h"
+#include "../../../inc/minishell.h"
 
+/* Configure le pipe pour le heredoc */
 static int	setup_heredoc_pipe(int pipe_fd[2])
 {
 	if (pipe(pipe_fd) < 0)
@@ -22,6 +23,7 @@ static int	setup_heredoc_pipe(int pipe_fd[2])
 	return (0);
 }
 
+/* Traite une ligne d'entrée du heredoc */
 static int	process_line(int pipe_fd[2], char *line, char *delimiter, 
 						size_t delimiter_len)
 {
@@ -31,18 +33,17 @@ static int	process_line(int pipe_fd[2], char *line, char *delimiter,
 		free(line);
 		return (1);
 	}
-	
 	if (write(pipe_fd[1], line, ft_strlen(line)) < 0)
 	{
 		free(line);
 		perror("write");
 		return (-1);
 	}
-	
 	free(line);
 	return (0);
 }
 
+/* Lit l'entrée du heredoc jusqu'au délimiteur */
 static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 {
 	char	*line;
@@ -63,7 +64,6 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 			}
 			break;
 		}
-		
 		result = process_line(pipe_fd, line, delimiter, delimiter_len);
 		if (result != 0)
 			return (result);
@@ -71,6 +71,7 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 	return (0);
 }
 
+/* Gère le processus de heredoc complet */
 int	handle_heredoc(char *delimiter, int *fd_in)
 {
 	int		pipe_fd[2];

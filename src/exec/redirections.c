@@ -12,6 +12,7 @@
 
 #include "../../inc/minishell.h"
 
+/* Gère la redirection d'entrée (<) */
 static int	handle_input_redirection(char *filename)
 {
 	int	fd;
@@ -31,6 +32,7 @@ static int	handle_input_redirection(char *filename)
 	return (0);
 }
 
+/* Gère la redirection de sortie (>) et l'ajout (>>) */
 static int	handle_output_redirection(char *filename, int append)
 {
 	int	fd;
@@ -56,6 +58,7 @@ static int	handle_output_redirection(char *filename, int append)
 	return (0);
 }
 
+/* Gère la redirection heredoc (<<) */
 static int	handle_heredoc_redirection(char *delimiter)
 {
 	int	fd_in;
@@ -74,6 +77,7 @@ static int	handle_heredoc_redirection(char *delimiter)
 	return (0);
 }
 
+/* Configure toutes les redirections pour une commande */
 int	setup_redirections(t_redir *redirections)
 {
 	t_redir	*current;

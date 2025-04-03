@@ -15,6 +15,8 @@ OBJ_DIR = obj
 
 SRC = main.c \
 	  $(wildcard $(SRC_DIR)/exec/*.c) \
+	  $(wildcard $(SRC_DIR)/exec/builtins/*.c) \
+	  $(wildcard $(SRC_DIR)/exec/pipes/*.c) \
 	  $(wildcard $(SRC_DIR)/pars/*.c) \
 	  $(wildcard $(SRC_DIR)/utils/*.c)
 

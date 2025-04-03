@@ -12,6 +12,7 @@
 
 #include "../../inc/minishell.h"
 
+/* Affiche le contenu d'un tableau de chaînes de caractères */
 void	print_tab(char **tab)
 {
 	int	i;
