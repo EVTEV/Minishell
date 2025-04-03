@@ -41,6 +41,7 @@ $(LIBFT):
 
 clean:
 	$(RM) $(OBJ_DIR)
+	$(RM) minishell.dSYM
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean

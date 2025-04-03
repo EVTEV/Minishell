@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:30:59 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 19:43:40 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/03 17:42:46 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*remove_quotes(char *value)
 	int		j;
 	char	quote;
 
-	result = (char *)malloc(ft_strlen(value) + 1);
+	result = allocate_result_buffer(value);
 	if (!result)
 		return (NULL);
 	i = -1;
@@ -39,32 +39,14 @@ char	*remove_quotes(char *value)
 	quote = 0;
 	while (value[++i])
 	{
-		if (!quote && (value[i] == '\'' || value[i] == '"'))
-			quote = value[i];
-		else if (quote && value[i] == quote)
-			quote = 0;
-		else
+		handle_quote_state(value[i], &quote);
+		if (!quote || value[i] != quote)
 			result[j++] = value[i];
 	}
 	result[j] = '\0';
 	tmp = ft_strdup(result);
 	free(result);
 	return (tmp);
-}
-
-static void	combine_token_values(t_ast_node *current)
-{
-	char	*left_value;
-	char	*right_value;
-	char	*combined_value;
-
-	left_value = remove_quotes(current->token->value);
-	right_value = remove_quotes(current->right->token->value);
-	combined_value = ft_strjoin(left_value, right_value);
-	free(left_value);
-	free(right_value);
-	free(current->token->value);
-	current->token->value = combined_value;
 }
 
 void	normalize_ast(t_ast_node *root)

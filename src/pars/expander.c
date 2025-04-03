@@ -6,27 +6,13 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:31:03 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/03 17:35:05 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/03 17:53:49 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*expand_variable(char *input, t_env *env)
-{
-	char	*value;
-
-	if (!input || !*input || input[0] != '$')
-		return (ft_strdup(input));
-	if (ft_isdigit(input[1]))
-		return (ft_strdup(input + 2)); // Ignore le $ et le premier chiffre
-	value = get_env_value(env, input + 1);
-	if (!value)
-		return (ft_strdup(""));
-	return (ft_strdup(value));
-}
-
-static char	*append_character(char *result, char c)
+char	*append_character(char *result, char c)
 {
 	char	*tmp;
 	char	*char_str;
@@ -38,55 +24,45 @@ static char	*append_character(char *result, char c)
 	return (tmp);
 }
 
-char	*expand_double_quotes(char *input, t_env *env)
+static char	*handle_single_quotes(char *input)
 {
-	char	*result;
-	int		i;
-
-	result = ft_strdup("");
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] == '$')
-		{
-			char *temp_result = expand_var_in_quo(result, input, &i, env);
-			if (!temp_result) // Stop expansion if variable doesn't exist
-				break;
-			result = temp_result;
-		}
-		else
-			result = append_character(result, input[i]);
-		i++;
-	}
-	return (result);
+	return (ft_substr(input, 1, ft_strlen(input) - 2));
 }
 
-char	*expand_token(char *input, t_env *env)
+static char	*handle_double_quotes(char *input, t_env *env)
 {
 	char	*inner;
 	char	*expanded;
 
-	if (input[0] == '\'' && input[ft_strlen(input) - 1] == '\'')
-		return (ft_substr(input, 1, ft_strlen(input) - 2));
-	if (input[0] == '"' && input[ft_strlen(input) - 1] == '"')
-	{
-		inner = ft_substr(input, 1, ft_strlen(input) - 2);
-		expanded = expand_double_quotes(inner, env);
-		free(inner);
-		return (expanded);
-	}
-	return (expand_variable(input, env));
+	inner = ft_substr(input, 1, ft_strlen(input) - 2);
+	expanded = expand_double_quotes(inner, env);
+	free(inner);
+	return (expanded);
 }
 
-void	expand_tokens(t_token *tokens, t_env *env)
+static char	*expand_unquoted_token(char *input, t_env *env)
 {
 	char	*expanded;
+	int		i;
 
-	while (tokens)
+	expanded = ft_strdup("");
+	i = 0;
+	while (input[i])
 	{
-		expanded = expand_token(tokens->value, env);
-		free(tokens->value);
-		tokens->value = expanded;
-		tokens = tokens->next;
+		if (input[i] == '$')
+			expanded = expand_var_in_quo(expanded, input, &i, env);
+		else
+			expanded = append_character(expanded, input[i]);
+		i++;
 	}
+	return (expanded);
+}
+
+char	*expand_token(char *input, t_env *env)
+{
+	if (input[0] == '\'' && input[ft_strlen(input) - 1] == '\'')
+		return (handle_single_quotes(input));
+	if (input[0] == '"' && input[ft_strlen(input) - 1] == '"')
+		return (handle_double_quotes(input, env));
+	return (expand_unquoted_token(input, env));
 }

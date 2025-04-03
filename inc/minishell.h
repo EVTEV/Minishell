@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 20:19:37 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/03 17:53:57 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ t_token		*duplicate_token(t_token *token);
 char		*remove_quotes(char *value);
 t_env		*init_env(char **envp);
 char		*expand_var_in_quo(char *result, char *input, int *i, t_env *env);
+char		*expand_variable(char *input, t_env *env);
+char		*expand_double_quotes(char *input, t_env *env);
+char		*expand_token(char *input, t_env *env);
+char	*append_character(char *result, char c);
 
 // -------------------- Exec -------------------- //
 // -------------------- Signals -------------------- //
@@ -48,5 +52,8 @@ int			is_valid_env_char(char c, int is_first);
 void		free_env(t_env *env);
 void		remove_right_node(t_ast_node *current);
 char		*ft_strjoin_free(char *s1, const char *s2);
+char		*allocate_result_buffer(char *value);
+void		combine_token_values(t_ast_node *current);
+void		handle_quote_state(char c, char *quote);
 
 #endif
