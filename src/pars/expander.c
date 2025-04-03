@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:31:03 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 20:19:51 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/03 17:35:05 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*expand_variable(char *input, t_env *env)
 
 	if (!input || !*input || input[0] != '$')
 		return (ft_strdup(input));
+	if (ft_isdigit(input[1]))
+		return (ft_strdup(input + 2)); // Ignore le $ et le premier chiffre
 	value = get_env_value(env, input + 1);
 	if (!value)
 		return (ft_strdup(""));
@@ -46,7 +48,12 @@ char	*expand_double_quotes(char *input, t_env *env)
 	while (input[i])
 	{
 		if (input[i] == '$')
-			result = expand_var_in_quo(result, input, &i, env);
+		{
+			char *temp_result = expand_var_in_quo(result, input, &i, env);
+			if (!temp_result) // Stop expansion if variable doesn't exist
+				break;
+			result = temp_result;
+		}
 		else
 			result = append_character(result, input[i]);
 		i++;
