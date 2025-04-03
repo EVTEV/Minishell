@@ -15,9 +15,7 @@
 char	*read_input(t_data *data)
 {
 	char	*input;
-	char	**tab;
 
-	tab = NULL;
 	input = get_next_line(0);
 	if (ft_strncmp(input, "\n", ft_strlen(input) - 1) == 0)
 		return (free(input), input = NULL, NULL);
