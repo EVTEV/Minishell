@@ -38,6 +38,10 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argv;
 	(void)argc;
+	tokens = NULL;
+	ast = NULL;
+	env = NULL;
+	input = NULL;
 	// Initialisation de l'environnement
 	env = init_env(envp);
 	if (!env)
@@ -45,7 +49,6 @@ int	main(int argc, char **argv, char **envp)
 		printf("Failed to initialize environment.\n");
 		return (1);
 	}
-
 	// Boucle interactive
 	while (1)
 	{
@@ -57,7 +60,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (*input) // Ajouter à l'historique si la commande n'est pas vide
 			add_history(input);
-
+		if (ft_strncmp(input, "exit", ft_strlen(input)) == 0)
+			break;
 		// Lexer : création des tokens
 		tokens = lexer(input);
 		printf("Tokens:\n");
@@ -83,9 +87,15 @@ int	main(int argc, char **argv, char **envp)
 		free_ast(ast);
 		free(input);
 	}
-
 	// Libération de l'environnement
-	free_env(env);
+	if (tokens)
+		free_tokens(tokens);
+	if (ast)
+		free_ast(ast);
+	if (input)
+		free(input);
+	if (env)
+		free_env(env);
 	printf("Exiting minishell.\n");
 	return (0);
 }
