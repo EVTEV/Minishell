@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:46:05 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/03 17:45:38 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:52:53 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ t_ast_node	*create_ast_node(t_token *token)
 		free(node);
 		return (NULL);
 	}
+	node->args = NULL;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);
@@ -62,4 +63,27 @@ void	remove_right_node(t_ast_node *current)
 	free(tmp->token->value);
 	free(tmp->token);
 	free(tmp);
+}
+
+t_ast_node	*parse_command(t_token **tokens)
+{
+	t_ast_node	*node;
+	int			arg_count;
+
+	if (!*tokens)
+		return (NULL);
+	node = create_ast_node(*tokens);
+	if (!node)
+		return (NULL);
+	*tokens = (*tokens)->next;
+	arg_count = count_arguments(*tokens);
+	node->args = fill_args(node, tokens, arg_count);
+	if (!node->args)
+	{
+		free_ast(node);
+		return (NULL);
+	}
+	while (arg_count--)
+		*tokens = (*tokens)->next;
+	return (node);
 }

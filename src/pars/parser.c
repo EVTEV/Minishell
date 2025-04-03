@@ -6,21 +6,50 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:30:59 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/03 17:42:46 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:54:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-t_ast_node	*parse_command(t_token **tokens)
+int	count_arguments(t_token *tokens)
 {
-	t_ast_node	*node;
+	int	count;
 
-	if (!*tokens)
+	count = 0;
+	while (tokens && tokens->type == WORD)
+	{
+		count++;
+		tokens = tokens->next;
+	}
+	return (count);
+}
+
+char	**fill_args(t_ast_node *node, t_token **tokens, int arg_count)
+{
+	char	**args;
+	t_token	*current_token;
+	int		i;
+
+	args = malloc((arg_count + 2) * sizeof(char *));
+	if (!args)
 		return (NULL);
-	node = create_ast_node(*tokens);
-	*tokens = (*tokens)->next;
-	return (node);
+	args[0] = ft_strdup(node->token->value);
+	if (!args[0])
+	{
+		free(args);
+		return (NULL);
+	}
+	current_token = *tokens;
+	i = 1;
+	while (i <= arg_count)
+	{
+		args[i] = ft_strdup(current_token->value);
+		current_token = current_token->next;
+		i++;
+	}
+	args[arg_count + 1] = NULL;
+	return (args);
 }
 
 char	*remove_quotes(char *value)

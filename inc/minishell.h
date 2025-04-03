@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:35:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/04 00:45:54 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:54:34 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 # define MINISHELL_H
 
 # include "../Libft/inc/libft.h"
-# include "token.h"
-# include "env.h"
-# include "ast.h"
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -53,6 +50,7 @@ typedef struct s_env
 typedef struct s_ast_node
 {
 	t_token				*token;
+	char				**args;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 }	t_ast_node;
@@ -73,6 +71,9 @@ char		*expand_variable(char *input, t_env *env);
 char		*expand_double_quotes(char *input, t_env *env);
 char		*expand_token(char *input, t_env *env);
 char		*append_character(char *result, char c);
+t_ast_node	*parse_command(t_token **tokens);
+char		**fill_args(t_ast_node *node, t_token **tokens, int arg_count);
+int			count_arguments(t_token *tokens);
 
 // -------------------- Exec -------------------- //
 // -------------------- Signals -------------------- //

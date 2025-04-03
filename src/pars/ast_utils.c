@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 18:32:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/02 20:13:20 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:55:43 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	free_ast(t_ast_node *root)
 {
+	int	i;
+
+	i = 0;
 	if (!root)
 		return ;
 	free_ast(root->left);
@@ -22,6 +25,15 @@ void	free_ast(t_ast_node *root)
 	{
 		free(root->token->value);
 		free(root->token);
+	}
+	if (root->args)
+	{
+		while (root->args[i])
+		{
+			free(root->args[i]);
+			root->args[i] = NULL;
+		}
+		free(root->args);
 	}
 	free(root);
 }
