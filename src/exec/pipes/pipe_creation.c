@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_creation.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:04:36 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static int	allocate_pipes(t_data *data, int pipe_count)
 	data->pipes = (int **)malloc(sizeof(int *) * pipe_count);
 	if (!data->pipes)
 		return (1);
-	
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -45,10 +44,8 @@ int	create_pipes(t_data *data, int pipe_count)
 
 	if (pipe_count <= 0)
 		return (0);
-	
 	if (allocate_pipes(data, pipe_count) != 0)
 		return (1);
-	
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -81,4 +78,4 @@ pid_t	*allocate_pids(int cmd_count, int pipe_count, t_data *data)
 		return (NULL);
 	}
 	return (pids);
-} 
+}

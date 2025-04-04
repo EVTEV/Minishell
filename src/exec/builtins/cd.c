@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:22:46 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,4 +105,3 @@ int	ft_cd(char **av, t_env *env)
 	ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 	return (1);
 }
-

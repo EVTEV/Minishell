@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 17:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 17:00:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:05:47 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ static int	setup_heredoc_pipe(int pipe_fd[2])
 }
 
 /* Traite une ligne d'entrée du heredoc */
-static int	process_line(int pipe_fd[2], char *line, char *delimiter, 
+static int	process_line(int pipe_fd[2], char *line, char *delimiter,
 						size_t delimiter_len)
 {
-	if (ft_strncmp(line, delimiter, delimiter_len) == 0 && 
-		(line[delimiter_len] == '\n' || line[delimiter_len] == '\0'))
+	if (ft_strncmp(line, delimiter, delimiter_len) == 0
+		&& (line[delimiter_len] == '\n' || line[delimiter_len] == '\0'))
 	{
 		free(line);
 		return (1);
@@ -62,7 +62,7 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 				perror("get_next_line");
 				return (-1);
 			}
-			break;
+			break ;
 		}
 		result = process_line(pipe_fd, line, delimiter, delimiter_len);
 		if (result != 0)
@@ -79,16 +79,13 @@ int	handle_heredoc(char *delimiter, int *fd_in)
 
 	if (setup_heredoc_pipe(pipe_fd) != 0)
 		return (1);
-	
 	result = read_heredoc_input(pipe_fd, delimiter);
 	close(pipe_fd[1]);
-	
 	if (result < 0)
 	{
 		close(pipe_fd[0]);
 		return (1);
 	}
-	
 	*fd_in = pipe_fd[0];
 	return (0);
-} 
+}

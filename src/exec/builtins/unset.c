@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:30:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:24:54 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ int	ft_unset(char **args, t_env **env)
 			remove_env_var(env, args[i]);
 		else
 		{
-			ft_printf("minishell: unset: `%s`: not a valid identifier\n", args[i]);
+			ft_printf("minishell: unset: `%s`: not a valid identifier\n",
+				args[i]);
 			status = 1;
 		}
 		i++;

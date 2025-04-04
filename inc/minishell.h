@@ -3,6 +3,8 @@
 
 # include "../Libft/inc/libft.h"
 # include <sys/wait.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include <string.h>
 # include <stdio.h>
 # include <signal.h>
@@ -49,7 +51,9 @@ typedef struct s_data
 // --------------- Pars.c --------------- //
 t_cmd	*parse_input(char *input, t_data *data);
 // --------------- Read.c --------------- //
-char	*read_input(t_data *data);
+char	*read_input(void);
+void	save_history(char *input);
+void	load_history(void);
 
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
@@ -94,6 +98,7 @@ int		execute_piped_commands(t_data *data);
 
 // -------------- execution.c ---------------- //
 int		is_builtin(char *cmd);
+int		ft_tablen(char **tab);
 int		execute_builtin(t_cmd *cmd, t_data *data);
 int		execute_external(t_cmd *cmd, t_data *data);
 int		execute_single_command(t_cmd *cmd, t_data *data);

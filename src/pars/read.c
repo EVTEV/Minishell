@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/08 17:27:30 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 11:02:53 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,21 @@ void	load_history(void)
 		close(fd);
 	while (line)
 	{
-		add_history(ft_substr(line, 0, ft_strlen(line - 1)));
+		add_history(ft_substr(line, 0, ft_strlen(line) - 1));
 		free(line);
 		line = get_next_line(fd);
 	}
 	close(fd);
 }
 
-void	add_history(char *input)
+void	save_history(char *input)
 {
 	int		fd;
 	char	*tmp;
 
 	if (!input)
 		return ;
-	fd = open(".shell_history", O_CREAT | O_WRONLY, 0644);
+	fd = open(".shell_history", O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
 		return ;
 	tmp = ft_strjoin(input, "\n");
@@ -52,12 +52,17 @@ void	add_history(char *input)
 	close(fd);
 }
 
-char	*read_input()
+char	*read_input(void)
 {
 	char	*input;
 
 	input = readline("minishell> ");
+	if (!input)
+		return (NULL);
 	if (*input)
+	{
 		add_history(input);
-		
+		save_history(input);
+	}
+	return (input);
 }

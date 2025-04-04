@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 15:00:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 10:03:26 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,4 @@ void	free_cmd_list(t_cmd *cmd_list)
 		free(current);
 		current = next;
 	}
-} 
+}

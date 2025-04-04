@@ -24,13 +24,14 @@ OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4
+LDFLAGS = -lreadline
 RM = @rm -rf
 AR = ar -rcs
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -46,6 +47,7 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
+	$(RM) .shell_history
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all

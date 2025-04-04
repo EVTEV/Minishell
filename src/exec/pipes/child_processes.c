@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_processes.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:03:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,17 @@
 int	execute_command_in_child(t_cmd *cmd, t_data *data)
 {
 	char	*cmd_path;
-	
+
 	if (setup_redirections(cmd->redirections) != 0)
 		exit(1);
-	
 	if (is_builtin(cmd->args[0]))
 		exit(execute_builtin(cmd, data));
-	
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)
 	{
 		ft_printf("minishell: %s: command not found\n", cmd->args[0]);
 		exit(127);
 	}
-	
 	if (execve(cmd_path, cmd->args, data->env) < 0)
 	{
 		free(cmd_path);
@@ -39,7 +36,6 @@ int	execute_command_in_child(t_cmd *cmd, t_data *data)
 	return (0);
 }
 
-/* Attend la terminaison de tous les processus enfants et retourne le statut de sortie */
 int	wait_for_children(pid_t *pids, int cmd_count)
 {
 	int	i;
@@ -59,4 +55,4 @@ int	wait_for_children(pid_t *pids, int cmd_count)
 	else
 		exit_status = 1;
 	return (exit_status);
-} 
+}

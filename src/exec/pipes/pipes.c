@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:22:37 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ void	close_all_pipes(t_data *data, int pipe_count)
 	int	i;
 
 	if (!data->pipes)
-		return;
-	
+		return ;
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -51,8 +50,7 @@ void	free_pipes(t_data *data, int pipe_count)
 	int	i;
 
 	if (!data->pipes)
-		return;
-	
+		return ;
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -79,15 +77,13 @@ int	execute_piped_commands(t_data *data)
 	int		cmd_count;
 	int		pipe_count;
 	int		result;
-	
+
 	cmd_count = count_commands(data->cmd_list);
 	result = check_cmd_count(data, cmd_count);
 	if (result > 0)
 		return (result);
-		
 	pipe_count = cmd_count - 1;
 	if (create_pipes(data, pipe_count) != 0)
 		return (1);
-		
 	return (execute_pipe_processes(data, cmd_count, pipe_count));
-} 
+}

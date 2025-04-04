@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_value.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 10:03:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	update_value(t_env *env, char *name, char *value)
 		{
 			free(current->value);
 			current->value = ft_strdup(value);
-			return;
+			return ;
 		}
 		current = current->next;
 	}
@@ -52,9 +52,9 @@ void	add_value(t_env **env, char *name, char *value)
 	t_env	*new;
 	t_env	*current;
 
-	new = malloc(sizeof(t_env));
+	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
-		return;
+		return ;
 	new->name = ft_strdup(name);
 	new->value = ft_strdup(value);
 	new->next = NULL;

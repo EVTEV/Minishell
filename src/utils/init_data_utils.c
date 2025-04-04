@@ -1,30 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   init_data_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:24:13 by lowatell         ###   ########.fr       */
+/*   Created: 2025/04/04 10:08:16 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/04 10:08:21 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../inc/minishell.h"
+#include "../../inc/minishell.h"
 
-/* Affiche le répertoire de travail actuel */
-int	ft_pwd(void)
+char	**copy_env(char **env)
 {
-	char	path[4096];
+	int		i;
+	char	**cpy_env;
 
-	if (getcwd(path, sizeof(path)) != NULL)
+	i = 0;
+	while (env[i])
+		i++;
+	cpy_env = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!cpy_env)
+		return (NULL);
+	i = 0;
+	while (env[i])
 	{
-		ft_printf("%s\n", path);
-		return (0);
+		cpy_env[i] = ft_strdup(env[i]);
+		if (!cpy_env[i])
+			return (free_tab(cpy_env), NULL);
+		i++;
 	}
-	else
-	{
-		ft_printf("minishell: pwd: %s\n", strerror(errno));
-		return (1);
-	}
+	return (cpy_env);
 }

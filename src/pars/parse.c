@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:10:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 15:10:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 11:02:36 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ static void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 	current->next = new_cmd;
 }
 
-// Pour l'instant, elle se contente de créer une commande simple à partir de l'entrée
 t_cmd	*parse_input(char *input, t_data *data)
 {
 	t_cmd	*cmd_list;
@@ -65,4 +64,4 @@ t_cmd	*parse_input(char *input, t_data *data)
 	new_cmd->args = tokens;
 	add_cmd_to_list(&cmd_list, new_cmd);
 	return (cmd_list);
-} 
+}

@@ -6,34 +6,13 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/08 16:53:15 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 10:08:06 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
 /* Copie le tableau d'environnement dans une nouvelle allocation */
-char	**copy_env(char **env)
-{
-	int		i;
-	char	**cpy_env;
-
-	i = 0;
-	while (env[i])
-		i++;
-	cpy_env = (char **)malloc(sizeof(char *) * (i + 1));
-	if (!cpy_env)
-		return (NULL);
-	i = 0;
-	while (env[i])
-	{
-		cpy_env[i] = ft_strdup(env[i]);
-		if (!cpy_env[i])
-			return (free_tab(cpy_env), NULL);
-		i++;
-	}
-	return (cpy_env);
-}
 
 /* Récupère la variable d'environnement PATH */
 char	*get_path(char **env)
@@ -57,34 +36,41 @@ char	*get_path(char **env)
 	return (NULL);
 }
 
+/* Crée un nœud de la liste chaînée pour une variable d'environnement */
+static void	create_env_node(t_env **env_list, char *env_var)
+{
+	char	*name;
+	char	*value;
+	char	*equal_sign;
+
+	equal_sign = ft_strchr(env_var, '=');
+	if (equal_sign)
+	{
+		*equal_sign = '\0';
+		name = ft_strdup(env_var);
+		value = ft_strdup(equal_sign + 1);
+		*equal_sign = '=';
+		if (name && value)
+			add_value(env_list, name, value);
+		else
+		{
+			free(name);
+			free(value);
+		}
+	}
+}
+
 /* Convertit le tableau d'environnement en liste chaînée */
 t_env	*env_to_list(char **env)
 {
 	t_env	*env_list;
 	int		i;
-	char	*name;
-	char	*value;
-	char	*equal_sign;
 
 	env_list = NULL;
 	i = 0;
 	while (env[i])
 	{
-		equal_sign = ft_strchr(env[i], '=');
-		if (equal_sign)
-		{
-			*equal_sign = '\0';
-			name = ft_strdup(env[i]);
-			value = ft_strdup(equal_sign + 1);
-			*equal_sign = '=';
-			if (name && value)
-				add_value(&env_list, name, value);
-			else
-			{
-				free(name);
-				free(value);
-			}
-		}
+		create_env_node(&env_list, env[i]);
 		i++;
 	}
 	return (env_list);
@@ -127,6 +113,7 @@ t_data	*init_data(int ac, char **av, char **env)
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)
 		return (NULL);
+	load_history();
 	(void)ac;
 	(void)av;
 	data->input = NULL;

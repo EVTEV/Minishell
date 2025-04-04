@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:40:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 10:21:44 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ static int	handle_heredoc_redirection(char *delimiter)
 	result = handle_heredoc(delimiter, &fd_in);
 	if (result != 0)
 		return (1);
-	
 	if (dup2(fd_in, STDIN_FILENO) == -1)
 	{
 		close(fd_in);
@@ -75,6 +74,20 @@ static int	handle_heredoc_redirection(char *delimiter)
 	}
 	close(fd_in);
 	return (0);
+}
+
+/* Gère une redirection spécifique en fonction de son type */
+static int	handle_redirection(t_redir *redir)
+{
+	if (redir->type == 0)
+		return (handle_input_redirection(redir->file));
+	else if (redir->type == 1)
+		return (handle_output_redirection(redir->file, 0));
+	else if (redir->type == 2)
+		return (handle_output_redirection(redir->file, 1));
+	else if (redir->type == 3)
+		return (handle_heredoc_redirection(redir->file));
+	return (1);
 }
 
 /* Configure toutes les redirections pour une commande */
@@ -85,26 +98,8 @@ int	setup_redirections(t_redir *redirections)
 	current = redirections;
 	while (current)
 	{
-		if (current->type == 0) // Input redirection (<)
-		{
-			if (handle_input_redirection(current->file) != 0)
-				return (1);
-		}
-		else if (current->type == 1) // Output redirection (>)
-		{
-			if (handle_output_redirection(current->file, 0) != 0)
-				return (1);
-		}
-		else if (current->type == 2) // Append redirection (>>)
-		{
-			if (handle_output_redirection(current->file, 1) != 0)
-				return (1);
-		}
-		else if (current->type == 3) // Heredoc (<<)
-		{
-			if (handle_heredoc_redirection(current->file) != 0)
-				return (1);
-		}
+		if (handle_redirection(current) != 0)
+			return (1);
 		current = current->next;
 	}
 	return (0);

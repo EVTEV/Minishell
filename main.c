@@ -7,8 +7,8 @@ int	main(int ac, char **av, char **env)
 	data = init_data(ac, av, env);
 	while (1)
 	{
-		ft_printf("minishell: ");
-		if (read_input(data) && data->input)
+		data->input = read_input();
+		if (data->input)
 		{
 			data->cmd_list = parse_input(data->input, data);
 			if (data->cmd_list)
