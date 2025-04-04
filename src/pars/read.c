@@ -12,26 +12,52 @@
 
 #include "../../inc/minishell.h"
 
-char	*read_input(t_data *data)
+void	load_history(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open(".shell_history", O_CREAT | O_RDONLY, 0644);
+	if (fd == -1)
+		return ;
+	line = get_next_line(fd);
+	if (!line)
+		close(fd);
+	while (line)
+	{
+		add_history(ft_substr(line, 0, ft_strlen(line - 1)));
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+}
+
+void	add_history(char *input)
+{
+	int		fd;
+	char	*tmp;
+
+	if (!input)
+		return ;
+	fd = open(".shell_history", O_CREAT | O_WRONLY, 0644);
+	if (fd == -1)
+		return ;
+	tmp = ft_strjoin(input, "\n");
+	if (tmp)
+	{
+		ft_putstr_fd(tmp, fd);
+		free(tmp);
+		tmp = NULL;
+	}
+	close(fd);
+}
+
+char	*read_input()
 {
 	char	*input;
 
-	input = get_next_line(0);
-	if (ft_strncmp(input, "\n", ft_strlen(input) - 1) == 0)
-		return (free(input), input = NULL, NULL);
-	else if (ft_strncmp(input, "exit", ft_strlen(input) - 1) == 0)
-		return (free(input), input = NULL, exit_clean(data), NULL);
-	else if (ft_strncmp(input, "env", ft_strlen(input) - 1) == 0)
-		print_tab(data->env);
-	else if (ft_strncmp(input, "$PATH", ft_strlen(input) - 1) == 0)
-		ft_printf("%s\n", data->path);
-	// else if (ft_strncmp(input, "echo", 4) == 0)
-	// {
-	// 	tab = ft_split(input, ' ');
-	// 	if (!tab)
-	// 		return (free(input), input = NULL, NULL);
-	// 	free(input);
-	// 	ft_echo()
-	// }
-	return (input);
+	input = readline("minishell> ");
+	if (*input)
+		add_history(input);
+		
 }
