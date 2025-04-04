@@ -11,7 +11,10 @@ int	main(int ac, char **av, char **env)
 		data->input = read_input();
 		if (data->input)
 		{
-			data->cmd_list = parse_input(data->input, data);
+			char *expanded_input = expander(data->input, data); // Passez `data` ici
+			t_token *tokens = lexer(expanded_input);
+			free(expanded_input);
+			data->cmd_list = parser(tokens);
 			if (data->cmd_list)
 			{
 				data->exit_status = execute_commands(data);
@@ -21,6 +24,7 @@ int	main(int ac, char **av, char **env)
 					data->cmd_list = NULL;
 				}
 			}
+			// Libérer les tokens après parsing
 			free(data->input);
 			data->input = NULL;
 		}

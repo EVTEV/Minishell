@@ -13,12 +13,25 @@
 # include <dirent.h>
 # include <errno.h>
 
+# define TOKEN_WORD 1
+# define TOKEN_PIPE 2
+# define TOKEN_REDIR_OUT 3
+# define TOKEN_REDIR_APPEND 4
+# define TOKEN_REDIR_IN 5
+
 typedef struct s_env
 {
 	char			*name;
 	char			*value;
 	struct s_env	*next;
 }	t_env;
+
+typedef struct s_token
+{
+	char			*value;
+	int				type;
+	struct s_token	*next;
+}	t_token;
 
 typedef struct s_redir
 {
@@ -48,6 +61,12 @@ typedef struct s_data
 }	t_data;
 
 // ==================== Pars ==================== //
+// --------------- Lexer.c --------------- //
+t_token	*lexer(char *input);
+// --------------- Parser.c --------------- //
+t_cmd	*parser(t_token *tokens);
+// --------------- Expander.c --------------- //
+char	*expander(char *input, t_data *data);
 // --------------- Pars.c --------------- //
 t_cmd	*parse_input(char *input, t_data *data);
 // --------------- Read.c --------------- //
@@ -108,6 +127,8 @@ int		setup_redirections(t_redir *redirections);
 
 // ==================== Utils ==================== //
 // --------------- Utils.c --------------- //
+char	*ft_strjoin_free(char *s1, char *s2);
+char	**ft_tabjoin(char **tab, char *new_elem);
 // ---------- free_cmd.c ------------ //
 void	free_cmd_list(t_cmd *cmd_list);
 // ---------- get_value.c ------------ //
