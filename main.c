@@ -5,6 +5,7 @@ int	main(int ac, char **av, char **env)
 	t_data	*data;
 
 	data = init_data(ac, av, env);
+	data->cmd_list = NULL;
 	while (1)
 	{
 		data->input = read_input();
@@ -14,8 +15,11 @@ int	main(int ac, char **av, char **env)
 			if (data->cmd_list)
 			{
 				data->exit_status = execute_commands(data);
-				free_cmd_list(data->cmd_list);
-				data->cmd_list = NULL;
+				if (data->cmd_list)
+				{
+					free_cmd_list(data->cmd_list);
+					data->cmd_list = NULL;
+				}
 			}
 			free(data->input);
 			data->input = NULL;

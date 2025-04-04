@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:50:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/04 16:04:28 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,16 @@
 static int	check_args(char **args, int *start)
 {
 	int	i;
+	int	j;
 
 	i = 1;
-	while (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
+	while (args[i] && args[i][0] == '-')
+	{
+		j = 0;
+		while (args[i][j] && args[i][j] == 'n')
+			j++;
 		i++;
+	}
 	*start = i;
 	if (i > 1)
 		return (1);

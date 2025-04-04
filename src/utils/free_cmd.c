@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 10:03:26 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 16:12:09 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,22 @@ void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*current;
 	t_cmd	*next;
+	int		i;
 
+	i = 0;
 	current = cmd_list;
 	while (current)
 	{
 		next = current->next;
 		if (current->args)
-			free_tab(current->args);
+		{
+			while (current->args[i])
+			{
+				free(current->args[i]);
+				current->args[i] = NULL;
+				i++;
+			}
+		}
 		if (current->redirections)
 			free_redirections(current->redirections);
 		free(current);
