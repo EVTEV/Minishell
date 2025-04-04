@@ -122,5 +122,6 @@ char	*find_command_path(char *cmd, t_data *data);
 t_data	*init_data(int ac, char **av, char **env);
 // ---------- print_tab.c ------------ //
 void	print_tab(char **tab);
+void	print_list(t_env *env);
 
 #endif

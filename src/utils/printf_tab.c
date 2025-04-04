@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:49:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/03/08 16:50:29 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 13:44:46 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,4 +22,19 @@ void	print_tab(char **tab)
 	i = -1;
 	while (tab[++i])
 		ft_printf("%s\n", tab[i]);
+}
+
+void	print_list(t_env *env)
+{
+	t_env	*current;
+
+	current = env;
+	while (current)
+	{
+		if (current->value)
+			ft_printf("%s=%s\n", current->name, current->value);
+		else
+			ft_printf("%s\n", current->name);
+		current = current->next;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:17:23 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/04 10:56:21 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 13:45:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
 		return (ft_unset(cmd->args, &data->env_list));
 	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
-		return (print_tab(data->env), 0);
+		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		exit_clean(data);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:24:03 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/04 14:15:32 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,17 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	char	*value;
 
 	equal_sign = ft_strchr(arg, '=');
+	if (!equal_sign)
+		return (1);
 	*equal_sign = '\0';
 	name = arg;
 	value = equal_sign + 1;
 	if (is_valid_identifier(name))
 	{
-		handle_env_var(env, name, value);
+		if (*value)
+			handle_env_var(env, name, value);
+		else
+			handle_env_var(env, name, NULL);
 		*equal_sign = '=';
 		return (0);
 	}
@@ -58,9 +63,8 @@ static int	process_export_arg(char **args, int i, t_env **env)
 {
 	if (ft_strchr(args[i], '='))
 		return (process_export_with_equal(args[i], env));
-	else if (is_valid_identifier(args[i]))
-		handle_export_no_value(env, args[i]);
-	return (0);
+	else
+		return (1);
 }
 
 /* Gère la commande export (avec ou sans arguments) */
