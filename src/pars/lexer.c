@@ -40,7 +40,7 @@ t_token	*lexer(char *input)
 	int		i = 0;
 	int		start;
 
-	while (input[i])
+	while (input && input[i])
 	{
 		if (input[i] == ' ' || input[i] == '\t')
 			i++;
