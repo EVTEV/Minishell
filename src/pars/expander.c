@@ -29,7 +29,17 @@ char	*expander(char *input, t_data *data)
 
 	while (input[i])
 	{
-		if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
+		if (input[i] == '\'') // Skip expansion inside single quotes
+		{
+			start = ++i;
+			while (input[i] && input[i] != '\'')
+				i++;
+			tmp = ft_substr(input, start, i - start);
+			result = ft_strjoin_free(result, tmp);
+			if (input[i] == '\'')
+				i++;
+		}
+		else if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
 		{
 			tmp = expand_variable(&input[i], data->env_list, &len);
 			result = ft_strjoin_free(result, tmp);
@@ -49,7 +59,7 @@ char	*expander(char *input, t_data *data)
 		else
 		{
 			start = i;
-			while (input[i] && input[i] != '$')
+			while (input[i] && input[i] != '$' && input[i] != '\'')
 				i++;
 			tmp = ft_substr(input, start, i - start);
 			result = ft_strjoin_free(result, tmp);
