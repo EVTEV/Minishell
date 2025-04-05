@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:22:46 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/05 11:04:56 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,17 +91,26 @@ int	ft_cd(char **av, t_env *env)
 	char	*path;
 	char	current[PATH_MAX];
 
-	if (!av[1] || !av[2])
+	// Vérifie si un chemin est fourni et s'il existe
+	if (av[1] && access(av[1], F_OK) != 0)
+		return (handle_cd_error(av[1]));
+
+	// Vérifie si le répertoire courant est valide
+	if (getcwd(current, PATH_MAX) == NULL)
 	{
-		if (getcwd(current, PATH_MAX) == NULL)
-			return (perror("Error:ft_cd"), 1);
-		path = find_path(av, env);
-		if (!path)
+		if (!av[1]) // Si aucun argument n'est fourni, on retourne au $HOME
+			av[1] = NULL;
+		else // Sinon, on affiche une erreur
+		{
+			ft_putstr_fd("minishell: cd: current directory invalid\n", 2);
 			return (1);
-		if (exec_cd(path, current, env, av) != 0)
-			return (1);
-		return (0);
+		}
 	}
-	ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-	return (1);
+
+	path = find_path(av, env);
+	if (!path)
+		return (1);
+	if (exec_cd(path, current, env, av) != 0)
+		return (1);
+	return (0);
 }
