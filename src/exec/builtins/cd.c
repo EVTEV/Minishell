@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/05 11:04:56 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/05 11:19:49 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,22 +91,18 @@ int	ft_cd(char **av, t_env *env)
 	char	*path;
 	char	current[PATH_MAX];
 
-	// Vérifie si un chemin est fourni et s'il existe
 	if (av[1] && access(av[1], F_OK) != 0)
 		return (handle_cd_error(av[1]));
-
-	// Vérifie si le répertoire courant est valide
 	if (getcwd(current, PATH_MAX) == NULL)
 	{
-		if (!av[1]) // Si aucun argument n'est fourni, on retourne au $HOME
+		if (!av[1])
 			av[1] = NULL;
-		else // Sinon, on affiche une erreur
+		else
 		{
 			ft_putstr_fd("minishell: cd: current directory invalid\n", 2);
 			return (1);
 		}
 	}
-
 	path = find_path(av, env);
 	if (!path)
 		return (1);
