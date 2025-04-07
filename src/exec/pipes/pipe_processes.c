@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:17:23 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:19:10 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 {
 	pid_t	*pids;
 	int		exit_status;
+	int		i;
+	int		status;
 
 	pids = allocate_pids(cmd_count, pipe_count, data);
 	if (!pids)
@@ -83,7 +85,18 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 	if (create_child_processes(data, pids, cmd_count, pipe_count) != 0)
 		return (1);
 	close_all_pipes(data, pipe_count);
-	exit_status = wait_for_children(pids, cmd_count);
+
+	// Attendre chaque processus enfant et afficher les erreurs
+	exit_status = 0;
+	for (i = 0; i < cmd_count; i++)
+	{
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+		{
+			exit_status = WEXITSTATUS(status); // Conserver le dernier code d'erreur
+		}
+	}
+	free_pids(pids);
 	free_pipes(data, pipe_count);
 	return (exit_status);
 }
