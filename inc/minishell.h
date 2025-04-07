@@ -70,7 +70,7 @@ char	*expander(char *input, t_data *data);
 // --------------- Pars.c --------------- //
 t_cmd	*parse_input(char *input, t_data *data);
 // --------------- Read.c --------------- //
-char	*read_input(void);
+char	*read_input(t_data *data);
 void	save_history(char *input);
 void	load_history(void);
 

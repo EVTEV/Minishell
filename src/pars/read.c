@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 13:38:39 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:51:04 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	handle_signal(int sig)
 	}
 }
 
-char	*read_input(void)
+char	*read_input(t_data *data)
 {
 	char	*input;
 
@@ -72,7 +72,10 @@ char	*read_input(void)
 	signal(SIGQUIT, SIG_IGN);
 	input = readline("minishell> ");
 	if (!input)
-		return (NULL);
+	{
+		write(1, "exit\n", 5);
+		exit_clean(data);
+	}
 	if (*input)
 	{
 		add_history(input);

@@ -16,7 +16,7 @@ int	main(int ac, char **av, char **env)
 	data->cmd_list = NULL;
 	while (1)
 	{
-		data->input = read_input();
+		data->input = read_input(data);
 		if (data->input)
 		{
 			char *expanded_input = expander(data->input, data); // Passez `data` ici
