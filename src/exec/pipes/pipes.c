@@ -96,8 +96,10 @@ int	execute_piped_commands(t_data *data)
 		return (1);
 	result = execute_pipe_processes(data, cmd_count, pipe_count);
 	if (result != 0)
+	{
+		if (WIFEXITED(result))
+			return (WEXITSTATUS(result));
 		return (result);
-	if (WIFEXITED(result) && WEXITSTATUS(result) != 0)
-		return (WEXITSTATUS(result));
+	}
 	return (result);
 }

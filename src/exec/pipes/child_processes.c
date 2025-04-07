@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:15:11 by lowatell         ###   ########.fr       */
+/*   Created: 2025/04/07 15:17:39 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/07 15:17:43 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ int	execute_command_in_child(t_cmd *cmd, t_data *data)
 	char	*cmd_path;
 
 	if (setup_redirections(cmd->redirections) != 0)
+	{
+		ft_printf("minishell: error setting up redirections\n");
 		exit(1);
+	}
 	if (is_builtin(cmd->args[0]))
 		exit(execute_builtin(cmd, data));
 	cmd_path = find_command_path(cmd->args[0], data);

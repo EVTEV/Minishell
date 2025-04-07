@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:15:09 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:17:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				exit(127);
 			}
 			execute_command_in_child(current, data);
+			exit(0); // Ensure child process exits after execution
 		}
 		current = current->next;
 		i++;
