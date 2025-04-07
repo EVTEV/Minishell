@@ -6,18 +6,19 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/04 11:02:53 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:38:39 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+#include <signal.h>
 
 void	load_history(void)
 {
 	int		fd;
 	char	*line;
 
-	fd = open(".shell_history", O_CREAT | O_RDONLY, 0644);
+	fd = open("~/.shell_history", O_CREAT | O_RDONLY, 0644);
 	if (fd == -1)
 		return ;
 	line = get_next_line(fd);
@@ -39,7 +40,7 @@ void	save_history(char *input)
 
 	if (!input)
 		return ;
-	fd = open(".shell_history", O_CREAT | O_WRONLY | O_APPEND, 0644);
+	fd = open("~/.shell_history", O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
 		return ;
 	tmp = ft_strjoin(input, "\n");
@@ -52,10 +53,23 @@ void	save_history(char *input)
 	close(fd);
 }
 
+static void	handle_signal(int sig)
+{
+	if (sig == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
 char	*read_input(void)
 {
 	char	*input;
 
+	signal(SIGINT, handle_signal);
+	signal(SIGQUIT, SIG_IGN);
 	input = readline("minishell> ");
 	if (!input)
 		return (NULL);

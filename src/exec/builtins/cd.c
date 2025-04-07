@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/05 11:19:49 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 12:06:45 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ static int	update_env_vars(char *old_dir, t_env *env)
 	old_pwd = ft_strdup(old_dir);
 	if (old_pwd == NULL)
 		return (perror("Error:cd:exec_cd"), 1);
-	update_value(env, "OLDPWD", old_pwd);
+	update_value(env, "OLDPWD", old_pwd); // Ensure OLDPWD is updated
 	free(old_pwd);
 	if (getcwd(current, PATH_MAX) == NULL)
 		return (perror("Error:cd:exec_cd"), 1);
-	update_value(env, "PWD", current);
+	update_value(env, "PWD", current); // Ensure PWD is updated
 	return (0);
 }
 
@@ -46,13 +46,22 @@ static int	update_env_vars(char *old_dir, t_env *env)
 static int	exec_cd(char *path, char *old_dir, t_env *env, char **args)
 {
 	if (chdir(path) != 0)
-		return (handle_cd_error(path));
+		return (printf("49"), handle_cd_error(path));
 	if (update_env_vars(old_dir, env) != 0)
-		return (1);
+		return (printf("51"), 1);
 	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
 	{
-		ft_putstr_fd(getcwd(NULL, 0), 1);
-		ft_putchar_fd('\n', 1);
+		char *old_pwd = get_value(*env, "OLDPWD");
+		if (old_pwd && old_pwd[0] != '\0') // Ensure OLDPWD is valid
+		{
+			ft_putstr_fd(old_pwd, 1);
+			ft_putchar_fd('\n', 1);
+		}
+		else
+		{
+			ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+			return (1);
+		}
 	}
 	return (0);
 }
@@ -62,7 +71,7 @@ static char	*find_path(char **args, t_env *env)
 {
 	char	*path;
 
-	if (args[1] == NULL || ft_strncmp(args[1], "~", 2) == 0)
+	if (args[1] == NULL || !ft_strcmp(args[1], "~") || !ft_strcmp(args[1], "--"))
 	{
 		path = get_value(*env, "HOME");
 		if (!path || path[0] == '\0')
@@ -71,7 +80,7 @@ static char	*find_path(char **args, t_env *env)
 			return (NULL);
 		}
 	}
-	else if (ft_strncmp(args[1], "-", 2) == 0)
+	else if (ft_strcmp(args[1], "-") == 0)
 	{
 		path = get_value(*env, "OLDPWD");
 		if (!path || path[0] == '\0')
@@ -91,7 +100,8 @@ int	ft_cd(char **av, t_env *env)
 	char	*path;
 	char	current[PATH_MAX];
 
-	if (av[1] && access(av[1], F_OK) != 0)
+	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
+			&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
 		return (handle_cd_error(av[1]));
 	if (getcwd(current, PATH_MAX) == NULL)
 	{

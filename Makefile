@@ -23,8 +23,8 @@ SRC = main.c \
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4
-LDFLAGS = -lreadline
+CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4 
+LDFLAGS = -lreadline 
 RM = @rm -rf
 AR = ar -rcs
 

@@ -1,9 +1,17 @@
 #include "inc/minishell.h"
+#include <signal.h>
+
+static void	setup_signals(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
 
 int	main(int ac, char **av, char **env)
 {
 	t_data	*data;
 
+	setup_signals();
 	data = init_data(ac, av, env);
 	data->cmd_list = NULL;
 	while (1)

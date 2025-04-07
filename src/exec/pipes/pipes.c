@@ -6,11 +6,12 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:22:37 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:38:41 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
+#include <signal.h>
 
 /* Compte le nombre total de commandes dans la liste */
 int	count_commands(t_cmd *cmd_list)
@@ -71,6 +72,13 @@ static int	check_cmd_count(t_data *data, int cmd_count)
 	return (0);
 }
 
+/* Gère les signaux pour les processus enfants */
+static void	handle_child_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
 /* Exécute les commandes avec pipes entre elles */
 int	execute_piped_commands(t_data *data)
 {
@@ -78,6 +86,7 @@ int	execute_piped_commands(t_data *data)
 	int		pipe_count;
 	int		result;
 
+	handle_child_signals();
 	cmd_count = count_commands(data->cmd_list);
 	result = check_cmd_count(data, cmd_count);
 	if (result > 0)

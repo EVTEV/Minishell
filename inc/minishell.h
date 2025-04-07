@@ -101,6 +101,7 @@ int		ft_unset(char **args, t_env **env);
 // ------------------ pipes ------------------ //
 // ---------- child_processes.c ------------ //
 int		execute_command_in_child(t_cmd *cmd, t_data *data);
+int		execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
 int		wait_for_children(pid_t *pids, int cmd_count);
 // ---------- heredoc.c ------------ //
 int		handle_heredoc(char *delimiter, int *fd_in);
