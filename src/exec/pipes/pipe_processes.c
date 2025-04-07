@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:23:58 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:25:33 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 	{
 		pids[i] = fork();
 		if (pids[i] < 0)
-		{
-			perror("fork");
-			continue; // Ne pas arrêter, continuer avec les autres commandes
-		}
+			return (handle_fork_error(pids, i, data, pipe_count));
 		else if (pids[i] == 0)
 		{
 			setup_child_pipes(data, i, cmd_count);
@@ -66,7 +63,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				exit(127);
 			}
 			execute_command_in_child(current, data);
-			exit(0); // Assurez-vous que le processus enfant se termine
+			exit(0); // Ensure child process exits after execution
 		}
 		current = current->next;
 		i++;
@@ -89,15 +86,14 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 		return (1);
 	close_all_pipes(data, pipe_count);
 
-	// Attendre chaque processus enfant et collecter les erreurs
+	// Attendre chaque processus enfant et afficher les erreurs
 	exit_status = 0;
 	for (i = 0; i < cmd_count; i++)
 	{
-		if (pids[i] > 0) // Vérifie si le fork a réussi
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 		{
-			waitpid(pids[i], &status, 0);
-			if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-				exit_status = WEXITSTATUS(status);
+			exit_status = WEXITSTATUS(status); // Conserver le dernier code d'erreur
 		}
 	}
 	free_pids(pids);
