@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:04:16 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:12:43 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 		else if (pids[i] == 0)
 		{
 			setup_child_pipes(data, i, cmd_count);
+			if (!current->args || !current->args[0])
+			{
+				ft_printf("minishell: : command not found\n");
+				exit(127);
+			}
 			execute_command_in_child(current, data);
 		}
 		current = current->next;
