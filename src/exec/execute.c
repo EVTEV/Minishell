@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:24:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 12:33:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:36:45 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)
 	{
+		ft_putstr_fd("TEST\n", 2);
 		ft_printf("minishell: %s: command not found\n", cmd->args[0]);
 		return (127);
 	}
