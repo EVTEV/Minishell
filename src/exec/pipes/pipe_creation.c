@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:04:36 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:20:51 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,11 @@ pid_t	*allocate_pids(int cmd_count, int pipe_count, t_data *data)
 		return (NULL);
 	}
 	return (pids);
+}
+
+/* Libère la mémoire allouée pour les PIDs */
+void	free_pids(pid_t *pids)
+{
+	if (pids)
+		free(pids);
 }
