@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 15:52:49 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 16:03:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,19 @@ void	reset_terminal_line(void)
 
 void	signal_handler_main(int signum)
 {
+	struct termios	term;
+
 	if (signum == SIGINT)
 	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_exit_status = 1;
+		rl_replace_line("", 0); // Efface la ligne courante
+		write(1, "\n", 1); // Affiche une nouvelle ligne
+		rl_on_new_line();   // Indique à readline qu'une nouvelle ligne commence
+		rl_redisplay();     // Réaffiche le prompt
+		g_exit_status = 1;  // Met à jour le statut global
 	}
-	reset_terminal_line();
+	tcgetattr(1, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(1, TCSANOW, &term);
 }
 
 void	ft_exec_sig_handler(int sig)
