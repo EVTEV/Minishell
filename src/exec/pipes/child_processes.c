@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:17:39 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 15:19:06 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 16:28:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ int	execute_command_in_child(t_cmd *cmd, t_data *data)
 		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 		exit(126);
 	}
-	ft_printf("minishell: %s: executed successfully\n", cmd->args[0]);
-	return (0);
+	return (0); // This line is unreachable but kept for clarity
 }
 
 int	wait_for_children(pid_t *pids, int cmd_count)

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 16:25:35 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 16:29:11 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,6 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 			execute_command_in_child(current, data);
 			exit(0); // Ensure child process exits after execution
 		}
-		else
-		{
-			// Parent process: check if the child failed immediately
-			if (pids[i] > 0)
-			{
-				int status;
-				waitpid(pids[i], &status, WNOHANG);
-				if (WIFEXITED(status) && WEXITSTATUS(status) == 127)
-					ft_printf("minishell: %s: command not found\n", current->args[0]);
-			}
-		}
 		current = current->next;
 		i++;
 	}
@@ -96,16 +85,17 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 	if (create_child_processes(data, pids, cmd_count, pipe_count) != 0)
 		return (1);
 	close_all_pipes(data, pipe_count);
-
-	// Attendre chaque processus enfant et afficher les erreurs
 	exit_status = 0;
 	for (i = 0; i < cmd_count; i++)
 	{
 		waitpid(pids[i], &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 		{
+			ft_printf("minishell: process %d exited with status %d\n", i, WEXITSTATUS(status));
 			exit_status = WEXITSTATUS(status); // Conserver le dernier code d'erreur
 		}
+		else if (WIFSIGNALED(status))
+			ft_printf("minishell: process %d terminated by signal %d\n", i, WTERMSIG(status));
 	}
 	free_pids(pids);
 	free_pipes(data, pipe_count);
