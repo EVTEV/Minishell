@@ -34,7 +34,7 @@ void	signal_handler_main(int signum)
 		rl_replace_line("", 0); // Efface la ligne courante
 		write(1, "\n", 1); // Affiche une nouvelle ligne
 		rl_on_new_line();   // Indique à readline qu'une nouvelle ligne commence
-		rl_redisplay();     // Réaffiche le prompt
+		//rl_redisplay();     // Réaffiche le prompt
 		g_exit_status = 1;  // Met à jour le statut global
 	}
 	tcgetattr(1, &term);

@@ -1,20 +1,9 @@
 #include "inc/minishell.h"
 #include <signal.h>
 
-static void	handle_signal_in_main(int sig)
-{
-	if (sig == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
 static void	setup_signals(void)
 {
-	signal(SIGINT, handle_signal_in_main);
+	signal(SIGINT, signal_handler_main);
 	signal(SIGQUIT, SIG_IGN);
 }
 
