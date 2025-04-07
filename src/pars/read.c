@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 16:03:19 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 16:20:20 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	signal_handler_main(int signum)
 		rl_replace_line("", 0); // Efface la ligne courante
 		write(1, "\n", 1); // Affiche une nouvelle ligne
 		rl_on_new_line();   // Indique à readline qu'une nouvelle ligne commence
-		//rl_redisplay();     // Réaffiche le prompt
+		rl_redisplay();     // Réaffiche le prompt
 		g_exit_status = 1;  // Met à jour le statut global
 	}
 	tcgetattr(1, &term);
@@ -46,7 +46,7 @@ void	ft_exec_sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\n", 1);
+		write(1, "\n", 1); // Ajoute une nouvelle ligne pour éviter les doublons
 		g_exit_status = 130;
 	}
 	else if (sig == SIGQUIT)
@@ -100,8 +100,6 @@ char	*read_input(t_data *data)
 {
 	char	*input;
 
-	signal(SIGINT, signal_handler_main);
-	signal(SIGQUIT, SIG_IGN);
 	reset_terminal_line();
 	input = readline("minishell> ");
 	if (!input)

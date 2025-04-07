@@ -7,6 +7,12 @@ static void	setup_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+static void	setup_exec_signals(void)
+{
+	signal(SIGINT, ft_exec_sig_handler);
+	signal(SIGQUIT, ft_exec_sig_handler);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_data	*data;
@@ -19,6 +25,7 @@ int	main(int ac, char **av, char **env)
 		data->input = read_input(data);
 		if (data->input)
 		{
+			setup_exec_signals(); // Configure les signaux pour l'exécution
 			char *expanded_input = expander(data->input, data); // Passez `data` ici
 			t_token *tokens = lexer(expanded_input);
 			free(expanded_input);
@@ -32,7 +39,7 @@ int	main(int ac, char **av, char **env)
 					data->cmd_list = NULL;
 				}
 			}
-			// Libérer les tokens après parsing
+			setup_signals(); // Réinitialise les signaux pour le prompt
 			free(data->input);
 			data->input = NULL;
 		}
