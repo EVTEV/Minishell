@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipes.c                                            :+:      :+:    :+:   */
+/*   pipes.c                                            :+:      :+:    :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -95,6 +95,8 @@ int	execute_piped_commands(t_data *data)
 	if (create_pipes(data, pipe_count) != 0)
 		return (1);
 	result = execute_pipe_processes(data, cmd_count, pipe_count);
+	if (result != 0)
+		return (result);
 	if (WIFEXITED(result) && WEXITSTATUS(result) != 0)
 		return (WEXITSTATUS(result));
 	return (result);
