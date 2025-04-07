@@ -6,12 +6,51 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 15:08:51 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:52:49 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 #include <signal.h>
+#include <termios.h> // Ajout pour gérer les attributs du terminal
+
+int	g_exit_status = 0; // Définition de la variable globale
+
+void	reset_terminal_line(void)
+{
+	struct termios	term;
+
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+void	signal_handler_main(int signum)
+{
+	if (signum == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		g_exit_status = 1;
+	}
+	reset_terminal_line();
+}
+
+void	ft_exec_sig_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		write(1, "\n", 1);
+		g_exit_status = 130;
+	}
+	else if (sig == SIGQUIT)
+	{
+		write(2, "Quit: 3\n", 8);
+		g_exit_status = 131;
+	}
+}
 
 void	load_history(void)
 {
@@ -53,23 +92,13 @@ void	save_history(char *input)
 	close(fd);
 }
 
-static void	handle_signal(int sig)
-{
-	if (sig == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
 char	*read_input(t_data *data)
 {
 	char	*input;
 
-	signal(SIGINT, handle_signal);
+	signal(SIGINT, signal_handler_main);
 	signal(SIGQUIT, SIG_IGN);
+	reset_terminal_line();
 	input = readline("minishell> ");
 	if (!input)
 	{

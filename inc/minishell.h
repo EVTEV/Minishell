@@ -19,6 +19,8 @@
 # define TOKEN_REDIR_APPEND 4
 # define TOKEN_REDIR_IN 5
 
+extern int	g_exit_status; // Variable globale pour gérer les signaux
+
 typedef struct s_env
 {
 	char			*name;
@@ -59,6 +61,11 @@ typedef struct s_data
 	int		exit_status;
 	int		**pipes;
 }	t_data;
+
+// Prototypes des nouvelles fonctions de gestion des signaux
+void	reset_terminal_line(void);
+void	signal_handler_main(int signum);
+void	ft_exec_sig_handler(int sig);
 
 // ==================== Pars ==================== //
 // --------------- Lexer.c --------------- //
