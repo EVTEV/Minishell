@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:25:33 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/07 16:25:35 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,17 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 			}
 			execute_command_in_child(current, data);
 			exit(0); // Ensure child process exits after execution
+		}
+		else
+		{
+			// Parent process: check if the child failed immediately
+			if (pids[i] > 0)
+			{
+				int status;
+				waitpid(pids[i], &status, WNOHANG);
+				if (WIFEXITED(status) && WEXITSTATUS(status) == 127)
+					ft_printf("minishell: %s: command not found\n", current->args[0]);
+			}
 		}
 		current = current->next;
 		i++;
