@@ -60,17 +60,8 @@ static int	handle_output_redirection(char *filename, int append)
 /* Configure les redirections pour une commande */
 int	setup_redirections(t_redir *redirections)
 {
-	int	std_fds[2];
 	int	result = 0;
 
-
-	std_fds[0] = dup(STDIN_FILENO);
-	std_fds[1] = dup(STDOUT_FILENO);
-	if (std_fds[0] == -1 || std_fds[1] == -1)
-	{
-		perror("dup");
-		return (-1);
-	}
 	while (redirections)
 	{
 		if (redirections->type == TOKEN_REDIR_IN)
@@ -79,7 +70,7 @@ int	setup_redirections(t_redir *redirections)
 			result = handle_output_redirection(redirections->file, 0);
 		else if (redirections->type == TOKEN_REDIR_APPEND)
 			result = handle_output_redirection(redirections->file, 1);
-		else if (redirections->type == TOKEN_REDIR_IN && ft_strcmp(redirections->file, "<<") == 0)
+		else if (redirections->type == TOKEN_REDIR_HEREDOC)
 		{
 			int	fd_in;
 			if (handle_heredoc(redirections->file, &fd_in) != 0)
@@ -93,15 +84,8 @@ int	setup_redirections(t_redir *redirections)
 			close(fd_in);
 		}
 		if (result == -1)
-			break;
+			return (-1); // Arrête immédiatement en cas d'erreur
 		redirections = redirections->next;
 	}
-	if (dup2(std_fds[0], STDIN_FILENO) == -1 || dup2(std_fds[1], STDOUT_FILENO) == -1)
-	{
-		perror("dup2");
-		result = -1;
-	}
-	close(std_fds[0]);
-	close(std_fds[1]);
 	return (result);
 }

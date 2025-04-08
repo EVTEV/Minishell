@@ -39,28 +39,27 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 			if (errno != 0)
 			{
 				perror("get_next_line");
+				close(pipe_fd[1]); // Ferme le pipe en cas d'erreur
 				return (-1);
 			}
-			break ;
+			break;
 		}
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0
 			&& (line[delimiter_len] == '\n' || line[delimiter_len] == '\0'))
 		{
 			free(line);
-			close(pipe_fd[1]);
-			return (0);
+			break; // Arrête la lecture lorsque le délimiteur est atteint
 		}
 		if (write(pipe_fd[1], line, ft_strlen(line)) < 0)
 		{
 			free(line);
 			perror("write");
+			close(pipe_fd[1]); // Ferme le pipe en cas d'erreur
 			return (-1);
 		}
 		free(line);
 	}
-	ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted `", STDERR_FILENO);
-	ft_putstr_fd(delimiter, STDERR_FILENO);
-	ft_putstr_fd("')\n", STDERR_FILENO);
+	close(pipe_fd[1]); // Ferme le côté écriture du pipe après la lecture
 	return (0);
 }
 
@@ -85,5 +84,10 @@ int	handle_heredoc(char *delimiter, int *fd_in)
 		return (1);
 	}
 	*fd_in = pipe_fd[0];
+	if (*fd_in < 0) // Vérifie si le fichier est correctement créé
+	{
+		ft_putstr_fd("minishell: error creating heredoc file\n", STDERR_FILENO);
+		return (1);
+	}
 	return (0);
 }
