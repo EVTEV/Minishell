@@ -5,7 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/04 16:42:57 by lowatell          #+#    #+#             */
+/*   Created: 2025/04/04 16:42:57 by lowatell          #+#             */
 /*   Updated: 2025/04/04 18:02:00 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -63,7 +63,13 @@ t_cmd	*parser(t_token *tokens)
 		}
 		if (tokens->type == TOKEN_WORD)
 		{
-			current_cmd->args = ft_tabjoin(current_cmd->args, tokens->value);
+			char *dup_value = ft_strdup(tokens->value); // Duplicate token value
+			if (!dup_value || !(current_cmd->args = ft_tabjoin(current_cmd->args, dup_value)))
+			{
+				free(dup_value); // Free if ft_tabjoin fails
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
 		}
 		else if (tokens->type == TOKEN_PIPE)
 		{

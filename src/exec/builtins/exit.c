@@ -18,7 +18,9 @@ static void	free_data_members(t_data *data)
 	if (data->input)
 		free(data->input);
 	if (data->env)
-		free_tab(data->env);
+		free_tab(data->env); // Ensure free_tab handles NULL pointers
+	if (data->env_list)
+		free_env_copy(data->env_list);
 	if (data->path)
 		free(data->path);
 	if (data->cmd_list)

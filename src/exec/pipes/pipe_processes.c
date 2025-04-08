@@ -60,6 +60,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 			if (!current->args || !current->args[0])
 			{
 				ft_putstr_fd("minishell: : command not found\n", STDERR_FILENO);
+				close_all_pipes(data, pipe_count);
 				exit(127);
 			}
 			if (!find_command_path(current->args[0], data))
@@ -68,10 +69,12 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				if (current->args[0])
 					ft_putstr_fd(current->args[0], STDERR_FILENO);
 				ft_putstr_fd(": command not found\n", STDERR_FILENO);
+				close_all_pipes(data, pipe_count);
 				exit(127);
 			}
 			execute_command_in_child(current, data);
-			exit(0); // Ensure child process exits after execution
+			close_all_pipes(data, pipe_count);
+			exit(0);
 		}
 		current = current->next;
 		i++;
@@ -93,16 +96,12 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 	if (create_child_processes(data, pids, cmd_count, pipe_count) != 0)
 		return (1);
 	close_all_pipes(data, pipe_count);
-
-	// Attendre chaque processus enfant dans l'ordre
 	exit_status = 0;
 	for (i = 0; i < cmd_count; i++)
 	{
 		waitpid(pids[i], &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-		{
-			exit_status = WEXITSTATUS(status); // Conserver le dernier code d'erreur
-		}
+			exit_status = WEXITSTATUS(status);
 	}
 	free_pids(pids);
 	free_pipes(data, pipe_count);

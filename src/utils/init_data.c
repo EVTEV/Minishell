@@ -54,8 +54,10 @@ static void	create_env_node(t_env **env_list, char *env_var)
 			add_value(env_list, name, value);
 		else
 		{
-			free(name);
-			free(value);
+			if (name)
+				free(name);
+			if (value)
+				free(value);
 		}
 	}
 }
@@ -66,7 +68,7 @@ t_env	*env_to_list(char **env)
 	t_env	*env_list;
 	int		i;
 
-	env_list = NULL;
+	env_list = NULL; // Initialize env_list to NULL
 	i = 0;
 	while (env[i])
 	{
@@ -121,9 +123,11 @@ t_data	*init_data(int ac, char **av, char **env)
 	if (!data->env)
 		return (free(data), NULL);
 	data->env_list = env_to_list(data->env);
+	if (!data->env_list)
+		return (free_tab(data->env), free(data), NULL);
 	data->path = get_path(data->env);
 	if (!data->path)
-		return (free(data->env), free(data), NULL);
+		return (free_tab(data->env), free_env_copy(data->env_list), free(data), NULL);
 	data->cmd_list = NULL;
 	data->exit_status = 0;
 	data->pipes = NULL;

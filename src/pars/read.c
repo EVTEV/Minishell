@@ -60,6 +60,7 @@ void	load_history(void)
 {
 	int		fd;
 	char	*line;
+	char	*tmp;
 
 	fd = open("./.shell_history", O_CREAT | O_RDONLY, 0644);
 	if (fd == -1)
@@ -69,8 +70,10 @@ void	load_history(void)
 		close(fd);
 	while (line)
 	{
-		add_history(ft_substr(line, 0, ft_strlen(line) - 1));
-		free(line);
+		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
+		add_history(tmp);
+		free(tmp);
+		free(line); // Free the line after processing
 		line = get_next_line(fd);
 	}
 	close(fd);

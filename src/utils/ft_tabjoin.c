@@ -10,11 +10,36 @@ char	**ft_tabjoin(char **tab, char *new_elem)
 			len++;
 	new_tab = malloc(sizeof(char *) * (len + 2));
 	if (!new_tab)
+	{
+		free_tab(tab);
+		free(new_elem);
 		return (NULL);
+	}
 	for (int i = 0; i < len; i++)
-		new_tab[i] = tab[i];
+	{
+		new_tab[i] = ft_strdup(tab[i]);
+		if (!new_tab[i]) // Handle allocation failure during duplication
+		{
+			while (--i >= 0)
+				free(new_tab[i]);
+			free(new_tab);
+			free_tab(tab);
+			free(new_elem);
+			return (NULL);
+		}
+	}
 	new_tab[len] = ft_strdup(new_elem);
+	if (!new_tab[len])
+	{
+		for (int i = 0; i < len; i++)
+			free(new_tab[i]);
+		free(new_tab);
+		free_tab(tab);
+		free(new_elem);
+		return (NULL);
+	}
 	new_tab[len + 1] = NULL;
-	free(tab);
+	free_tab(tab);
+	free(new_elem);
 	return (new_tab);
 }

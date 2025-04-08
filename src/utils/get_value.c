@@ -55,8 +55,8 @@ void	add_value(t_env **env, char *name, char *value)
 	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
 		return ;
-	new->name = ft_strdup(name);
-	new->value = ft_strdup(value);
+	new->name = name;
+	new->value = value;
 	new->next = NULL;
 	if (*env == NULL)
 		*env = new;

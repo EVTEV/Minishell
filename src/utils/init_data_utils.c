@@ -23,6 +23,7 @@ char	**copy_env(char **env)
 	cpy_env = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!cpy_env)
 		return (NULL);
+	cpy_env[i] = NULL; // Ensure the last element is NULL
 	i = 0;
 	while (env[i])
 	{

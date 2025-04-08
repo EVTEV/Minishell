@@ -51,7 +51,6 @@ t_cmd	*parse_input(char *input, t_data *data)
 
 	i = 0;
 	cmd_list = NULL;
-	cmd_list->args = NULL;
 	(void)data;
 	if (!input)
 		return (NULL);
@@ -64,17 +63,27 @@ t_cmd	*parse_input(char *input, t_data *data)
 		free_tab(tokens);
 		return (NULL);
 	}
+	new_cmd->args = malloc(sizeof(char *) * (ft_tablen(tokens) + 1)); // Allocate memory for args
+	if (!new_cmd->args)
+	{
+		free_tab(tokens);
+		free(new_cmd);
+		return (NULL);
+	}
 	while (tokens[i])
 	{
-		cmd_list->args[i] = ft_strdup(tokens[i]);
-		if (!cmd_list->args[i])
+		new_cmd->args[i] = ft_strdup(tokens[i]); // Use new_cmd->args instead of cmd_list->args
+		if (!new_cmd->args[i])
 		{
 			free_tab(tokens);
+			free_tab(new_cmd->args); // Free allocated args
 			free(new_cmd);
 			return (NULL);
 		}
 		i++;
 	}
+	new_cmd->args[i] = NULL; // Null-terminate the args array
 	add_cmd_to_list(&cmd_list, new_cmd);
+	free_tab(tokens); // Free tokens after use
 	return (cmd_list);
 }

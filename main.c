@@ -1,5 +1,4 @@
 #include "inc/minishell.h"
-#include <signal.h>
 
 static void	setup_signals(void)
 {
@@ -26,11 +25,31 @@ int	main(int ac, char **av, char **env)
 		data->input = read_input(data);
 		if (data->input)
 		{
-			setup_exec_signals(); // Configure les signaux pour l'exécution
-			char *expanded_input = expander(data->input, data); // Passez `data` ici
+			setup_exec_signals();
+			char *expanded_input = expander(data->input, data);
 			t_token *tokens = lexer(expanded_input);
+			if (!tokens)
+			{
+				free(expanded_input);
+				free(data->input);
+				data->input = NULL;
+				continue;
+			}
 			free(expanded_input);
 			data->cmd_list = parser(tokens);
+			if (!data->cmd_list)
+			{
+				free(data->input);
+				data->input = NULL;
+				free_token(tokens);
+				tokens = NULL;
+				continue;
+			}
+			if (tokens)
+			{
+				free_token(tokens);
+				tokens = NULL;
+			}
 			if (data->cmd_list)
 			{
 				data->exit_status = execute_commands(data);
@@ -40,7 +59,7 @@ int	main(int ac, char **av, char **env)
 					data->cmd_list = NULL;
 				}
 			}
-			setup_signals(); // Réinitialise les signaux pour le prompt
+			setup_signals();
 			free(data->input);
 			data->input = NULL;
 		}

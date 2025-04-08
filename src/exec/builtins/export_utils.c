@@ -52,18 +52,3 @@ t_env	*copy_env_list(t_env *env)
 	}
 	return (env_copy);
 }
-
-/* Libère la liste d'environnement copiée */
-void	free_env_copy(t_env *env_copy)
-{
-	t_env	*current;
-
-	while (env_copy)
-	{
-		current = env_copy;
-		env_copy = env_copy->next;
-		free(current->name);
-		free(current->value);
-		free(current);
-	}
-}

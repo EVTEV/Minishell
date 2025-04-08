@@ -54,6 +54,8 @@ int	execute_external(t_cmd *cmd, t_data *data)
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
+	if (setup_redirections(cmd->redirections) != 0) // Handle redirections first
+		return (1);
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)
 	{

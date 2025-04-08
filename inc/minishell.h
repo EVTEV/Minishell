@@ -140,6 +140,7 @@ char	**ft_tabjoin(char **tab, char *new_elem);
 // ---------- free_cmd.c ------------ //
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_pids(pid_t *pids);
+void	free_token(t_token *tokens);
 // ---------- get_value.c ------------ //
 char	*get_value(t_env env, char *name);
 void	update_value(t_env *env, char *name, char *value);
