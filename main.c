@@ -40,10 +40,9 @@ int	main(int ac, char **av, char **env)
 			if (!data->cmd_list)
 			{
 				free(data->input);
-				data->input = NULL;
 				free_token(tokens);
 				tokens = NULL;
-				continue;
+				exit_clean(data, tokens, 2);
 			}
 			if (tokens)
 			{
@@ -53,12 +52,14 @@ int	main(int ac, char **av, char **env)
 			if (data->cmd_list)
 			{
 				data->exit_status = execute_commands(data);
-				if (data->cmd_list)
+				if (data && data->cmd_list)
 				{
-					free_cmd_list(data->cmd_list);
+					free_cmd_list(data->cmd_list); // Free the command list after execution
 					data->cmd_list = NULL;
 				}
 			}
+			else
+				free_cmd_list(data->cmd_list); // Free the command list if execution fails
 			setup_signals();
 			free(data->input);
 			data->input = NULL;

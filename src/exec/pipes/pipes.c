@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipes.c                                            :+:      :+:    :+:    :+:   */
+/*   pipes.c                                            :+:      :+:    :+:   :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -19,6 +19,8 @@ int	count_commands(t_cmd *cmd_list)
 	int		count;
 	t_cmd	*current;
 
+	if (!cmd_list)
+		return (0);
 	count = 0;
 	current = cmd_list;
 	while (current)
@@ -50,12 +52,13 @@ void	free_pipes(t_data *data, int pipe_count)
 {
 	int	i;
 
-	if (!data->pipes)
+	if (!data || !data->pipes)
 		return ;
 	i = 0;
 	while (i < pipe_count)
 	{
 		free(data->pipes[i]);
+		data->pipes[i] = NULL;
 		i++;
 	}
 	free(data->pipes);
@@ -93,13 +96,18 @@ int	execute_piped_commands(t_data *data)
 		return (result);
 	pipe_count = cmd_count - 1;
 	if (create_pipes(data, pipe_count) != 0)
+	{
+		free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
 		return (1);
+	}
 	result = execute_pipe_processes(data, cmd_count, pipe_count);
 	if (result != 0)
 	{
+		free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
 		if (WIFEXITED(result))
 			return (WEXITSTATUS(result));
 		return (result);
 	}
+	free_pipes(data, pipe_count); // Libère les pipes après exécution
 	return (result);
 }

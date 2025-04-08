@@ -88,7 +88,7 @@ int		ft_cd(char **av, t_env *env);
 // ---------- echo.c ------------ //
 int		ft_echo(int ac, char **av);
 // ---------- exit.c ------------ //
-void    exit_clean(t_data *data);
+void    exit_clean(t_data *data, t_token *tokens, int i);
 // ---------- export.c ------------ //
 int		ft_export(char **args, t_env **env);
 // ---------- export_utils.c ------------ //
@@ -107,7 +107,7 @@ int		ft_unset(char **args, t_env **env);
 
 // ------------------ pipes ------------------ //
 // ---------- child_processes.c ------------ //
-int		execute_command_in_child(t_cmd *cmd, t_data *data);
+int		execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
 int		execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
 int		wait_for_children(pid_t *pids, int cmd_count);
 // ---------- heredoc.c ------------ //

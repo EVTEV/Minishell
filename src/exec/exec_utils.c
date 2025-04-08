@@ -74,7 +74,7 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		exit_clean(data);
+		exit_clean(data, 0, 0);
 	else
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);

@@ -18,23 +18,36 @@ static void	free_data_members(t_data *data)
 	if (data->input)
 		free(data->input);
 	if (data->env)
-		free_tab(data->env); // Ensure free_tab handles NULL pointers
+		free_tab(data->env);
 	if (data->env_list)
 		free_env_copy(data->env_list);
 	if (data->path)
 		free(data->path);
 	if (data->cmd_list)
+	{
 		free_cmd_list(data->cmd_list);
+		data->cmd_list = NULL; // Prevent double free by nullifying the pointer
+	}
 }
 
 /* Nettoie et libère toutes les ressources avant de quitter le programme */
-void	exit_clean(t_data *data)
+void	exit_clean(t_data *data, t_token *tokens, int i)
 {
 	if (!data)
 		exit(2);
+	if (tokens)
+	{
+		free_token(tokens);
+		tokens = NULL;
+	}
 	free_data_members(data);
 	if (data->pipes)
-		free_pipes(data, count_commands(data->cmd_list) - 1);
+	{
+		if (data->cmd_list)
+			free_pipes(data, count_commands(data->cmd_list) - 1);
+		else
+			free_pipes(data, 0);
+	}
 	free(data);
-	exit(2);
+	exit(i);
 }

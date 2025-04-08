@@ -26,10 +26,8 @@ static int	allocate_pipes(t_data *data, int pipe_count)
 		data->pipes[i] = (int *)malloc(sizeof(int) * 2);
 		if (!data->pipes[i])
 		{
-			while (--i >= 0)
-				free(data->pipes[i]);
-			free(data->pipes);
-			data->pipes = NULL;
+			free_pipes(data, i); // Libère les pipes déjà alloués
+			free_pipes(data, pipe_count); // Libère tous les pipes en cas d'erreur
 			return (1);
 		}
 		i++;
@@ -51,14 +49,8 @@ int	create_pipes(t_data *data, int pipe_count)
 	{
 		if (pipe(data->pipes[i]) < 0)
 		{
-			while (--i >= 0)
-			{
-				close(data->pipes[i][0]);
-				close(data->pipes[i][1]);
-				free(data->pipes[i]);
-			}
-			free(data->pipes);
-			data->pipes = NULL;
+			close_all_pipes(data, i); // Ferme les pipes ouverts
+			free_pipes(data, pipe_count); // Libère tous les pipes
 			return (1);
 		}
 		i++;
@@ -85,4 +77,5 @@ void	free_pids(pid_t *pids)
 {
 	if (pids)
 		free(pids);
+	pids = NULL; // Prevent double free by nullifying the pointer
 }

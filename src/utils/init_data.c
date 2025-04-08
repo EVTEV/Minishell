@@ -97,14 +97,24 @@ char	*find_command_path(char *cmd, t_data *data)
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
+		if (!tmp) // Check for allocation failure
+		{
+			free_tab(paths);
+			return (NULL);
+		}
 		cmd_path = ft_strjoin(tmp, cmd);
-		free(tmp);
+		free(tmp); // Free tmp after use
+		if (!cmd_path) // Check for allocation failure
+		{
+			free_tab(paths);
+			return (NULL);
+		}
 		if (access(cmd_path, X_OK) == 0)
-			return (free_tab(paths), cmd_path);
-		free(cmd_path);
+			return (free_tab(paths), cmd_path); // Return valid path
+		free(cmd_path); // Free cmd_path if access fails
 		i++;
 	}
-	return (free_tab(paths), NULL);
+	return (free_tab(paths), NULL); // Free paths and return NULL if no valid path is found
 }
 
 /* Initialise la structure data avec les paramètres du programme */

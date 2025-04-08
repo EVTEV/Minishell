@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_processes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+         +:+     */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
 /*   Updated: 2025/04/08 08:09:12 by lowatell         ###   ########.fr       */
@@ -36,7 +36,7 @@ static int	handle_fork_error(pid_t *pids, int i, t_data *data, int pipe_count)
 		waitpid(pids[i], NULL, 0);
 	free(pids);
 	close_all_pipes(data, pipe_count);
-	free_pipes(data, pipe_count);
+	free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
 	return (1);
 }
 
@@ -45,6 +45,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 									int cmd_count, int pipe_count)
 {
 	t_cmd	*current;
+	char	*tmp;
 	int		i;
 
 	current = data->cmd_list;
@@ -63,18 +64,23 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				close_all_pipes(data, pipe_count);
 				exit(127);
 			}
-			if (!find_command_path(current->args[0], data))
+			tmp = find_command_path(current->args[0], data);
+			if (!tmp)
 			{
 				ft_putstr_fd("minishell: ", STDERR_FILENO);
 				if (current->args[0])
 					ft_putstr_fd(current->args[0], STDERR_FILENO);
 				ft_putstr_fd(": command not found\n", STDERR_FILENO);
 				close_all_pipes(data, pipe_count);
-				exit(127);
+				free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
+				if (data->cmd_list)
+					exit_clean(data, NULL, 127);
+				else
+					exit(127);
 			}
-			execute_command_in_child(current, data);
+			execute_command_in_child(current, data, tmp);
 			close_all_pipes(data, pipe_count);
-			exit(0);
+			exit_clean(data, NULL, 0);
 		}
 		current = current->next;
 		i++;

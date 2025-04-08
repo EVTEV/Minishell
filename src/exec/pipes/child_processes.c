@@ -13,7 +13,7 @@
 #include "../../../inc/minishell.h"
 
 /* Exécute une commande dans un processus enfant */
-int	execute_command_in_child(t_cmd *cmd, t_data *data)
+int	execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 {
 	char	*cmd_path;
 
@@ -28,15 +28,16 @@ int	execute_command_in_child(t_cmd *cmd, t_data *data)
 	if (!cmd_path)
 	{
 		ft_printf("minishell: %s: command not found\n", cmd->args[0]);
-		exit(127);
+		exit_clean(data, NULL, 127);
 	}
 	if (execve(cmd_path, cmd->args, data->env) < 0)
 	{
 		free(cmd_path);
+		free(cmdpath);
 		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
-		exit(126);
+		exit_clean(data, NULL, 126);
 	}
-	return (0); // This line is unreachable but kept for clarity
+	return (0);
 }
 
 int	wait_for_children(pid_t *pids, int cmd_count)

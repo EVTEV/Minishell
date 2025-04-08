@@ -67,7 +67,7 @@ t_cmd	*parser(t_token *tokens)
 			if (!dup_value || !(current_cmd->args = ft_tabjoin(current_cmd->args, dup_value)))
 			{
 				free(dup_value); // Free if ft_tabjoin fails
-				free_cmd_list(cmd_list);
+				free_cmd_list(cmd_list); // Free the command list
 				return (NULL);
 			}
 		}

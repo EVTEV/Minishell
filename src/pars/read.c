@@ -108,7 +108,7 @@ char	*read_input(t_data *data)
 	if (!input)
 	{
 		write(1, "exit\n", 5);
-		exit_clean(data);
+		exit_clean(data, 0, 0);
 	}
 	if (*input)
 	{

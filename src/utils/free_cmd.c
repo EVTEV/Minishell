@@ -47,31 +47,29 @@ void	free_tab(char **tab)
 }
 
 /* Libère la liste complète des commandes et leurs redirections */
-void	free_cmd_list(t_cmd *cmd_list)
+void	free_cmd_list(t_cmd *current)
 {
-	t_cmd	*current;
 	t_cmd	*next;
-	int		i;
 
-	i = 0;
-	current = cmd_list;
 	while (current)
 	{
 		next = current->next;
 		if (current->args)
 		{
-			while (current->args[i])
+			for (int i = 0; current->args[i]; i++) // Reset i for each command
 			{
 				free(current->args[i]);
 				current->args[i] = NULL;
-				i++;
 			}
+			free(current->args); // Free the args array itself
 		}
 		if (current->redirections)
 			free_redirections(current->redirections);
-		free(current);
+		if (current)
+			free(current);
 		current = next;
 	}
+	current = NULL; // Assurez-vous que le pointeur est mis à NULL après libération
 }
 
 /* Libère la liste d'environnement copiée */
@@ -100,7 +98,8 @@ void	free_token(t_token *tokens)
 		next = current->next;
 		if (current->value)
 		{
-			free(current->value); // Free the token value
+			// Ensure the pointer is valid before freeing
+			free(current->value);
 			current->value = NULL; // Set pointer to NULL after freeing
 		}
 		free(current); // Free the token itself
