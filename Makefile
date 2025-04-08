@@ -3,12 +3,13 @@ NAME = minishell
 MAKEFLAGS = --no-print-directory
 
 LIBFT_DIR = ./Libft
+READLINE_PATH = $(shell brew --prefix readline)
 LIBFT = $(LIBFT_DIR)/libft.a
 INC_LIBFT = -I$(LIBFT_DIR)/inc
 LIBFT_FLAGS = -L$(LIBFT_DIR) -lft
 
 INC_DIR = ./inc
-INC = -I$(INC_DIR)
+INC = -I$(INC_DIR) -I$(READLINE_PATH)/include
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -24,7 +25,7 @@ OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g #-gdwarf-4 
-LDFLAGS = -lreadline 
+LDFLAGS = -L$(READLINE_PATH)/lib -lreadline -lhistory
 RM = @rm -rf
 AR = ar -rcs
 

@@ -3,10 +3,10 @@
 
 # include "../Libft/inc/libft.h"
 # include <sys/wait.h>
+# include <stdio.h> // Ajout pour résoudre les erreurs liées à FILE
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <string.h>
-# include <stdio.h>
 # include <signal.h>
 # include <fcntl.h>
 # include <sys/stat.h>
