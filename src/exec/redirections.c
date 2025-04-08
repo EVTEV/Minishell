@@ -79,6 +79,19 @@ int	setup_redirections(t_redir *redirections)
 			result = handle_output_redirection(redirections->file, 0);
 		else if (redirections->type == TOKEN_REDIR_APPEND)
 			result = handle_output_redirection(redirections->file, 1);
+		else if (redirections->type == TOKEN_REDIR_IN && ft_strcmp(redirections->file, "<<") == 0)
+		{
+			int	fd_in;
+			if (handle_heredoc(redirections->file, &fd_in) != 0)
+				return (-1);
+			if (dup2(fd_in, STDIN_FILENO) == -1)
+			{
+				perror("dup2");
+				close(fd_in);
+				return (-1);
+			}
+			close(fd_in);
+		}
 		if (result == -1)
 			break;
 		redirections = redirections->next;

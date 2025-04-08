@@ -1,9 +1,5 @@
 #include "../../inc/minishell.h"
 
-# define TOKEN_REDIR_OUT 3
-# define TOKEN_REDIR_APPEND 4
-# define TOKEN_REDIR_IN 5
-
 static void	add_token(t_token **tokens, char *value, int type)
 {
 	t_token	*new;
@@ -103,6 +99,16 @@ t_token	*lexer(char *input)
 			}
 			add_token(&tokens, ft_strdup(">"), TOKEN_REDIR_OUT);
 			i++;
+		}
+		else if (input[i] == '<' && input[i + 1] == '<')
+		{
+			if (current_part)
+			{
+				add_token(&tokens, current_part, TOKEN_WORD);
+				current_part = NULL;
+			}
+			add_token(&tokens, ft_strdup("<<"), TOKEN_REDIR_HEREDOC);
+			i += 2;
 		}
 		else if (input[i] == '<')
 		{

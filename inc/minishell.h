@@ -18,6 +18,7 @@
 # define TOKEN_REDIR_OUT 3
 # define TOKEN_REDIR_APPEND 4
 # define TOKEN_REDIR_IN 5
+# define TOKEN_REDIR_HEREDOC 6
 
 extern int	g_exit_status; // Variable globale pour gérer les signaux
 

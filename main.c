@@ -37,12 +37,17 @@ int	main(int ac, char **av, char **env)
 			}
 			free(expanded_input);
 			data->cmd_list = parser(tokens);
-			if (!data->cmd_list)
+			if (!data->cmd_list) // Erreur de syntaxe détectée
 			{
-				free(data->input);
+				if (data->input)
+				{
+					free(data->input);
+					data->input = NULL;
+				}
 				free_token(tokens);
 				tokens = NULL;
-				exit_clean(data, tokens, 2);
+				data->exit_status = 2; // Code de retour pour erreur de syntaxe
+				continue;
 			}
 			if (tokens)
 			{

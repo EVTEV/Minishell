@@ -73,18 +73,75 @@ t_cmd	*parser(t_token *tokens)
 		}
 		else if (tokens->type == TOKEN_PIPE)
 		{
+			if (!current_cmd || !current_cmd->args) // Pipe au début ou double pipe
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", STDERR_FILENO);
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
 			current_cmd->next = create_new_command();
 			current_cmd = current_cmd->next;
 		}
 		else if (tokens->type == TOKEN_REDIR_OUT || tokens->type == TOKEN_REDIR_APPEND || tokens->type == TOKEN_REDIR_IN)
 		{
-			if (tokens->next && tokens->next->type == TOKEN_WORD)
+			if (!tokens->next || tokens->next->type != TOKEN_WORD) // Redirection sans fichier
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
+			if (tokens->type == TOKEN_REDIR_IN)
+			{
+				if (ft_strcmp(tokens->value, "<<") == 0 && tokens->next) // Gestion des heredocs
+				{
+					int	fd_in;
+					if (handle_heredoc(tokens->next->value, &fd_in) != 0)
+					{
+						free_cmd_list(cmd_list);
+						return (NULL);
+					}
+					add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, ft_strdup(tokens->next->value));
+					tokens = tokens->next;
+				}
+				else
+				{
+					add_redirection(&current_cmd->redirections, tokens->type, ft_strdup(tokens->next->value));
+					tokens = tokens->next;
+				}
+			}
+			else
 			{
 				add_redirection(&current_cmd->redirections, tokens->type, ft_strdup(tokens->next->value));
 				tokens = tokens->next;
 			}
 		}
+		else if (tokens->type == TOKEN_REDIR_HEREDOC)
+		{
+			if (!tokens->next || tokens->next->type != TOKEN_WORD) // Heredoc sans délimiteur
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
+			int	fd_in;
+			if (handle_heredoc(tokens->next->value, &fd_in) != 0) // Lire jusqu'au délimiteur
+			{
+				free_cmd_list(cmd_list);
+				return (NULL);
+			}
+			add_redirection(&current_cmd->redirections, TOKEN_REDIR_HEREDOC, ft_strdup(tokens->next->value));
+			tokens = tokens->next;
+			if (tokens->next && tokens->next->type == TOKEN_PIPE) // Vérifie si un pipe suit immédiatement
+			{
+				tokens = tokens->next; // Passe au token suivant pour éviter une erreur de syntaxe
+			}
+		}
 		tokens = tokens->next;
+	}
+	if (current_cmd && !current_cmd->args && !current_cmd->redirections) // Commande vide
+	{
+		free_cmd_list(cmd_list);
+		return (NULL);
 	}
 	return (cmd_list);
 }
