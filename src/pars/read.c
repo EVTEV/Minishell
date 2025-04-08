@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 16:20:20 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/08 08:09:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	load_history(void)
 	int		fd;
 	char	*line;
 
-	fd = open("~/.shell_history", O_CREAT | O_RDONLY, 0644);
+	fd = open("./.shell_history", O_CREAT | O_RDONLY, 0644);
 	if (fd == -1)
 		return ;
 	line = get_next_line(fd);
@@ -83,7 +83,7 @@ void	save_history(char *input)
 
 	if (!input)
 		return ;
-	fd = open("~/.shell_history", O_CREAT | O_WRONLY | O_APPEND, 0644);
+	fd = open("./.shell_history", O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
 		return ;
 	tmp = ft_strjoin(input, "\n");

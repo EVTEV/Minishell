@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:17:23 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/07 12:30:22 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/08 08:09:16 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,16 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		exit_clean(data);
+	else
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		if (cmd->args[0])
+		{
+			ft_putstr_fd(cmd->args[0], STDERR_FILENO);
+			ft_putstr_fd("\n", STDERR_FILENO);
+		}
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	}
 	return (1);
 }
 

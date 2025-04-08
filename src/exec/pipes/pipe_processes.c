@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 16:30:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/08 08:09:12 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,15 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 			setup_child_pipes(data, i, cmd_count);
 			if (!current->args || !current->args[0])
 			{
-				ft_printf("minishell: : command not found\n");
+				ft_putstr_fd("minishell: : command not found\n", STDERR_FILENO);
+				exit(127);
+			}
+			if (!find_command_path(current->args[0], data))
+			{
+				ft_putstr_fd("minishell: ", STDERR_FILENO);
+				if (current->args[0])
+					ft_putstr_fd(current->args[0], STDERR_FILENO);
+				ft_putstr_fd(": command not found\n", STDERR_FILENO);
 				exit(127);
 			}
 			execute_command_in_child(current, data);
@@ -86,7 +94,7 @@ int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
 		return (1);
 	close_all_pipes(data, pipe_count);
 
-	// Attendre chaque processus enfant et afficher les erreurs
+	// Attendre chaque processus enfant dans l'ordre
 	exit_status = 0;
 	for (i = 0; i < cmd_count; i++)
 	{

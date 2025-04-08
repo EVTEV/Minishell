@@ -18,6 +18,7 @@ int	main(int ac, char **av, char **env)
 	t_data	*data;
 
 	setup_signals();
+	load_history();
 	data = init_data(ac, av, env);
 	data->cmd_list = NULL;
 	while (1)
