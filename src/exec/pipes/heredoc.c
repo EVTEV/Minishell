@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
+#include <signal.h>
 
 /* Configure le pipe pour le heredoc */
 static int	setup_heredoc_pipe(int pipe_fd[2])
@@ -23,6 +24,19 @@ static int	setup_heredoc_pipe(int pipe_fd[2])
 	return (0);
 }
 
+/* Static variable to track heredoc interruption */
+static sig_atomic_t heredoc_interrupted = 0;
+
+/* Gestionnaire de signal pour interrompre le heredoc */
+static void	signal_handler_heredoc(int signum)
+{
+	if (signum == SIGINT)
+	{
+		heredoc_interrupted = 1;
+		write(1, "\n", 1); // Affiche une nouvelle ligne immédiatement
+	}
+}
+
 /* Lit l'entrée du heredoc jusqu'au délimiteur */
 static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 {
@@ -30,7 +44,7 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 	size_t	delimiter_len;
 
 	delimiter_len = ft_strlen(delimiter);
-	while (1)
+	while (!heredoc_interrupted)
 	{
 		ft_printf("> ");
 		line = get_next_line(0);
@@ -39,7 +53,7 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 			if (errno != 0)
 			{
 				perror("get_next_line");
-				close(pipe_fd[1]); // Ferme le pipe en cas d'erreur
+				close(pipe_fd[1]);
 				return (-1);
 			}
 			break;
@@ -54,13 +68,13 @@ static int	read_heredoc_input(int pipe_fd[2], char *delimiter)
 		{
 			free(line);
 			perror("write");
-			close(pipe_fd[1]); // Ferme le pipe en cas d'erreur
+			close(pipe_fd[1]);
 			return (-1);
 		}
 		free(line);
 	}
 	close(pipe_fd[1]); // Ferme le côté écriture du pipe après la lecture
-	return (0);
+	return (heredoc_interrupted ? -2 : 0); // Retourne -2 si interrompu
 }
 
 /* Gère le processus de heredoc complet */
@@ -68,26 +82,36 @@ int	handle_heredoc(char *delimiter, int *fd_in)
 {
 	int		pipe_fd[2];
 	int		result;
+	void	(*prev_sigint_handler)(int);
 
-	if (!delimiter || !*delimiter) // Vérifie si le délimiteur est vide
+	if (!delimiter || !*delimiter)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
 		return (1);
 	}
 	if (setup_heredoc_pipe(pipe_fd) != 0)
 		return (1);
+
+	// Configure le gestionnaire de signal pour le heredoc
+	heredoc_interrupted = 0;
+	prev_sigint_handler = signal(SIGINT, signal_handler_heredoc);
+
 	result = read_heredoc_input(pipe_fd, delimiter);
+
+	// Restaure le gestionnaire de signal précédent
+	signal(SIGINT, prev_sigint_handler);
+
 	close(pipe_fd[1]);
+	if (result == -2) // Si le heredoc a été interrompu
+	{
+		close(pipe_fd[0]);
+		return (1);
+	}
 	if (result < 0)
 	{
 		close(pipe_fd[0]);
 		return (1);
 	}
 	*fd_in = pipe_fd[0];
-	if (*fd_in < 0) // Vérifie si le fichier est correctement créé
-	{
-		ft_putstr_fd("minishell: error creating heredoc file\n", STDERR_FILENO);
-		return (1);
-	}
 	return (0);
 }

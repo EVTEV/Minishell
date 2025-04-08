@@ -47,7 +47,7 @@ static int	handle_output_redirection(char *filename, int append)
 		perror(filename);
 		return (-1);
 	}
-	if (dup2(fd, STDOUT_FILENO) == -1)
+	if (dup2(fd, STDOUT_FILENO) == -1) // Redirige STDOUT vers le fichier
 	{
 		perror("dup2");
 		close(fd);
@@ -57,10 +57,46 @@ static int	handle_output_redirection(char *filename, int append)
 	return (0);
 }
 
+/* Crée les fichiers pour les redirections de sortie (TOKEN_REDIR_OUT et TOKEN_REDIR_APPEND) */
+static int	create_redirection_files(t_redir *redirections)
+{
+	int	fd;
+
+	while (redirections)
+	{
+		if (redirections->type == TOKEN_REDIR_OUT)
+		{
+			fd = open(redirections->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			if (fd == -1)
+			{
+				perror(redirections->file);
+				return (-1);
+			}
+			close(fd);
+		}
+		else if (redirections->type == TOKEN_REDIR_APPEND)
+		{
+			fd = open(redirections->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+			if (fd == -1)
+			{
+				perror(redirections->file);
+				return (-1);
+			}
+			close(fd);
+		}
+		redirections = redirections->next;
+	}
+	return (0);
+}
+
 /* Configure les redirections pour une commande */
 int	setup_redirections(t_redir *redirections)
 {
 	int	result = 0;
+
+	// Crée les fichiers de redirection avant de configurer les redirections
+	if (create_redirection_files(redirections) != 0)
+		return (-1);
 
 	while (redirections)
 	{

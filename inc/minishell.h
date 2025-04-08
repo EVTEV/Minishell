@@ -49,6 +49,7 @@ typedef struct s_cmd
 	t_redir			*redirections;
 	int				pipe_in;
 	int				pipe_out;
+	int				interrupted; // Indique si un heredoc a été interrompu
 	struct s_cmd	*next;
 }	t_cmd;
 

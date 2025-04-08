@@ -37,7 +37,7 @@ int	main(int ac, char **av, char **env)
 			}
 			free(expanded_input);
 			data->cmd_list = parser(tokens);
-			if (!data->cmd_list) // Erreur de syntaxe détectée
+			if (!data->cmd_list) // Erreur de syntaxe ou interruption
 			{
 				if (data->input)
 				{
@@ -47,6 +47,17 @@ int	main(int ac, char **av, char **env)
 				free_token(tokens);
 				tokens = NULL;
 				data->exit_status = 2; // Code de retour pour erreur de syntaxe
+				continue;
+			}
+			if (data->cmd_list && data->cmd_list->interrupted) // Si le heredoc a été interrompu
+			{
+				free_cmd_list(data->cmd_list);
+				data->cmd_list = NULL;
+				free(data->input);
+				data->input = NULL;
+				free_token(tokens);
+				tokens = NULL;
+				data->exit_status = 1; // Code de retour pour interruption
 				continue;
 			}
 			if (tokens)

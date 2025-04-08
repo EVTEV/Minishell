@@ -100,20 +100,30 @@ int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 		restore_std_fds(std_fds);
 		return (1);
 	}
-	if (ft_strncmp(cmd->args[0], "cd", 3) == 0 || ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		restore_std_fds(std_fds); // Pas besoin de redirections pour ces commandes
 	int result = execute_builtin(cmd, data);
-	restore_std_fds(std_fds);
+	restore_std_fds(std_fds); // Restaure les descripteurs après l'exécution
 	return (result);
 }
 
 /* Exécute une commande unique (interne ou externe) */
 int	execute_single_command(t_cmd *cmd, t_data *data)
 {
-	if (!cmd || !cmd->args || !cmd->args[0])
+	int	std_fds[2];
+
+	if (!cmd || !cmd->args || !cmd->args[0]) // Vérifie si cmd ou cmd->args est NULL
 		return (1);
+	if (save_std_fds(std_fds) != 0)
+		return (1);
+	if (setup_redirections(cmd->redirections) != 0)
+	{
+		restore_std_fds(std_fds);
+		return (1);
+	}
+	int result;
 	if (is_builtin(cmd->args[0]))
-		return (execute_builtin_with_redirections(cmd, data));
+		result = execute_builtin(cmd, data);
 	else
-		return (execute_external(cmd, data));
+		result = execute_external(cmd, data);
+	restore_std_fds(std_fds); // Restaure les descripteurs après l'exécution
+	return (result);
 }

@@ -53,8 +53,15 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	pid_t	pid;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (1);
-	if (setup_redirections(cmd->redirections) != 0)
+	{
+		if (setup_redirections(cmd->redirections) != 0) // Configure les redirections même si la commande est vide
+		{
+			ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
+			return (1);
+		}
+		return (0); // Retourne 0 pour indiquer que les redirections ont été configurées
+	}
+	if (setup_redirections(cmd->redirections) != 0) // Configure les redirections avant de vérifier la commande
 	{
 		ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
 		return (1);
@@ -65,7 +72,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
-		return (127);
+		return (127); // Retourne une erreur mais les redirections sont déjà configurées
 	}
 	pid = fork();
 	if (pid == 0)
