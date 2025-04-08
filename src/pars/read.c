@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/08 08:09:38 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/08 08:12:26 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ char	*read_input(t_data *data)
 	char	*input;
 
 	reset_terminal_line();
-	input = readline("minishell> ");
+	input = readline("minishell$ ");
 	if (!input)
 	{
 		write(1, "exit\n", 5);
