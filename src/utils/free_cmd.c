@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 16:12:09 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/10 22:59:47 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,29 +47,21 @@ void	free_tab(char **tab)
 }
 
 /* Libère la liste complète des commandes et leurs redirections */
-void	free_cmd_list(t_cmd *current)
+void	free_cmd_list(t_cmd *cmd_list)
 {
-	t_cmd	*next;
+	t_cmd	*tmp;
 
-	while (current)
+	while (cmd_list)
 	{
-		next = current->next;
-		if (current->args)
-		{
-			for (int i = 0; current->args[i]; i++) // Reset i for each command
-			{
-				free(current->args[i]);
-				current->args[i] = NULL;
-			}
-			free(current->args); // Free the args array itself
-		}
-		if (current->redirections)
-			free_redirections(current->redirections);
-		if (current)
-			free(current);
-		current = next;
+		tmp = cmd_list;
+		cmd_list = cmd_list->next;
+		if (tmp->heredoc_file)
+			unlink(tmp->heredoc_file); // Remove the temporary heredoc file
+		free(tmp->heredoc_file);
+		free_tab(tmp->args);
+		free_redirections(tmp->redirections);
+		free(tmp);
 	}
-	current = NULL; // Assurez-vous que le pointeur est mis à NULL après libération
 }
 
 /* Libère la liste d'environnement copiée */

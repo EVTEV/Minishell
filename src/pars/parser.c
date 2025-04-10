@@ -94,13 +94,13 @@ t_cmd	*parser(t_token *tokens)
 			{
 				if (ft_strcmp(tokens->value, "<<") == 0 && tokens->next) // Gestion des heredocs
 				{
-					int	fd_in;
-					if (handle_heredoc(tokens->next->value, &fd_in) != 0)
+					char *heredoc_file;
+					if (handle_heredoc(tokens->next->value, &heredoc_file) != 0)
 					{
 						free_cmd_list(cmd_list);
 						return (NULL);
 					}
-					add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, ft_strdup(tokens->next->value));
+					add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, heredoc_file);
 					tokens = tokens->next;
 				}
 				else
@@ -117,24 +117,20 @@ t_cmd	*parser(t_token *tokens)
 		}
 		else if (tokens->type == TOKEN_REDIR_HEREDOC)
 		{
-			if (!tokens->next || tokens->next->type != TOKEN_WORD) // Heredoc sans délimiteur
+			if (!tokens->next || tokens->next->type != TOKEN_WORD)
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", STDERR_FILENO);
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
-			int	fd_in;
-			if (handle_heredoc(tokens->next->value, &fd_in) != 0) // Lire jusqu'au délimiteur
+			char *heredoc_file;
+			if (handle_heredoc(tokens->next->value, &heredoc_file) != 0)
 			{
 				free_cmd_list(cmd_list);
 				return (NULL);
 			}
-			add_redirection(&current_cmd->redirections, TOKEN_REDIR_HEREDOC, ft_strdup(tokens->next->value));
+			add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, heredoc_file);
 			tokens = tokens->next;
-			if (tokens->next && tokens->next->type == TOKEN_PIPE) // Vérifie si un pipe suit immédiatement
-			{
-				tokens = tokens->next; // Passe au token suivant pour éviter une erreur de syntaxe
-			}
 		}
 		tokens = tokens->next;
 	}

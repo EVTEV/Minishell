@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 18:34:35 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/10 23:01:58 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,16 @@ int	setup_redirections(t_redir *redirections)
 			result = handle_output_redirection(redirections->file, 1);
 		else if (redirections->type == TOKEN_REDIR_HEREDOC)
 		{
-			int	fd_in;
-			if (handle_heredoc(redirections->file, &fd_in) != 0)
+			char *heredoc_file;
+			if (handle_heredoc(redirections->file, &heredoc_file) != 0)
 				return (1); // Return 1 to indicate an error but allow pipeline to continue
+			int fd_in = open(heredoc_file, O_RDONLY);
+			free(heredoc_file); // Free the temporary file path after opening
+			if (fd_in == -1)
+			{
+				perror("open");
+				return (1); // Return 1 to indicate an error but allow pipeline to continue
+			}
 			if (dup2(fd_in, STDIN_FILENO) == -1)
 			{
 				perror("dup2");

@@ -50,6 +50,7 @@ typedef struct s_cmd
 	int				pipe_in;
 	int				pipe_out;
 	int				interrupted; // Indique si un heredoc a été interrompu
+	char			*heredoc_file; // Fichier temporaire pour le heredoc
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -114,7 +115,7 @@ int		execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
 int		execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
 int		wait_for_children(pid_t *pids, int cmd_count);
 // ---------- heredoc.c ------------ //
-int		handle_heredoc(char *delimiter, int *fd_in);
+int		handle_heredoc(char *delimiter, char **heredoc_file);
 // ---------- pipe_creation.c ------------ //
 int		create_pipes(t_data *data, int pipe_count);
 pid_t	*allocate_pids(int cmd_count, int pipe_count, t_data *data);
@@ -133,6 +134,7 @@ int		execute_builtin(t_cmd *cmd, t_data *data);
 int		execute_external(t_cmd *cmd, t_data *data);
 int		execute_single_command(t_cmd *cmd, t_data *data);
 int		execute_commands(t_data *data);
+void	cleanup_heredoc_file(char *heredoc_file);
 // -------------- redirections.c -------------- //
 int		setup_redirections(t_redir *redirections);
 
