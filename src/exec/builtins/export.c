@@ -37,7 +37,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 
 	equal_sign = ft_strchr(arg, '=');
 	if (!equal_sign)
-		return (1);
+		return (0);
 	*equal_sign = '\0';
 	name = arg;
 	value = equal_sign + 1;
@@ -52,9 +52,11 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	}
 	else
 	{
-		ft_printf("minishell: export: `%s': not a valid identifier\n", name);
+		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+		ft_putstr_fd(name, STDERR_FILENO);
+		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 		*equal_sign = '=';
-		return (1);
+		return (1); // Return error code for invalid identifier
 	}
 }
 
@@ -63,8 +65,14 @@ static int	process_export_arg(char **args, int i, t_env **env)
 {
 	if (ft_strchr(args[i], '='))
 		return (process_export_with_equal(args[i], env));
-	else
-		return (1);
+	else if (!is_valid_identifier(args[i])) // Handle invalid identifiers without '='
+	{
+		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+		ft_putstr_fd(args[i], STDERR_FILENO);
+		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+		return (1); // Return error code for invalid identifier
+	}
+	return (0);
 }
 
 /* Gère la commande export (avec ou sans arguments) */
@@ -72,6 +80,7 @@ int	ft_export(char **args, t_env **env)
 {
 	int	i;
 	int	status;
+	int	ret_code = 0;
 
 	if (!args[1])
 		return (print_sorted_env(*env));
@@ -80,7 +89,9 @@ int	ft_export(char **args, t_env **env)
 	while (args[i])
 	{
 		status = process_export_arg(args, i, env);
+		if (status != 0)
+			ret_code = 1; // Set return code to 1 if any argument is invalid
 		i++;
 	}
-	return (status);
+	return (ret_code);
 }

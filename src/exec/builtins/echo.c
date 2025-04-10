@@ -19,7 +19,7 @@ static int	check_args(char **args, int *start)
 	int	j;
 
 	i = 1;
-	while (args[i] && args[i][0] == '-')
+	while (args[i] && args[i][0] == '-' && args[i][1])
 	{
 		j = 0;
 		while (args[i][j] && args[i][j] == 'n')

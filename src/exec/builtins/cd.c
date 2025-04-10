@@ -100,6 +100,11 @@ int	ft_cd(char **av, t_env *env)
 	char	*path;
 	char	current[PATH_MAX];
 
+	if (ft_tablen(av) > 2) // Check for too many arguments
+	{
+		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+		return (1);
+	}
 	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
 			&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
 		return (handle_cd_error(av[1]));

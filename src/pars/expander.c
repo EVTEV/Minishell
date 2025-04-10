@@ -31,7 +31,9 @@ char	*expander(char *input, t_data *data)
 	{
 		if (input[i] == '"') // Conserve les guillemets doubles
 		{
-			result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet ouvrant
+			tmp = ft_substr(input, i++, 1);
+			result = ft_strjoin_free(result, tmp); // Ajoute le guillemet ouvrant
+			free(tmp);
 			start = i;
 			while (input[i] && input[i] != '"')
 			{
@@ -50,22 +52,36 @@ char	*expander(char *input, t_data *data)
 					i += 2;
 				}
 				else
-					result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute les autres caractères
+				{
+					char *char_to_add = ft_substr(input, i++, 1); // Extract single character
+					result = ft_strjoin_free(result, char_to_add); // Append to result
+					free(char_to_add); // Free the temporary string
+				}
 			}
 			if (input[i] == '"')
-				result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet fermant
+			{
+				char *closing_quote = ft_substr(input, i++, 1); // Extract closing quote
+				result = ft_strjoin_free(result, closing_quote); // Append to result
+				free(closing_quote); // Free the temporary string
+			}
 		}
-		else if (input[i] == '\'') // Conserve les guillemets simples
+		else if (input[i] == '\'') // Preserve single quotes
 		{
-			result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet ouvrant
+			tmp = ft_substr(input, i++, 1); // Extract opening single quote
+			result = ft_strjoin_free(result, tmp); // Append to result
+			free(tmp);
 			start = i;
 			while (input[i] && input[i] != '\'')
 				i++;
-			tmp = ft_substr(input, start, i - start); // Extrait le contenu entre les guillemets
+			tmp = ft_substr(input, start, i - start); // Extract content inside quotes
 			result = ft_strjoin_free(result, tmp);
 			free(tmp);
 			if (input[i] == '\'')
-				result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet fermant
+			{
+				tmp = ft_substr(input, i++, 1); // Extract closing single quote
+				result = ft_strjoin_free(result, tmp); // Append to result
+				free(tmp);
+			}
 		}
 		else if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
 		{
@@ -83,7 +99,9 @@ char	*expander(char *input, t_data *data)
 		}
 		else if (input[i] == '$' && (!input[i + 1] || input[i + 1] == ' ')) // Gère "$" seul
 		{
-			result = ft_strjoin_free(result, ft_strdup("$"));
+			char *single_dollar = ft_strdup("$"); // Create a temporary string for "$"
+			result = ft_strjoin_free(result, single_dollar); // Append to result
+			free(single_dollar); // Free the temporary string
 			i++;
 		}
 		else
