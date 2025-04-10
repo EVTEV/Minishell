@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_processes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
 /*   Updated: 2025/04/08 08:09:12 by lowatell         ###   ########.fr       */
@@ -58,6 +58,12 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 		else if (pids[i] == 0)
 		{
 			setup_child_pipes(data, i, cmd_count);
+			if (setup_redirections(current->redirections) != 0) // Handle redirection errors
+			{
+				ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
+				close_all_pipes(data, pipe_count);
+				exit(1); // Exit child process with error
+			}
 			if (!current->args || !current->args[0])
 			{
 				ft_putstr_fd("minishell: : command not found\n", STDERR_FILENO);
@@ -73,10 +79,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				ft_putstr_fd(": command not found\n", STDERR_FILENO);
 				close_all_pipes(data, pipe_count);
 				free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
-				if (data->cmd_list)
-					exit_clean(data, NULL, 127);
-				else
-					exit(127);
+				exit(127);
 			}
 			execute_command_in_child(current, data, tmp);
 			close_all_pipes(data, pipe_count);

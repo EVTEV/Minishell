@@ -64,7 +64,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	if (setup_redirections(cmd->redirections) != 0) // Configure les redirections avant de vérifier la commande
 	{
 		ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
-		return (1);
+		return (1); // Return error for this command but allow pipeline to continue
 	}
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)

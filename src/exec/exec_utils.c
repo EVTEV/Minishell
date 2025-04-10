@@ -60,7 +60,7 @@ int	is_builtin(char *cmd)
 int	execute_builtin(t_cmd *cmd, t_data *data)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (1);
+		return (0);
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (ft_echo(ft_tablen(cmd->args), cmd->args));
 	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
