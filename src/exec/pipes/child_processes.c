@@ -20,7 +20,7 @@ int	execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 	if (setup_redirections(cmd->redirections) != 0)
 		exit_clean(data, NULL, 0);
 	if (is_builtin(cmd->args[0]))
-		exit(execute_builtin(cmd, data));
+		exit_clean(data, NULL, (execute_builtin(cmd, data)));
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)
 	{

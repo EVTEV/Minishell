@@ -33,14 +33,15 @@ static void	free_data_members(t_data *data)
 /* Nettoie et libère toutes les ressources avant de quitter le programme */
 void	exit_clean(t_data *data, t_token *tokens, int i)
 {
-	if (!data)
-		exit(2);
+	if (!data && !tokens)
+		exit(i);
 	if (tokens)
 	{
 		free_token(tokens);
 		tokens = NULL;
 	}
-	free_data_members(data);
+	if (data)
+		free_data_members(data);
 	if (data->pipes)
 	{
 		if (data->cmd_list)
@@ -48,7 +49,11 @@ void	exit_clean(t_data *data, t_token *tokens, int i)
 		else
 			free_pipes(data, 0);
 	}
-	free(data);
+	if (data)
+	{
+		free(data);
+		data = NULL; // Prevent double free by nullifying the pointer
+	}
 	exit(i);
 }
 
