@@ -61,6 +61,11 @@ static int	handle_quotes(char *input, int i, char quote)
 	i++;
 	while (input[i] && input[i] != quote)
 		i++;
+	if (!input[i]) // If the quote is not closed
+	{
+		ft_putstr_fd("minishell: syntax error: unclosed quote\n", STDERR_FILENO);
+		return (-1); // Return -1 to indicate an error
+	}
 	return (i);
 }
 
@@ -107,6 +112,12 @@ t_token	*lexer(char *input)
 		{
 			start = i++;
 			i = handle_quotes(input, i, input[start]);
+			if (i == -1) // If an error occurred due to unclosed quotes
+			{
+				free(current_part); // Free any partially constructed token
+				free_token(tokens); // Free the token list
+				return (NULL);
+			}
 			char *quoted_part = ft_substr(input, start, i - start + 1); // Include quotes
 			current_part = concatenate_parts(current_part, quoted_part);
 			i++;

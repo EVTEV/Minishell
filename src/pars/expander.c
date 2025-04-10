@@ -29,10 +29,10 @@ char	*expander(char *input, t_data *data)
 
 	while (input[i])
 	{
-		if (input[i] == '"') // Conserve les guillemets doubles
+		if (input[i] == '"') // Handle double quotes
 		{
 			tmp = ft_substr(input, i++, 1);
-			result = ft_strjoin_free(result, tmp); // Ajoute le guillemet ouvrant
+			result = ft_strjoin_free(result, tmp);
 			free(tmp);
 			start = i;
 			while (input[i] && input[i] != '"')
@@ -58,6 +58,12 @@ char	*expander(char *input, t_data *data)
 					free(char_to_add); // Free the temporary string
 				}
 			}
+			if (!input[i]) // If closing quote is missing
+			{
+				ft_putstr_fd("minishell: syntax error: unclosed double quote\n", STDERR_FILENO);
+				free(result);
+				return (NULL);
+			}
 			if (input[i] == '"')
 			{
 				char *closing_quote = ft_substr(input, i++, 1); // Extract closing quote
@@ -65,7 +71,7 @@ char	*expander(char *input, t_data *data)
 				free(closing_quote); // Free the temporary string
 			}
 		}
-		else if (input[i] == '\'') // Preserve single quotes
+		else if (input[i] == '\'') // Handle single quotes
 		{
 			tmp = ft_substr(input, i++, 1); // Extract opening single quote
 			result = ft_strjoin_free(result, tmp); // Append to result
@@ -73,6 +79,12 @@ char	*expander(char *input, t_data *data)
 			start = i;
 			while (input[i] && input[i] != '\'')
 				i++;
+			if (!input[i]) // If closing quote is missing
+			{
+				ft_putstr_fd("minishell: syntax error: unclosed single quote\n", STDERR_FILENO);
+				free(result);
+				return (NULL);
+			}
 			tmp = ft_substr(input, start, i - start); // Extract content inside quotes
 			result = ft_strjoin_free(result, tmp);
 			free(tmp);

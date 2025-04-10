@@ -63,6 +63,13 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				close_all_pipes(data, pipe_count);
 				exit_clean(data, NULL, 0); // Exit child process with error
 			}
+			if (is_builtin(current->args[0]))
+			{
+				int result = execute_builtin_with_redirections(current, data);
+				close_all_pipes(data, pipe_count);
+				free_pipes(data, pipe_count); // Free pipes after built-in execution
+				exit_clean(data, NULL, result);
+			}
 			if (!current->args || !current->args[0])
 			{
 				ft_putstr_fd("minishell: : command not found\n", STDERR_FILENO);

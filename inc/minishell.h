@@ -145,6 +145,7 @@ int		is_directory(const char *path);
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_pids(pid_t *pids);
 void	free_token(t_token *tokens);
+void	free_redirections(t_redir *redirections);
 // ---------- get_value.c ------------ //
 char	*get_value(t_env env, char *name);
 void	update_value(t_env *env, char *name, char *value);

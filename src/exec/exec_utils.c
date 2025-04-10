@@ -105,6 +105,12 @@ int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 	}
 	int result = execute_builtin(cmd, data);
 	restore_std_fds(std_fds); // Restaure les descripteurs après l'exécution
+
+	// Free resources related to the command after execution
+	if (cmd->redirections)
+		free_redirections(cmd->redirections); // Ensure redirections are freed
+	cmd->redirections = NULL;
+
 	return (result);
 }
 

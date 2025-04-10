@@ -26,8 +26,9 @@ static int	allocate_pipes(t_data *data, int pipe_count)
 		data->pipes[i] = (int *)malloc(sizeof(int) * 2);
 		if (!data->pipes[i])
 		{
-			free_pipes(data, i); // Libère les pipes déjà alloués
-			free_pipes(data, pipe_count); // Libère tous les pipes en cas d'erreur
+			free_pipes(data, i); // Free only the pipes allocated so far
+			free(data->pipes);   // Free the main array to avoid memory leak
+			data->pipes = NULL;  // Nullify the pointer to prevent dangling references
 			return (1);
 		}
 		i++;
