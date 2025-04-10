@@ -6,11 +6,29 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/10 23:19:56 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/10 23:29:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
+#include <dirent.h> // For directory operations
+
+/* Supprime tous les fichiers commençant par .minishell_ */
+static void	delete_temp_files(void)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+
+	dir = opendir(".");
+	if (!dir)
+		return ;
+	while ((entry = readdir(dir)))
+	{
+		if (ft_strncmp(entry->d_name, ".minishell_", 11) == 0)
+			unlink(entry->d_name); // Supprime le fichier
+	}
+	closedir(dir);
+}
 
 /* Libère tous les membres de la structure data */
 static void	free_data_members(t_data *data)
@@ -33,6 +51,7 @@ static void	free_data_members(t_data *data)
 /* Nettoie et libère toutes les ressources avant de quitter le programme */
 void	exit_clean(t_data *data, t_token *tokens, int i)
 {
+	delete_temp_files(); // Supprime les fichiers temporaires
 	if (!data && !tokens)
 		exit(i);
 	if (tokens)
