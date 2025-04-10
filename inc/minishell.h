@@ -140,6 +140,7 @@ int		setup_redirections(t_redir *redirections);
 // --------------- Utils.c --------------- //
 char	*ft_strjoin_free(char *s1, char *s2);
 char	**ft_tabjoin(char **tab, char *new_elem);
+int		is_directory(const char *path);
 // ---------- free_cmd.c ------------ //
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_pids(pid_t *pids);
@@ -157,5 +158,7 @@ t_data	*init_data(int ac, char **av, char **env);
 // ---------- print_tab.c ------------ //
 void	print_tab(char **tab);
 void	print_list(t_env *env);
+
+
 
 #endif

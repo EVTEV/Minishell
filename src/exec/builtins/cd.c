@@ -18,8 +18,8 @@ static int	handle_cd_error(char *path)
 	ft_putstr_fd("minishell: cd: ", 2);
 	if (access(path, F_OK) != 0)
 		ft_putstr_fd("No such file or directory\n", 2);
-	else if (access(path, X_OK) != 0)
-		ft_putstr_fd("Permission denied\n", 2);
+	//else if (access(path, X_OK) != 0)
+	//	ft_putstr_fd("Permission denied\n", 2);
 	else
 		ft_putstr_fd("Not a directory\n", 2);
 	return (1);

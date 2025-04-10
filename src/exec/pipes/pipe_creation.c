@@ -43,7 +43,7 @@ int	create_pipes(t_data *data, int pipe_count)
 	if (pipe_count <= 0)
 		return (0);
 	if (allocate_pipes(data, pipe_count) != 0)
-		return (1);
+		return (0);
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -51,7 +51,7 @@ int	create_pipes(t_data *data, int pipe_count)
 		{
 			close_all_pipes(data, i); // Ferme les pipes ouverts
 			free_pipes(data, pipe_count); // Libère tous les pipes
-			return (1);
+			return (0);
 		}
 		i++;
 	}

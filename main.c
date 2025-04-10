@@ -27,12 +27,12 @@ int	main(int ac, char **av, char **env)
 		{
 			setup_exec_signals();
 			char *expanded_input = expander(data->input, data);
+			free(data->input);
+			data->input = NULL;
 			t_token *tokens = lexer(expanded_input);
 			if (!tokens)
 			{
 				free(expanded_input);
-				free(data->input);
-				data->input = NULL;
 				continue;
 			}
 			free(expanded_input);

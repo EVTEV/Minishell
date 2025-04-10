@@ -27,7 +27,7 @@ int	ft_tablen(char **tab)
 static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 {
 	if (setup_redirections(cmd->redirections) != 0)
-		exit(1);
+		exit_clean(data, NULL, 1);
 	if (execve(cmd_path, cmd->args, data->env) == -1)
 	{
 		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
@@ -56,14 +56,14 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	{
 		if (setup_redirections(cmd->redirections) != 0) // Configure les redirections même si la commande est vide
 		{
-			ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
+			//ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
 			return (1);
 		}
-		return (0); // Retourne 0 pour indiquer que les redirections ont été configurées
+		return (1); // Retourne 0 pour indiquer que les redirections ont été configurées
 	}
 	if (setup_redirections(cmd->redirections) != 0) // Configure les redirections avant de vérifier la commande
 	{
-		ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
+		//ft_putstr_fd("minishell: error setting up redirections\n", STDERR_FILENO);
 		return (1); // Return error for this command but allow pipeline to continue
 	}
 	cmd_path = find_command_path(cmd->args[0], data);
@@ -73,6 +73,14 @@ int	execute_external(t_cmd *cmd, t_data *data)
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 		return (127); // Retourne une erreur mais les redirections sont déjà configurées
+	}
+	if (is_directory(cmd_path)) // Check if the command is a directory
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
+		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+		free(cmd_path);
+		return (126); // Return error code for "Is a directory"
 	}
 	pid = fork();
 	if (pid == 0)

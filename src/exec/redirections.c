@@ -96,7 +96,7 @@ int	setup_redirections(t_redir *redirections)
 
 	// Crée les fichiers de redirection avant de configurer les redirections
 	if (create_redirection_files(redirections) != 0)
-		return (-1);
+		return (1); // Return 1 to indicate an error but allow pipeline to continue
 
 	while (redirections)
 	{
@@ -110,18 +110,18 @@ int	setup_redirections(t_redir *redirections)
 		{
 			int	fd_in;
 			if (handle_heredoc(redirections->file, &fd_in) != 0)
-				return (-1);
+				return (1); // Return 1 to indicate an error but allow pipeline to continue
 			if (dup2(fd_in, STDIN_FILENO) == -1)
 			{
 				perror("dup2");
 				close(fd_in);
-				return (-1);
+				return (1); // Return 1 to indicate an error but allow pipeline to continue
 			}
 			close(fd_in);
 		}
 		if (result == -1)
-			return (-1); // Arrête immédiatement en cas d'erreur
+			return (1); // Return 1 to indicate an error but allow pipeline to continue
 		redirections = redirections->next;
 	}
-	return (result);
+	return (0);
 }
