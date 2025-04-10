@@ -87,7 +87,14 @@ t_token	*lexer(char *input)
 
 	while (input && input[i])
 	{
-		if (input[i] == ' ' || input[i] == '\t')
+		if (input[i] == '\\' && input[i + 1]) // Handle escaped characters
+		{
+			start = ++i; // Skip the backslash
+			i++;
+			char *escaped_part = ft_substr(input, start, 1); // Extract the escaped character
+			current_part = concatenate_parts(current_part, escaped_part);
+		}
+		else if (input[i] == ' ' || input[i] == '\t')
 		{
 			if (current_part)
 			{
