@@ -1,9 +1,43 @@
 #include "../../inc/minishell.h"
 
+// Forward declaration for concatenate_parts
+static char	*concatenate_parts(char *part1, char *part2);
+
 static void	add_token(t_token **tokens, char *value, int type)
 {
 	t_token	*new;
 	t_token	*tmp;
+
+	// Remove quotes for TOKEN_WORD and handle concatenation of quoted parts
+	if (type == TOKEN_WORD && value)
+	{
+		char *processed = NULL;
+		size_t i = 0, len = ft_strlen(value);
+
+		while (i < len)
+		{
+			if (value[i] == '\'' || value[i] == '\"')
+			{
+				char quote = value[i++];
+				size_t start = i;
+				while (i < len && value[i] != quote)
+					i++;
+				char *quoted_part = ft_substr(value, start, i - start);
+				processed = concatenate_parts(processed, quoted_part);
+				i++; // Skip closing quote
+			}
+			else
+			{
+				size_t start = i;
+				while (i < len && value[i] != '\'' && value[i] != '\"')
+					i++;
+				char *unquoted_part = ft_substr(value, start, i - start);
+				processed = concatenate_parts(processed, unquoted_part);
+			}
+		}
+		free(value);
+		value = processed;
+	}
 
 	new = malloc(sizeof(t_token));
 	if (!new)
@@ -66,64 +100,50 @@ t_token	*lexer(char *input)
 		{
 			start = i++;
 			i = handle_quotes(input, i, input[start]);
-			char *quoted_part = ft_substr(input, start + 1, i - start - 1); // Exclude quotes
+			char *quoted_part = ft_substr(input, start, i - start + 1); // Include quotes
 			current_part = concatenate_parts(current_part, quoted_part);
 			i++;
 		}
-		else if (input[i] == '|')
+		else if ((input[i] == '|' || input[i] == '<' || input[i] == '>') && 
+		         (!current_part || current_part[0] != '\'' || current_part[0] != '\"'))
 		{
 			if (current_part)
 			{
 				add_token(&tokens, current_part, TOKEN_WORD);
 				current_part = NULL;
 			}
-			add_token(&tokens, ft_strdup("|"), TOKEN_PIPE);
-			i++;
-		}
-		else if (input[i] == '>' && input[i + 1] == '>')
-		{
-			if (current_part)
+			if (input[i] == '>' && input[i + 1] == '>')
 			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
+				add_token(&tokens, ft_strdup(">>"), TOKEN_REDIR_APPEND);
+				i += 2;
 			}
-			add_token(&tokens, ft_strdup(">>"), TOKEN_REDIR_APPEND);
-			i += 2;
-		}
-		else if (input[i] == '>')
-		{
-			if (current_part)
+			else if (input[i] == '<' && input[i + 1] == '<')
 			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
+				add_token(&tokens, ft_strdup("<<"), TOKEN_REDIR_HEREDOC);
+				i += 2;
 			}
-			add_token(&tokens, ft_strdup(">"), TOKEN_REDIR_OUT);
-			i++;
-		}
-		else if (input[i] == '<' && input[i + 1] == '<')
-		{
-			if (current_part)
+			else if (input[i] == '>')
 			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
+				add_token(&tokens, ft_strdup(">"), TOKEN_REDIR_OUT);
+				i++;
 			}
-			add_token(&tokens, ft_strdup("<<"), TOKEN_REDIR_HEREDOC);
-			i += 2;
-		}
-		else if (input[i] == '<')
-		{
-			if (current_part)
+			else if (input[i] == '<')
 			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
+				add_token(&tokens, ft_strdup("<"), TOKEN_REDIR_IN);
+				i++;
 			}
-			add_token(&tokens, ft_strdup("<"), TOKEN_REDIR_IN);
-			i++;
+			else if (input[i] == '|')
+			{
+				add_token(&tokens, ft_strdup("|"), TOKEN_PIPE);
+				i++;
+			}
 		}
 		else
 		{
 			start = i;
-			while (input[i] && input[i] != ' ' && input[i] != '\t' && input[i] != '\'' && input[i] != '\"' && input[i] != '|' && input[i] != '>' && input[i] != '<')
+			while (input[i] && input[i] != ' ' && input[i] != '\t' && 
+			       input[i] != '\'' && input[i] != '\"' && 
+			       input[i] != '|' && input[i] != '>' && input[i] != '<')
 				i++;
 			char *unquoted_part = ft_substr(input, start, i - start);
 			current_part = concatenate_parts(current_part, unquoted_part);

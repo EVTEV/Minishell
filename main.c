@@ -27,6 +27,7 @@ int	main(int ac, char **av, char **env)
 		{
 			setup_exec_signals();
 			char *expanded_input = expander(data->input, data);
+			printf("Expanded input: %s\n", expanded_input); // Ajout du print
 			t_token *tokens = lexer(expanded_input);
 			if (!tokens)
 			{

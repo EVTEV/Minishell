@@ -29,30 +29,20 @@ char	*expander(char *input, t_data *data)
 
 	while (input[i])
 	{
-		if (input[i] == '"') // Handle double-quoted strings
+		if (input[i] == '"') // Conserve les guillemets doubles
 		{
-			start = ++i; // Skip the opening double quote
+			result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet ouvrant
+			start = i;
 			while (input[i] && input[i] != '"')
 			{
-				if (input[i] == '\'') // Preserve single-quoted strings inside double quotes
-				{
-					int single_start = ++i; // Skip the opening single quote
-					while (input[i] && input[i] != '\'')
-						i++;
-					tmp = ft_substr(input, single_start, i - single_start); // Extract single-quoted content
-					result = ft_strjoin_free(result, tmp);
-					free(tmp);
-					if (input[i] == '\'')
-						i++; // Skip the closing single quote
-				}
-				else if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
+				if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
 				{
 					tmp = expand_variable(&input[i], data->env_list, &len);
 					result = ft_strjoin_free(result, tmp);
 					free(tmp);
 					i += len;
 				}
-				else if (input[i] == '$' && input[i + 1] == '?') // Handle "$?" (exit status)
+				else if (input[i] == '$' && input[i + 1] == '?') // Gère "$?" (exit status)
 				{
 					tmp = ft_itoa(data->exit_status);
 					result = ft_strjoin_free(result, tmp);
@@ -60,21 +50,22 @@ char	*expander(char *input, t_data *data)
 					i += 2;
 				}
 				else
-					result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Append other characters
+					result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute les autres caractères
 			}
 			if (input[i] == '"')
-				i++; // Skip the closing double quote
+				result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet fermant
 		}
-		else if (input[i] == '\'') // Preserve single-quoted strings as-is
+		else if (input[i] == '\'') // Conserve les guillemets simples
 		{
-			start = ++i; // Skip the opening single quote
+			result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet ouvrant
+			start = i;
 			while (input[i] && input[i] != '\'')
 				i++;
-			tmp = ft_substr(input, start, i - start); // Extract single-quoted content
+			tmp = ft_substr(input, start, i - start); // Extrait le contenu entre les guillemets
 			result = ft_strjoin_free(result, tmp);
 			free(tmp);
 			if (input[i] == '\'')
-				i++; // Skip the closing single quote
+				result = ft_strjoin_free(result, ft_substr(input, i++, 1)); // Ajoute le guillemet fermant
 		}
 		else if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
 		{
@@ -83,14 +74,14 @@ char	*expander(char *input, t_data *data)
 			free(tmp);
 			i += len;
 		}
-		else if (input[i] == '$' && input[i + 1] == '?') // Handle "$?" (exit status)
+		else if (input[i] == '$' && input[i + 1] == '?') // Gère "$?" (exit status)
 		{
 			tmp = ft_itoa(data->exit_status);
 			result = ft_strjoin_free(result, tmp);
 			free(tmp);
 			i += 2;
 		}
-		else if (input[i] == '$' && (!input[i + 1] || input[i + 1] == ' ')) // Handle standalone "$"
+		else if (input[i] == '$' && (!input[i + 1] || input[i + 1] == ' ')) // Gère "$" seul
 		{
 			result = ft_strjoin_free(result, ft_strdup("$"));
 			i++;
