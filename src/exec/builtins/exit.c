@@ -51,3 +51,48 @@ void	exit_clean(t_data *data, t_token *tokens, int i)
 	free(data);
 	exit(i);
 }
+
+/* Vérifie si une chaîne est un argument numérique valide */
+static int	is_numeric_argument(char *arg)
+{
+	int	i = 0;
+
+	if (!arg || !*arg)
+		return (0);
+	if (arg[i] == '+' || arg[i] == '-')
+		i++;
+	while (arg[i])
+	{
+		if (!ft_isdigit(arg[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+/* Gère la commande exit */
+void	ft_exit(char **args, t_data *data)
+{
+	int	exit_code;
+
+	ft_putstr_fd("exit\n", 1);
+	if (!args[1]) // Pas d'argument
+		exit_clean(data, NULL, data->exit_status);
+	if (!is_numeric_argument(args[1])) // Argument non numérique
+	{
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(args[1], 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
+		exit_clean(data, NULL, 2);
+	}
+	if (args[2]) // Trop d'arguments
+	{
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		data->exit_status = 1; // Set exit status to 1
+		return ;
+	}
+	exit_code = ft_atoi(args[1]) % 256; // Calculer le code de sortie
+	if (exit_code < 0)
+		exit_code += 256; // Ajuster pour les valeurs négatives
+	exit_clean(data, NULL, exit_code);
+}

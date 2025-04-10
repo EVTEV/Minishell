@@ -74,7 +74,10 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		exit_clean(data, 0, 0);
+	{
+		ft_exit(cmd->args, data); // Pass arguments to the exit function
+		return (1); // This line won't be reached as ft_exit exits the program
+	}
 	else
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -85,7 +88,7 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 		}
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	}
-	return (1);
+	return (0);
 }
 
 /* Exécute une commande interne avec gestion des redirections */

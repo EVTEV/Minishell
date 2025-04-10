@@ -91,6 +91,7 @@ int		ft_cd(char **av, t_env *env);
 int		ft_echo(int ac, char **av);
 // ---------- exit.c ------------ //
 void    exit_clean(t_data *data, t_token *tokens, int i);
+void	ft_exit(char **args, t_data *data);
 // ---------- export.c ------------ //
 int		ft_export(char **args, t_env **env);
 // ---------- export_utils.c ------------ //
