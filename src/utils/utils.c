@@ -6,11 +6,33 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 17:53:33 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 17:53:41 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:39:44 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+
+int	ft_isspace(char *s)
+{
+	int		i;
+
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] && s[i] == ' ')
+	{
+		i++;
+	}
+	if (s[i] == '\0')
+	{
+		return (1);
+	}
+	else
+	{
+		return (0);
+	}
+	return (0);
+}
 
 /* Vérifie si un chemin est un répertoire */
 int	is_directory(const char *path)

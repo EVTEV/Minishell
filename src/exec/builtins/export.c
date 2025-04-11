@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 17:30:42 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:48:59 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static int	handle_env_var(t_env **env, char *name, char *value)
 		existing = existing->next;
 	if (existing)
 		update_value(*env, name, value);
-	else
-		add_value(env, name, value);
+	else if (!add_value(env, name, value))
+		return (1); // Return error if malloc fails
 	return (0);
 }
 
@@ -44,9 +44,15 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	if (is_valid_identifier(name))
 	{
 		if (*value)
-			handle_env_var(env, name, value);
+		{
+			if (handle_env_var(env, name, value))
+				return (*equal_sign = '=', 1); // Handle malloc failure
+		}
 		else
-			handle_env_var(env, name, "");
+		{
+			if (handle_env_var(env, name, ""))
+				return (*equal_sign = '=', 1); // Handle malloc failure
+		}
 		return (*equal_sign = '=', 0);
 	}
 	else

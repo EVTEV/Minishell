@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 17:55:04 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:44:51 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,12 @@ int	main(int ac, char **av, char **env)
 		data->input = read_input(data);
 		if (data->input)
 		{
+			if (ft_isspace(data->input))
+			{
+				free(data->input);
+				data->input = NULL;
+				continue;
+			}
 			setup_exec_signals();
 			char *expanded_input = expander(data->input, data);
 			free(data->input);
@@ -46,9 +52,11 @@ int	main(int ac, char **av, char **env)
 			if (!tokens)
 			{
 				free(expanded_input);
-				continue;
+				expanded_input = NULL;
+				continue ;
 			}
 			free(expanded_input);
+			expanded_input = NULL;
 			data->cmd_list = parser(tokens);
 			if (!data->cmd_list)
 			{

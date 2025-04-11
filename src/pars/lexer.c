@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 14:28:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 15:56:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:46:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,10 @@ static char	*process_value(char *value)
 		else
 			processed = process_unquoted_part(value, &i, len, processed);
 		if (!processed)
-			return (NULL);
+			return (free(value), value = NULL, NULL);
 	}
 	free(value);
+	value = NULL;
 	return (processed);
 }
 
@@ -91,9 +92,15 @@ static t_token	*create_new_token(char *value, int type)
 	if (!new)
 	{
 		free(value);
+		value = NULL;
 		return (NULL);
 	}
-	new->value = value;
+	new->value = ft_strdup(value);
+	if (!new->value)
+	{
+		free(new);
+		return (NULL);
+	}
 	new->type = type;
 	new->next = NULL;
 	return (new);
@@ -127,7 +134,11 @@ static void	add_token(t_token **tokens, char *value, int type)
 	}
 	new = create_new_token(value, type);
 	if (!new)
+	{
+		free(value);
+		value = NULL;
 		return ;
+	}
 	append_token(tokens, new);
 }
 
@@ -402,7 +413,9 @@ static int	finalize_tokens(char **current_part, t_token **tokens)
 		add_token(tokens, *current_part, TOKEN_WORD);
 		if (!*tokens)
 		{
-			free(*current_part);
+			if (*current_part)
+				free(*current_part);
+			*current_part = NULL;
 			free_token(*tokens);
 			return (-1);
 		}

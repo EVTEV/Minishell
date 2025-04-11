@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 17:03:03 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:47:36 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,20 @@ void	update_value(t_env *env, char *name, char *value)
 }
 
 /* Ajoute une nouvelle variable d'environnement à la liste */
-void	add_value(t_env **env, char *name, char *value)
+int	add_value(t_env **env, char *name, char *value)
 {
 	t_env	*new;
 	t_env	*current;
 
 	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
-		return ;
+		return (0);
 	new->name = ft_strdup(name);
 	if (!new->name)
-		return (free(new));
+		return (free(new), 0);
 	new->value = ft_strdup(value);
 	if (!new->value)
-		return (free(new->name), free(new));
+		return (free(new->name), free(new), 0);
 	new->next = NULL;
 	if (*env == NULL)
 		*env = new;
@@ -75,4 +75,5 @@ void	add_value(t_env **env, char *name, char *value)
 			current = current->next;
 		current->next = new;
 	}
+	return (1);
 }
