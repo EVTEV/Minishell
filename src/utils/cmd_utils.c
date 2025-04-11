@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 14:13:15 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:54:18 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	free_tab(char **tab)
 	int	i;
 
 	if (!tab)
-		return;
+		return ;
 	i = 0;
 	while (tab[i])
 	{

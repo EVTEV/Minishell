@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 12:15:36 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:10:27 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,15 @@ static void	create_env_node(t_env **env_list, char *env_var)
 	{
 		*equal_sign = '\0';
 		name = ft_strdup(env_var);
+		if (!name)
+			return;
 		value = ft_strdup(equal_sign + 1);
+		if (!value)
+		{
+			free(name);
+			*equal_sign = '=';
+			return;
+		}
 		*equal_sign = '=';
 		if (name && value)
 			add_value(env_list, name, value);
@@ -76,13 +84,44 @@ t_env	*env_to_list(char **env)
 	return (env_list);
 }
 
+static char	*join_path_and_cmd(char *path, char *cmd)
+{
+	char	*tmp;
+	char	*cmd_path;
+
+	tmp = ft_strjoin(path, "/");
+	if (!tmp)
+		return (NULL);
+	cmd_path = ft_strjoin(tmp, cmd);
+	free(tmp);
+	if (!cmd_path)
+		return (NULL);
+	return (cmd_path);
+}
+
+static char	*search_command_in_paths(char **paths, char *cmd)
+{
+	char	*cmd_path;
+	int		i;
+
+	i = 0;
+	while (paths[i])
+	{
+		cmd_path = join_path_and_cmd(paths[i], cmd);
+		if (!cmd_path)
+			return (free_tab(paths), NULL);
+		if (access(cmd_path, X_OK) == 0)
+			return (free_tab(paths), cmd_path);
+		free(cmd_path);
+		i++;
+	}
+	return (free_tab(paths), NULL);
+}
+
 /* Trouve le chemin complet d'une commande dans le PATH */
 char	*find_command_path(char *cmd, t_data *data)
 {
 	char	**paths;
-	char	*tmp;
-	char	*cmd_path;
-	int		i;
 
 	if (!cmd || !data || !data->path)
 		return (NULL);
@@ -91,28 +130,7 @@ char	*find_command_path(char *cmd, t_data *data)
 	paths = ft_split(data->path + 5, ':');
 	if (!paths)
 		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		tmp = ft_strjoin(paths[i], "/");
-		if (!tmp)
-		{
-			free_tab(paths);
-			return (NULL);
-		}
-		cmd_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (!cmd_path)
-		{
-			free_tab(paths);
-			return (NULL);
-		}
-		if (access(cmd_path, X_OK) == 0)
-			return (free_tab(paths), cmd_path);
-		free(cmd_path);
-		i++;
-	}
-	return (free_tab(paths), NULL);
+	return (search_command_in_paths(paths, cmd));
 }
 
 /* Initialise la structure data avec les paramètres du programme */
@@ -135,7 +153,8 @@ t_data	*init_data(int ac, char **av, char **env)
 		return (free_tab(data->env), free(data), NULL);
 	data->path = get_path(data->env);
 	if (!data->path)
-		return (free_tab(data->env), free_env_copy(data->env_list), free(data), NULL);
+		return (free_tab(data->env),
+			free_env_copy(data->env_list), free(data), NULL);
 	data->cmd_list = NULL;
 	data->exit_status = 0;
 	data->pipes = NULL;

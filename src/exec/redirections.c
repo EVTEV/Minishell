@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 12:14:46 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:53:05 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	handle_output_redirection(char *filename, int append)
 		perror(filename);
 		return (-1);
 	}
-	if (dup2(fd, STDOUT_FILENO) == -1) // Redirige STDOUT vers le fichier
+	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
 		perror("dup2");
 		close(fd);
@@ -57,77 +57,90 @@ static int	handle_output_redirection(char *filename, int append)
 	return (0);
 }
 
-/* Crée les fichiers pour les redirections de sortie (TOKEN_REDIR_OUT et TOKEN_REDIR_APPEND) */
-static int	create_redirection_files(t_redir *redirections)
+/* Ouvre un fichier pour une redirection donnée */
+static int	open_redirection_file(char *file, int flags)
 {
 	int	fd;
+
+	fd = open(file, flags, 0644);
+	if (fd == -1)
+		perror(file);
+	else
+		close(fd);
+	return (fd);
+}
+
+/* Crée les fichiers pour les redirections de sortie */
+static int	create_redirection_files(t_redir *redirections)
+{
+	int	flags;
 
 	while (redirections)
 	{
 		if (redirections->type == TOKEN_REDIR_OUT)
-		{
-			fd = open(redirections->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			if (fd == -1)
-			{
-				perror(redirections->file);
-				return (-1);
-			}
-			close(fd);
-		}
+			flags = O_CREAT | O_WRONLY | O_TRUNC;
 		else if (redirections->type == TOKEN_REDIR_APPEND)
+			flags = O_CREAT | O_WRONLY | O_APPEND;
+		else
 		{
-			fd = open(redirections->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			if (fd == -1)
-			{
-				perror(redirections->file);
-				return (-1);
-			}
-			close(fd);
+			redirections = redirections->next;
+			continue ;
 		}
+		if (open_redirection_file(redirections->file, flags) == -1)
+			return (-1);
 		redirections = redirections->next;
 	}
+	return (0);
+}
+
+/* Gère la redirection heredoc */
+static int	handle_heredoc_redirection(t_redir *redirection)
+{
+	int		fd_in;
+	char	*heredoc_file;
+
+	if (handle_heredoc(redirection->file, &heredoc_file) != 0)
+		return (1);
+	fd_in = open(heredoc_file, O_RDONLY);
+	free(heredoc_file);
+	if (fd_in == -1)
+	{
+		perror("open");
+		return (1);
+	}
+	if (dup2(fd_in, STDIN_FILENO) == -1)
+	{
+		perror("dup2");
+		close(fd_in);
+		return (1);
+	}
+	close(fd_in);
+	return (0);
+}
+
+/* Gère une redirection spécifique */
+static int	handle_single_redirection(t_redir *redirection)
+{
+	if (redirection->type == TOKEN_REDIR_IN)
+		return (handle_input_redirection(redirection->file));
+	else if (redirection->type == TOKEN_REDIR_OUT)
+		return (handle_output_redirection(redirection->file, 0));
+	else if (redirection->type == TOKEN_REDIR_APPEND)
+		return (handle_output_redirection(redirection->file, 1));
+	else if (redirection->type == TOKEN_REDIR_HEREDOC)
+		return (handle_heredoc_redirection(redirection));
 	return (0);
 }
 
 /* Configure les redirections pour une commande */
 int	setup_redirections(t_redir *redirections)
 {
-	int	result = 0;
-
-	// Crée les fichiers de redirection avant de configurer les redirections
 	if (create_redirection_files(redirections) != 0)
-		return (1); // Return 1 to indicate an error but allow pipeline to continue
-
+		return (1);
 	while (redirections)
 	{
-		if (redirections->type == TOKEN_REDIR_IN)
-			result = handle_input_redirection(redirections->file);
-		else if (redirections->type == TOKEN_REDIR_OUT)
-			result = handle_output_redirection(redirections->file, 0);
-		else if (redirections->type == TOKEN_REDIR_APPEND)
-			result = handle_output_redirection(redirections->file, 1);
-		else if (redirections->type == TOKEN_REDIR_HEREDOC)
-		{
-			char *heredoc_file;
-			if (handle_heredoc(redirections->file, &heredoc_file) != 0)
-				return (1); // Return 1 to indicate an error but allow pipeline to continue
-			int fd_in = open(heredoc_file, O_RDONLY);
-			free(heredoc_file); // Free the temporary file path after opening
-			if (fd_in == -1)
-			{
-				perror("open");
-				return (1); // Return 1 to indicate an error but allow pipeline to continue
-			}
-			if (dup2(fd_in, STDIN_FILENO) == -1)
-			{
-				perror("dup2");
-				close(fd_in);
-				return (1); // Return 1 to indicate an error but allow pipeline to continue
-			}
-			close(fd_in);
-		}
-		if (result == -1)
-			return (1); // Return 1 to indicate an error but allow pipeline to continue
+		if (handle_single_redirection(redirections) == -1)
+			return (1);
 		redirections = redirections->next;
 	}
 	return (0);

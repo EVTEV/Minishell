@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 14:31:27 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:55:04 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	main(int ac, char **av, char **env)
 			}
 			free(expanded_input);
 			data->cmd_list = parser(tokens);
-			if (!data->cmd_list) // Erreur de syntaxe ou interruption
+			if (!data->cmd_list)
 			{
 				if (data->input)
 				{
@@ -59,10 +59,10 @@ int	main(int ac, char **av, char **env)
 				}
 				free_token(tokens);
 				tokens = NULL;
-				data->exit_status = 2; // Code de retour pour erreur de syntaxe
+				data->exit_status = 2;
 				continue;
 			}
-			if (data->cmd_list && data->cmd_list->interrupted) // Si le heredoc a été interrompu
+			if (data->cmd_list && data->cmd_list->interrupted)
 			{
 				free_cmd_list(data->cmd_list);
 				data->cmd_list = NULL;
@@ -70,8 +70,8 @@ int	main(int ac, char **av, char **env)
 				data->input = NULL;
 				free_token(tokens);
 				tokens = NULL;
-				data->exit_status = 1; // Code de retour pour interruption
-				continue;
+				data->exit_status = 1;
+				continue ;
 			}
 			if (tokens)
 			{
@@ -83,12 +83,12 @@ int	main(int ac, char **av, char **env)
 				data->exit_status = execute_commands(data);
 				if (data && data->cmd_list)
 				{
-					free_cmd_list(data->cmd_list); // Free the command list after execution
+					free_cmd_list(data->cmd_list);
 					data->cmd_list = NULL;
 				}
 			}
 			else
-				free_cmd_list(data->cmd_list); // Free the command list if execution fails
+				free_cmd_list(data->cmd_list);
 			setup_signals();
 			free(data->input);
 			data->input = NULL;

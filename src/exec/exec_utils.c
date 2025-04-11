@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:17:23 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 17:39:48 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:42:01 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static int	handle_builtin_command(t_cmd *cmd, t_data *data)
 /* Exécute une commande interne */
 int	execute_builtin(t_cmd *cmd, t_data *data)
 {
-	int result;
+	int	result;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (0);
@@ -103,7 +103,9 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 {
 	int	std_fds[2];
+	int	result;
 
+	result = 0;
 	if (save_std_fds(std_fds) != 0)
 		return (1);
 	if (setup_redirections(cmd->redirections) != 0)
@@ -111,12 +113,11 @@ int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 		restore_std_fds(std_fds);
 		return (1);
 	}
-	int result = execute_builtin(cmd, data);
+	result = execute_builtin(cmd, data);
 	restore_std_fds(std_fds);
 	if (cmd->redirections)
 		free_redirections(cmd->redirections);
 	cmd->redirections = NULL;
-
 	return (result);
 }
 
@@ -124,7 +125,9 @@ int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 int	execute_single_command(t_cmd *cmd, t_data *data)
 {
 	int	std_fds[2];
+	int	result;
 
+	result = 0;
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
 	if (save_std_fds(std_fds) != 0)
@@ -134,7 +137,6 @@ int	execute_single_command(t_cmd *cmd, t_data *data)
 		restore_std_fds(std_fds);
 		return (1);
 	}
-	int result;
 	if (is_builtin(cmd->args[0]))
 		result = execute_builtin(cmd, data);
 	else

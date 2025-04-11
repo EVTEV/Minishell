@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/11 17:53:33 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/11 17:53:41 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 /* Vérifie si un chemin est un répertoire */
@@ -5,7 +17,7 @@ int	is_directory(const char *path)
 {
 	struct stat	path_stat;
 
-	if (stat(path, &path_stat) != 0) // Handle inaccessible or non-existent paths
+	if (stat(path, &path_stat) != 0)
 		return (0);
 	return (S_ISDIR(path_stat.st_mode));
 }

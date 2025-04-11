@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:08:16 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/04 10:08:21 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:53:28 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**copy_env(char **env)
 	cpy_env = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!cpy_env)
 		return (NULL);
-	cpy_env[i] = NULL; // Ensure the last element is NULL
+	cpy_env[i] = NULL;
 	i = 0;
 	while (env[i])
 	{
