@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 20:00:16 by acaes             #+#    #+#             */
-/*   Updated: 2025/03/08 17:22:49 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:30:51 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ static char	*ft_copy(const char *s, char c)
 	int		l;	
 
 	if (ft_strncmp(s, "<", 1) == 0 || ft_strncmp(s, "|", 1) == 0
-			|| ft_strncmp(s, ">", 1) == 0 || ft_strncmp(s, ">>", 2) == 0
-			|| ft_strncmp(s, "<<", 2) == 0)
+		|| ft_strncmp(s, ">", 1) == 0 || ft_strncmp(s, ">>", 2) == 0
+		|| ft_strncmp(s, "<<", 2) == 0)
 		return ("");
 	i = 0;
 	l = 0;

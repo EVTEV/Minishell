@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 18:44:51 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:00:11 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,23 @@
 
 int	g_exit_status = 0;
 
-static void	setup_signals(void)
+/* Gère SIGINT dans le parent pour ne pas quitter le shell */
+void	signal_handler_main(int signum)
 {
-	signal(SIGINT, signal_handler_main);
-	signal(SIGQUIT, SIG_IGN);
+	if (signum == SIGINT)
+	{
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		g_exit_status = 130; // Code de sortie pour SIGINT
+	}
+}
+
+void	setup_signals(void)
+{
+	signal(SIGINT, signal_handler_main); // Gérer SIGINT dans le parent
+	signal(SIGQUIT, SIG_IGN); // Ignorer SIGQUIT dans le parent
 }
 
 static void	setup_exec_signals(void)

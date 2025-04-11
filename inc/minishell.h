@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 18:47:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:11:14 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,19 +87,71 @@ typedef struct s_child
 	int				pipe_count;
 }	t_child;
 
-
-// Prototypes des nouvelles fonctions de gestion des signaux
-void				reset_terminal_line(void);
-void				signal_handler_main(int signum);
-void				ft_exec_sig_handler(int sig);
-
 // ==================== Pars ==================== //
 // --------------- Lexer.c --------------- //
 t_token				*lexer(char *input);
+char				*concatenate_parts(char *part1, char *part2);
+char				*process_quoted_part(char *value, size_t *i,
+						size_t len, char *processed);
+char				*process_unquoted_part(char *value,
+						size_t *i, size_t len, char *processed);
+char				*process_value(char *value);
+t_token				*create_new_token(char *value, int type);
+void				append_token(t_token **tokens, t_token *new);
+void				add_token(t_token **tokens, char *value, int type);
+int					handle_quotes(char *input, int i, char quote);
+char				*concatenate_parts(char *part1, char *part2);
+int					handle_escaped_characters(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_whitespace(char **current_part, t_token **tokens);
+int					handle_quotes_in_lexer(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_redirection_append(int *i, t_token **tokens);
+int					handle_redirection_heredoc(int *i, t_token **tokens);
+int					handle_redirection_out(int *i, t_token **tokens);
+int					handle_redirection_in(int *i, t_token **tokens);
+int					handle_redirections(char *input, int *i, t_token **tokens);
+int					handle_pipe(char *input, int *i, t_token **tokens);
+int					handle_special_characters(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_unquoted_part(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_escape_case(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_whitespace_case(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_quote_case(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_special_char_case(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					handle_default_case(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					process_input_char(char *input, int *i,
+						char **current_part, t_token **tokens);
+int					finalize_tokens(char **current_part, t_token **tokens);
+
 // --------------- Parser.c --------------- //
 t_cmd				*parser(t_token *tokens);
 // --------------- Expander.c --------------- //
 char				*expander(char *input, t_data *data);
+char				*handle_empty_dollar(char *result);
+char				*handle_single_quotes(char *input, int *i, char *result);
+char				*process_dollar_in_quotes(char *input, int *i,
+						t_data *data, char *result);
+char				*handle_double_quotes(char *input, int *i,
+						t_data *data, char *result);
+char				*handle_dollar_sign(char *input, int *i,
+						t_data *data, char *result);
+char				*handle_plain_text(char *input, int *i, char *result);
+char				*expand_dollar_variable(char *input, int *i,
+						t_data *data, char *result);
+char				*expand_variable(char *input, t_env *env_list, int *len);
+char				*append_char_to_result(char *result, char *tmp);
+char				*process_double_quotes_content(char *input, int *i,
+						t_data *data, char *result);
+char				*process_single_quotes_content(char *input,
+						int *i, char *result);
+
 // --------------- Pars.c --------------- //
 t_cmd				*parse_input(char *input, t_data *data);
 int					handle_redirection_token(t_cmd *current_cmd,
@@ -121,7 +173,13 @@ int					handle_redirection_file(t_cmd *current_cmd,
 char				*read_input(t_data *data);
 void				save_history(char *input);
 void				load_history(void);
-
+// -------------- Signal.c --------------- //
+void				reset_terminal_line(void);
+void				signal_handler_main(int signum);
+void				ft_exec_sig_handler(int sig);
+void				setup_signals(void);
+void				handle_parent_signals(void);
+void				handle_child_signals(void);
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
 // ---------- cd.c ------------ //
@@ -142,23 +200,31 @@ void				free_env_copy(t_env *env_copy);
 void				sort_env_list(t_env **head);
 void				handle_export_no_value(t_env **env, char *name);
 int					print_sorted_env(t_env *env);
+int					create_env_node(t_env **env_list, char *env_var);
 // ---------- pwd.c ------------ //
 int					ft_pwd(void);
 // ---------- unset.c ------------ //
 int					ft_unset(char **args, t_env **env);
-
 // ------------------ pipes ------------------ //
 // ---------- child_processes.c ------------ //
 int					exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
 int					execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
 int					wait_for_children(pid_t *pids, int cmd_count);
+void				setup_child_pipes(t_data *data, int i, int cmd_count);
+int					handle_fork_error(pid_t *pids, int i,
+						t_data *data, int pipe_count);
+void				handle_command_not_found(t_cmd *current,
+						t_data *data, int pipe_count);
 // ---------- heredoc.c ------------ //
 int					handle_heredoc(char *delimiter, char **heredoc_file);
 // ---------- pipe_creation.c ------------ //
 int					create_pipes(t_data *data, int pipe_count);
 pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
+void				restore_std_fds(int std_fds[2]);
+void				cleanup_execution(t_data *data, pid_t *pids, int pipe_count);
 // ---------- pipe_processes.c ------------ //
 int					exec_pipe(t_data *data, int cmd_count, int pipe_count);
+int					wait_children(pid_t *pids, int cmd_count, int *exit_status);
 // ---------- pipes.c ------------ //
 int					count_commands(t_cmd *cmd_list);
 void				close_all_pipes(t_data *data, int pipe_count);
@@ -172,9 +238,12 @@ int					execute_builtin(t_cmd *cmd, t_data *data);
 int					execute_external(t_cmd *cmd, t_data *data);
 int					execute_single_command(t_cmd *cmd, t_data *data);
 int					execute_commands(t_data *data);
-void				cleanup_heredoc_file(char *heredoc_file);
+int					validate_command(t_cmd *cmd, t_data *data, char **cmd_path);
+int					wait_for_child(pid_t pid);
 // -------------- redirections.c -------------- //
 int					setup_redirections(t_redir *redirections);
+int					handle_output_redirection(char *filename, int append);
+int					handle_input_redirection(char *filename);
 
 // ==================== Utils ==================== //
 // --------------- Utils.c --------------- //
@@ -182,6 +251,8 @@ char				*ft_strjoin_free(char *s1, char *s2);
 char				**ft_tabjoin(char **tab, char *new_elem);
 int					is_directory(const char *path);
 int					ft_isspace(char *s);
+int					create_tmp_file(char *tmp_file,
+						char **heredoc_file, int *fd);
 // ---------- free_cmd.c ------------ //
 void				free_cmd_list(t_cmd *cmd_list);
 t_cmd				*create_new_command(void);
@@ -198,8 +269,10 @@ char				*get_path(char **env);
 t_env				*env_to_list(char **env);
 char				*find_command_path(char *cmd, t_data *data);
 t_data				*init_data(int ac, char **av, char **env);
+int					handle_malloc_error(char *tmp, int fd);
 // ---------- print_tab.c ------------ //
 void				print_tab(char **tab);
+void				print_invalid_identifier_error(char *name);
 void				print_list(t_env *env);
 
 #endif
