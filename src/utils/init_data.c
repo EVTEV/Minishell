@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 18:47:32 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:53:05 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,43 +35,26 @@ char	*get_path(char **env)
 }
 
 /* Crée un nœud de la liste chaînée pour une variable d'environnement */
-static void	create_env_node(t_env **env_list, char *env_var)
+static int	create_env_node(t_env **env_list, char *env_var)
 {
 	char	*name;
 	char	*value;
 	char	*equal_sign;
 
 	equal_sign = ft_strchr(env_var, '=');
-	if (equal_sign)
-	{
-		*equal_sign = '\0';
-		name = ft_strdup(env_var);
-		if (!name)
-			return;
-		value = ft_strdup(equal_sign + 1);
-		if (!value)
-		{
-			free(name);
-			*equal_sign = '=';
-			return;
-		}
-		*equal_sign = '=';
-		if (name && value)
-		{
-			if (!add_value(env_list, name, value))
-			{
-				free(name);
-				free(value);
-			}
-		}
-		else
-		{
-			if (name)
-				free(name);
-			if (value)
-				free(value);
-		}
-	}
+	if (!equal_sign)
+		return (0);
+	*equal_sign = '\0';
+	name = ft_strdup(env_var);
+	*equal_sign = '=';
+	if (!name)
+		return (1);
+	value = ft_strdup(equal_sign + 1);
+	if (!value)
+		return (free(name), 1);
+	if (!add_value(env_list, name, value))
+		return (free(name), free(value), 1);
+	return (0);
 }
 
 /* Convertit le tableau d'environnement en liste chaînée */
@@ -84,7 +67,11 @@ t_env	*env_to_list(char **env)
 	i = 0;
 	while (env[i])
 	{
-		create_env_node(&env_list, env[i]);
+		if (create_env_node(&env_list, env[i]))
+		{
+			free_env_copy(env_list);
+			return (NULL);
+		}
 		i++;
 	}
 	return (env_list);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 17:11:41 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:47:50 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,7 @@ int					setup_redirections(t_redir *redirections);
 char				*ft_strjoin_free(char *s1, char *s2);
 char				**ft_tabjoin(char **tab, char *new_elem);
 int					is_directory(const char *path);
+int					ft_isspace(char *s);
 // ---------- free_cmd.c ------------ //
 void				free_cmd_list(t_cmd *cmd_list);
 t_cmd				*create_new_command(void);
@@ -190,7 +191,7 @@ void				free_redirections(t_redir *redirections);
 // ---------- get_value.c ------------ //
 char				*get_value(t_env env, char *name);
 void				update_value(t_env *env, char *name, char *value);
-void				add_value(t_env **env, char *name, char *value);
+int					add_value(t_env **env, char *name, char *value);
 // ---------- init_data.c ------------ //
 char				**copy_env(char **env);
 char				*get_path(char **env);
