@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_utils3.c                                     :+:      :+:    :+:   */
+/*   lexer_handler2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:19:37 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:19:42 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:33:34 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	handle_quotes_in_lexer(char *input, int *i,
 		return (free(*current_part), free_token(*tokens), -1);
 	*current_part = concatenate_parts(*current_part, quoted_part);
 	if (!*current_part)
-		return (free_token(*tokens), -1);
+		return (free(quoted_part), free_token(*tokens), -1);
 	(*i)++;
 	return (0);
 }

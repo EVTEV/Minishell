@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:39:01 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:39:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ static char	*search_command_in_paths(char **paths, char *cmd)
 		free(cmd_path);
 		i++;
 	}
+	free_tab(paths);
 	return (NULL);
 }
 
@@ -73,11 +74,17 @@ static char	*search_command_in_paths(char **paths, char *cmd)
 char	*find_command_path(char *cmd, t_data *data)
 {
 	char	**paths;
+	char	*tmp;
 
 	if (!cmd || !data || !data->path)
 		return (NULL);
 	if (cmd[0] == '/' || cmd[0] == '.')
-		return (ft_strdup(cmd));
+	{
+		tmp = ft_strdup(cmd);
+		if (!tmp)
+			return (NULL);
+		return (tmp);
+	}
 	paths = ft_split(data->path + 5, ':');
 	if (!paths)
 		return (NULL);
@@ -101,7 +108,7 @@ t_data	*init_data(int ac, char **av, char **env)
 		return (free(data), NULL);
 	data->env_list = env_to_list(data->env);
 	if (!data->env_list)
-		return (free_tab(data->env), free(data), NULL);
+		return (free_tab(data->env), NULL);
 	data->path = get_path(data->env);
 	if (!data->path)
 		return (free_tab(data->env),

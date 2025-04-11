@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:19:14 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:20:45 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:52:59 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	add_token(t_token **tokens, char *value, int type)
 		value = NULL;
 		return ;
 	}
+	free(value);
+	value = NULL;
 	append_token(tokens, new);
 }
 
@@ -37,20 +39,26 @@ char	*concatenate_parts(char *part1, char *part2)
 {
 	char	*result;
 
+	if (!part1 && !part2)
+		return (NULL);
 	if (!part1)
-		return (part2);
+	{
+		result = ft_strdup(part2);
+		if (!result)
+			return (free(part2), part2 = NULL, NULL);
+		return (free(part2), part2 = NULL, result);
+	}
 	if (!part2)
-		return (part1);
+	{
+		result = ft_strdup(part1);
+		if (!result)
+			return (free(part1), part1 = NULL, NULL);
+		return (free(part1), part1 = NULL, result);
+	}
 	result = ft_strjoin(part1, part2);
 	if (!result)
-	{
-		free(part1);
-		free(part2);
-		return (NULL);
-	}
-	free(part1);
-	free(part2);
-	return (result);
+		return (free(part1), free(part2), NULL);
+	return (free(part1), free(part2), part1 = NULL, part2 = NULL, result);
 }
 
 int	handle_escaped_characters(char *input, int *i,

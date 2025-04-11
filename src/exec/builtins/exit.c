@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 17:33:54 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:18:34 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	delete_temp_files(void)
 }
 
 /* Libère tous les membres de la structure data */
-static void	free_data_members(t_data *data)
+void	free_data_members(t_data *data)
 {
 	if (data->input)
 		free(data->input);

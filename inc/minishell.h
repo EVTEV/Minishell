@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 20:22:56 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:18:54 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,6 +260,7 @@ void				free_cmd_list(t_cmd *cmd_list);
 t_cmd				*create_new_command(void);
 void				free_pids(pid_t *pids);
 void				free_token(t_token *tokens);
+void				free_data_members(t_data *data);
 void				free_redirections(t_redir *redirections);
 // ---------- get_value.c ------------ //
 char				*get_value(t_env env, char *name);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 18:47:36 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 01:02:41 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,7 @@ int	add_value(t_env **env, char *name, char *value)
 			current = current->next;
 		current->next = new;
 	}
-	return (1);
+	free(name);
+	free(value);
+	return (name = NULL, value = NULL, 1);
 }

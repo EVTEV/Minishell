@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:08:16 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:39:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 00:06:04 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ int	create_env_node(t_env **env_list, char *env_var)
 		return (0);
 	*equal_sign = '\0';
 	name = ft_strdup(env_var);
+	if (!name)
+		return (1);
 	*equal_sign = '=';
 	if (!name)
 		return (1);

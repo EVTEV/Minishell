@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:25:55 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 01:35:35 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@ char	*process_dollar_in_quotes(char *input, int *i,
 		tmp = expand_variable(&input[*i], data->env_list, &len);
 	else if (input[*i] == '$' && input[*i + 1] == '?')
 		tmp = ft_itoa(data->exit_status);
+	else if (input[*i] == '$' && (!input[*i + 1] || input[*i + 1] == ' ' ||
+		input[*i + 1] == '\t' || input[*i + 1] == '\n' || input[*i + 1] == '"'))
+	{
+		tmp = ft_strdup("$");
+		if (!tmp)
+			return (free(result), NULL);
+		len = 1;
+	}
 	else
 		tmp = ft_substr(input, (*i)++, 1);
 	if (!tmp)
@@ -40,10 +48,7 @@ char	*process_dollar_in_quotes(char *input, int *i,
 	result = append_char_to_result(result, tmp);
 	if (!result)
 		return (NULL);
-	if (input[*i] == '$' && input[*i + 1] == '?')
-		*i += 2;
-	else
-		*i += len;
+	*i += len;
 	return (result);
 }
 

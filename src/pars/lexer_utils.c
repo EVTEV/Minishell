@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:18:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:18:54 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 01:00:57 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ char	*process_quoted_part(char *value, size_t *i,
 		(*i)++;
 	quoted_part = ft_substr(value, start, *i - start);
 	if (!quoted_part)
-	{
-		free(processed);
-		return (NULL);
-	}
+		return (free(processed), NULL);
 	processed = concatenate_parts(processed, quoted_part);
 	if (!processed)
 		return (NULL);
@@ -41,6 +38,7 @@ char	*process_unquoted_part(char *value,
 {
 	size_t	start;
 	char	*unquoted_part;
+	char	*tmp;
 
 	unquoted_part = NULL;
 	start = *i;
@@ -48,14 +46,15 @@ char	*process_unquoted_part(char *value,
 		(*i)++;
 	unquoted_part = ft_substr(value, start, *i - start);
 	if (!unquoted_part)
-	{
-		free(processed);
+		return (free(processed), NULL);
+	tmp = concatenate_parts(processed, unquoted_part);
+	if (!tmp)
 		return (NULL);
-	}
-	processed = concatenate_parts(processed, unquoted_part);
+	processed = ft_strdup(tmp);
 	if (!processed)
-		return (NULL);
-	return (processed);
+		return (free(tmp), NULL);
+	(*i)++;
+	return (free(tmp), processed);
 }
 
 char	*process_value(char *value)
@@ -64,6 +63,8 @@ char	*process_value(char *value)
 	size_t	i;
 	size_t	len;
 
+	if (!value)
+		return (NULL);
 	len = ft_strlen(value);
 	i = 0;
 	processed = NULL;
