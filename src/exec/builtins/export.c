@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 19:04:57 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:37:53 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,6 @@ static int	handle_env_var(t_env **env, char *name, char *value)
 	else if (!add_value(env, name, value))
 		return (1);
 	return (0);
-}
-
-/* Affiche un message d'erreur pour un identifiant invalide */
-static void	print_invalid_identifier_error(char *name)
-{
-	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-	ft_putstr_fd(name, STDERR_FILENO);
-	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 }
 
 /* Gère l'ajout ou mise à jour d'une variable avec une valeur */

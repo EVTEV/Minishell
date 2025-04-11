@@ -6,13 +6,13 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:17:39 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 16:13:31 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:34:35 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
 
-static void	handle_command_not_found(t_cmd *cmd, t_data *data)
+static void	handle_no_cmd(t_cmd *cmd, t_data *data)
 {
 	ft_printf("minishell: %s: command not found\n", cmd->args[0]);
 	exit_clean(data, NULL, 127);
@@ -37,7 +37,7 @@ int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 		exit_clean(data, NULL, (execute_builtin(cmd, data)));
 	cmd_path = find_command_path(cmd->args[0], data);
 	if (!cmd_path)
-		handle_command_not_found(cmd, data);
+		handle_no_cmd(cmd, data);
 	if (access(cmd_path, F_OK) == -1)
 	{
 		free(cmd_path);

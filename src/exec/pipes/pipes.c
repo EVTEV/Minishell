@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 16:35:53 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:11:46 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,6 @@ int	count_commands(t_cmd *cmd_list)
 		current = current->next;
 	}
 	return (count);
-}
-
-/* Ferme tous les descripteurs de fichiers des pipes */
-void	close_all_pipes(t_data *data, int pipe_count)
-{
-	int	i;
-
-	if (!data->pipes)
-		return ;
-	i = 0;
-	while (i < pipe_count)
-	{
-		close(data->pipes[i][0]);
-		close(data->pipes[i][1]);
-		i++;
-	}
 }
 
 /* Libère la mémoire allouée pour les pipes */
@@ -75,11 +59,11 @@ static int	check_cmd_count(t_data *data, int cmd_count)
 	return (0);
 }
 
-/* Gère les signaux pour les processus enfants */
-static void	handle_child_signals(void)
+/* Libère les ressources en cas d'interruption */
+void	cleanup_on_interrupt(t_data *data, int pipe_count)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	close_all_pipes(data, pipe_count);
+	free_pipes(data, pipe_count);
 }
 
 /* Exécute les commandes avec pipes entre elles */
@@ -89,7 +73,7 @@ int	execute_piped_commands(t_data *data)
 	int		pipe_count;
 	int		result;
 
-	handle_child_signals();
+	handle_parent_signals();
 	cmd_count = count_commands(data->cmd_list);
 	result = check_cmd_count(data, cmd_count);
 	if (result > 0)
@@ -103,11 +87,11 @@ int	execute_piped_commands(t_data *data)
 	result = exec_pipe(data, cmd_count, pipe_count);
 	if (result != 0)
 	{
-		free_pipes(data, pipe_count);
+		cleanup_on_interrupt(data, pipe_count);
 		if (WIFEXITED(result))
 			return (WEXITSTATUS(result));
 		return (result);
 	}
 	free_pipes(data, pipe_count);
-	return (result);
+	return (setup_signals(), result);
 }

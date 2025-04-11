@@ -6,56 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 18:59:17 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:39:01 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-/* Récupère la variable d'environnement PATH */
-char	*get_path(char **env)
-{
-	char	*path;
-	int		i;
-
-	i = 0;
-	path = NULL;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], "PATH=", 5) == 0)
-		{
-			path = ft_strdup(env[i]);
-			if (!path)
-				return (NULL);
-			return (path);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-/* Crée un nœud de la liste chaînée pour une variable d'environnement */
-static int	create_env_node(t_env **env_list, char *env_var)
-{
-	char	*name;
-	char	*value;
-	char	*equal_sign;
-
-	equal_sign = ft_strchr(env_var, '=');
-	if (!equal_sign)
-		return (0);
-	*equal_sign = '\0';
-	name = ft_strdup(env_var);
-	*equal_sign = '=';
-	if (!name)
-		return (1);
-	value = ft_strdup(equal_sign + 1);
-	if (!value)
-		return (free(name), 1);
-	if (!add_value(env_list, name, value))
-		return (free(name), free(value), 1);
-	return (0);
-}
 
 /* Convertit le tableau d'environnement en liste chaînée */
 t_env	*env_to_list(char **env)

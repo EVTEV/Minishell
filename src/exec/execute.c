@@ -6,22 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:24:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 18:06:10 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:49:58 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-/* Calcule la longueur d'un tableau de chaînes */
-int	ft_tablen(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab && tab[i])
-		i++;
-	return (i);
-}
 
 /* Gère l'exécution dans le processus enfant */
 static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
@@ -47,45 +36,11 @@ static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 	}
 }
 
-/* Attend la fin du processus enfant et retourne son statut */
-static int	wait_for_child(pid_t pid)
-{
-	int	status;
-
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (1);
-}
-
 /* Vérifie les redirections et retourne une erreur si nécessaire */
-static int	handle_redirections(t_cmd *cmd)
+static int	handle_redir(t_cmd *cmd)
 {
 	if (setup_redirections(cmd->redirections) != 0)
 		return (1);
-	return (0);
-}
-
-/* Vérifie si la commande est valide et donne son path ou un code err */
-static int	validate_command(t_cmd *cmd, t_data *data, char **cmd_path)
-{
-	*cmd_path = find_command_path(cmd->args[0], data);
-	if (!*cmd_path)
-	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
-		return (127);
-	}
-	if (is_directory(*cmd_path))
-	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
-		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
-		free(*cmd_path);
-		*cmd_path = NULL;
-		return (126);
-	}
 	return (0);
 }
 
@@ -109,8 +64,8 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	int		validation_status;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (handle_redirections(cmd));
-	if (handle_redirections(cmd) != 0)
+		return (handle_redir(cmd));
+	if (handle_redir(cmd) != 0)
 		return (1);
 	validation_status = validate_command(cmd, data, &cmd_path);
 	if (validation_status != 0)

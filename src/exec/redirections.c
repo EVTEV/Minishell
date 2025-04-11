@@ -6,56 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 17:53:05 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:47:50 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-/* Gère la redirection d'entrée (<) */
-static int	handle_input_redirection(char *filename)
-{
-	int	fd;
-
-	fd = open(filename, O_RDONLY);
-	if (fd == -1)
-	{
-		perror(filename);
-		return (-1);
-	}
-	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
-}
-
-/* Gère la redirection de sortie (>) */
-static int	handle_output_redirection(char *filename, int append)
-{
-	int	fd;
-
-	if (append)
-		fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-	else
-		fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd == -1)
-	{
-		perror(filename);
-		return (-1);
-	}
-	if (dup2(fd, STDOUT_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
-}
 
 /* Ouvre un fichier pour une redirection donnée */
 static int	open_redirection_file(char *file, int flags)

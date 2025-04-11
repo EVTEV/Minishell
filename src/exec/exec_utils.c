@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:17:23 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 17:42:01 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:46:59 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,37 +22,6 @@ static int	save_std_fds(int std_fds[2])
 		perror("dup");
 		return (1);
 	}
-	return (0);
-}
-
-/* Restaure les descripteurs de fichiers standard */
-static void	restore_std_fds(int std_fds[2])
-{
-	dup2(std_fds[0], STDIN_FILENO);
-	dup2(std_fds[1], STDOUT_FILENO);
-	close(std_fds[0]);
-	close(std_fds[1]);
-}
-
-/* Vérifie si une commande est une commande interne */
-int	is_builtin(char *cmd)
-{
-	if (!cmd)
-		return (0);
-	if (ft_strncmp(cmd, "echo", 5) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "pwd", 4) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "export", 7) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "unset", 6) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "env", 4) == 0)
-		return (1);
-	if (ft_strncmp(cmd, "exit", 5) == 0)
-		return (1);
 	return (0);
 }
 

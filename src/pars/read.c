@@ -6,28 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 14:30:44 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:02:03 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-void	signal_handler_main(int signum)
-{
-	struct termios	term;
-
-	if (signum == SIGINT)
-	{
-		rl_replace_line("", 0);
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_redisplay();
-		g_exit_status = 1;
-	}
-	tcgetattr(1, &term);
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(1, TCSANOW, &term);
-}
 
 void	ft_exec_sig_handler(int sig)
 {
