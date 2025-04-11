@@ -6,14 +6,14 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:17:39 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 10:56:04 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:22:35 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
 
 /* Exécute une commande dans un processus enfant */
-int	execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
+int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 {
 	char	*cmd_path;
 

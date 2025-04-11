@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/10 22:59:47 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:16:03 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_tab(char **tab)
 	while (tab[i])
 	{
 		free(tab[i]);
-		tab[i] = NULL; // Set pointer to NULL after freeing
+		tab[i] = NULL;
 		i++;
 	}
 	free(tab);
@@ -56,7 +56,7 @@ void	free_cmd_list(t_cmd *cmd_list)
 		tmp = cmd_list;
 		cmd_list = cmd_list->next;
 		if (tmp->heredoc_file)
-			unlink(tmp->heredoc_file); // Remove the temporary heredoc file
+			unlink(tmp->heredoc_file);
 		free(tmp->heredoc_file);
 		free_tab(tmp->args);
 		free_redirections(tmp->redirections);
@@ -90,12 +90,11 @@ void	free_token(t_token *tokens)
 		next = current->next;
 		if (current->value)
 		{
-			// Ensure the pointer is valid before freeing
 			free(current->value);
-			current->value = NULL; // Set pointer to NULL after freeing
+			current->value = NULL;
 		}
-		free(current); // Free the token itself
+		free(current);
 		current = next;
 	}
-	tokens = NULL; // Set tokens to NULL after freeing
+	tokens = NULL;
 }

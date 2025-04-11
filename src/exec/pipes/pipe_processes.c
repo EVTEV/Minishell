@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/08 08:09:12 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:24:18 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 				free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
 				exit_clean(data, NULL, 127);
 			}
-			execute_command_in_child(current, data, tmp);
+			exec_cmd_in_child(current, data, tmp);
 			close_all_pipes(data, pipe_count);
 			exit_clean(data, NULL, 0);
 		}
@@ -98,7 +98,7 @@ static int	create_child_processes(t_data *data, pid_t *pids,
 }
 
 /* Exécute les processus avec pipes et attend leur terminaison */
-int	execute_pipe_processes(t_data *data, int cmd_count, int pipe_count)
+int	exec_pipe(t_data *data, int cmd_count, int pipe_count)
 {
 	pid_t	*pids;
 	int		exit_status;

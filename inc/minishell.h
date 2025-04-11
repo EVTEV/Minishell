@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/11 12:22:06 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -56,112 +68,110 @@ typedef struct s_cmd
 
 typedef struct s_data
 {
-    char    *input;
-	char	**env;
-	t_env	*env_list;
-	char	*path;
-	t_cmd	*cmd_list;
-	int		exit_status;
-	int		**pipes;
+	char			*input;
+	char			**env;
+	t_env			*env_list;
+	char			*path;
+	t_cmd			*cmd_list;
+	int				exit_status;
+	int				**pipes;
 }	t_data;
 
 // Prototypes des nouvelles fonctions de gestion des signaux
-void	reset_terminal_line(void);
-void	signal_handler_main(int signum);
-void	ft_exec_sig_handler(int sig);
+void				reset_terminal_line(void);
+void				signal_handler_main(int signum);
+void				ft_exec_sig_handler(int sig);
 
 // ==================== Pars ==================== //
 // --------------- Lexer.c --------------- //
-t_token	*lexer(char *input);
+t_token				*lexer(char *input);
 // --------------- Parser.c --------------- //
-t_cmd	*parser(t_token *tokens);
+t_cmd				*parser(t_token *tokens);
 // --------------- Expander.c --------------- //
-char	*expander(char *input, t_data *data);
+char				*expander(char *input, t_data *data);
 // --------------- Pars.c --------------- //
-t_cmd	*parse_input(char *input, t_data *data);
+t_cmd				*parse_input(char *input, t_data *data);
 // --------------- Read.c --------------- //
-char	*read_input(t_data *data);
-void	save_history(char *input);
-void	load_history(void);
+char				*read_input(t_data *data);
+void				save_history(char *input);
+void				load_history(void);
 
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
 // ---------- cd.c ------------ //
-int		ft_cd(char **av, t_env *env);
+int					ft_cd(char **av, t_env *env);
 // ---------- echo.c ------------ //
-int		ft_echo(int ac, char **av);
+int					ft_echo(int ac, char **av);
 // ---------- exit.c ------------ //
-void    exit_clean(t_data *data, t_token *tokens, int i);
-void	ft_exit(char **args, t_data *data);
+void				exit_clean(t_data *data, t_token *tokens, int i);
+void				ft_exit(char **args, t_data *data);
 // ---------- export.c ------------ //
-int		ft_export(char **args, t_env **env);
+int					ft_export(char **args, t_env **env);
 // ---------- export_utils.c ------------ //
-int		is_valid_identifier(char *str);
-int		compare_env_vars(t_env *a, t_env *b);
-t_env	*copy_env_list(t_env *env);
-void	free_env_copy(t_env *env_copy);
+int					is_valid_identifier(char *str);
+int					compare_env_vars(t_env *a, t_env *b);
+t_env				*copy_env_list(t_env *env);
+void				free_env_copy(t_env *env_copy);
 // ---------- export_sort.c ------------ //
-void	sort_env_list(t_env **head);
-void	handle_export_no_value(t_env **env, char *name);
-int		print_sorted_env(t_env *env);
+void				sort_env_list(t_env **head);
+void				handle_export_no_value(t_env **env, char *name);
+int					print_sorted_env(t_env *env);
 // ---------- pwd.c ------------ //
-int		ft_pwd(void);
+int					ft_pwd(void);
 // ---------- unset.c ------------ //
-int		ft_unset(char **args, t_env **env);
+int					ft_unset(char **args, t_env **env);
 
 // ------------------ pipes ------------------ //
 // ---------- child_processes.c ------------ //
-int		execute_command_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
-int		execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
-int		wait_for_children(pid_t *pids, int cmd_count);
+int					exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
+int					execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
+int					wait_for_children(pid_t *pids, int cmd_count);
 // ---------- heredoc.c ------------ //
-int		handle_heredoc(char *delimiter, char **heredoc_file);
+int					handle_heredoc(char *delimiter, char **heredoc_file);
 // ---------- pipe_creation.c ------------ //
-int		create_pipes(t_data *data, int pipe_count);
-pid_t	*allocate_pids(int cmd_count, int pipe_count, t_data *data);
+int					create_pipes(t_data *data, int pipe_count);
+pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
 // ---------- pipe_processes.c ------------ //
-int		execute_pipe_processes(t_data *data, int cmd_count, int pipe_count);
+int					exec_pipe(t_data *data, int cmd_count, int pipe_count);
 // ---------- pipes.c ------------ //
-int		count_commands(t_cmd *cmd_list);
-void	close_all_pipes(t_data *data, int pipe_count);
-void	free_pipes(t_data *data, int pipe_count);
-int		execute_piped_commands(t_data *data);
+int					count_commands(t_cmd *cmd_list);
+void				close_all_pipes(t_data *data, int pipe_count);
+void				free_pipes(t_data *data, int pipe_count);
+int					execute_piped_commands(t_data *data);
 
 // -------------- execution.c ---------------- //
-int		is_builtin(char *cmd);
-int		ft_tablen(char **tab);
-int		execute_builtin(t_cmd *cmd, t_data *data);
-int		execute_external(t_cmd *cmd, t_data *data);
-int		execute_single_command(t_cmd *cmd, t_data *data);
-int		execute_commands(t_data *data);
-void	cleanup_heredoc_file(char *heredoc_file);
+int					is_builtin(char *cmd);
+int					ft_tablen(char **tab);
+int					execute_builtin(t_cmd *cmd, t_data *data);
+int					execute_external(t_cmd *cmd, t_data *data);
+int					execute_single_command(t_cmd *cmd, t_data *data);
+int					execute_commands(t_data *data);
+void				cleanup_heredoc_file(char *heredoc_file);
 // -------------- redirections.c -------------- //
-int		setup_redirections(t_redir *redirections);
+int					setup_redirections(t_redir *redirections);
 
 // ==================== Utils ==================== //
 // --------------- Utils.c --------------- //
-char	*ft_strjoin_free(char *s1, char *s2);
-char	**ft_tabjoin(char **tab, char *new_elem);
-int		is_directory(const char *path);
+char				*ft_strjoin_free(char *s1, char *s2);
+char				**ft_tabjoin(char **tab, char *new_elem);
+int					is_directory(const char *path);
 // ---------- free_cmd.c ------------ //
-void	free_cmd_list(t_cmd *cmd_list);
-void	free_pids(pid_t *pids);
-void	free_token(t_token *tokens);
-void	free_redirections(t_redir *redirections);
+void				free_cmd_list(t_cmd *cmd_list);
+void				free_pids(pid_t *pids);
+void				free_token(t_token *tokens);
+void				free_redirections(t_redir *redirections);
 // ---------- get_value.c ------------ //
-char	*get_value(t_env env, char *name);
-void	update_value(t_env *env, char *name, char *value);
-void	add_value(t_env **env, char *name, char *value);
+char				*get_value(t_env env, char *name);
+void				update_value(t_env *env, char *name, char *value);
+void				add_value(t_env **env, char *name, char *value);
 // ---------- init_data.c ------------ //
-char	**copy_env(char **env);
-char	*get_path(char **env);
-t_env	*env_to_list(char **env);
-char	*find_command_path(char *cmd, t_data *data);
-t_data	*init_data(int ac, char **av, char **env);
+char				**copy_env(char **env);
+char				*get_path(char **env);
+t_env				*env_to_list(char **env);
+char				*find_command_path(char *cmd, t_data *data);
+t_data				*init_data(int ac, char **av, char **env);
 // ---------- print_tab.c ------------ //
-void	print_tab(char **tab);
-void	print_list(t_env *env);
-
-
+void				print_tab(char **tab);
+void				print_list(t_env *env);
 
 #endif

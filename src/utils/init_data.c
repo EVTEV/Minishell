@@ -6,13 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/04 16:13:56 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:15:36 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-
-/* Copie le tableau d'environnement dans une nouvelle allocation */
 
 /* Récupère la variable d'environnement PATH */
 char	*get_path(char **env)
@@ -68,7 +66,7 @@ t_env	*env_to_list(char **env)
 	t_env	*env_list;
 	int		i;
 
-	env_list = NULL; // Initialize env_list to NULL
+	env_list = NULL;
 	i = 0;
 	while (env[i])
 	{
@@ -97,24 +95,24 @@ char	*find_command_path(char *cmd, t_data *data)
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
-		if (!tmp) // Check for allocation failure
+		if (!tmp)
 		{
 			free_tab(paths);
 			return (NULL);
 		}
 		cmd_path = ft_strjoin(tmp, cmd);
-		free(tmp); // Free tmp after use
-		if (!cmd_path) // Check for allocation failure
+		free(tmp);
+		if (!cmd_path)
 		{
 			free_tab(paths);
 			return (NULL);
 		}
 		if (access(cmd_path, X_OK) == 0)
-			return (free_tab(paths), cmd_path); // Return valid path
-		free(cmd_path); // Free cmd_path if access fails
+			return (free_tab(paths), cmd_path);
+		free(cmd_path);
 		i++;
 	}
-	return (free_tab(paths), NULL); // Free paths and return NULL if no valid path is found
+	return (free_tab(paths), NULL);
 }
 
 /* Initialise la structure data avec les paramètres du programme */
