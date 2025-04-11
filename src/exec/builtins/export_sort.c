@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 14:12:38 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:00:40 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,10 @@ void	free_env_copy(t_env *env_copy)
 	{
 		temp = env_copy;
 		env_copy = env_copy->next;
-		free(temp->name);
-		temp->name = NULL; // Set to NULL after free
-		free(temp->value);
-		temp->value = NULL; // Set to NULL after free
+		if (temp->name)
+			free(temp->name);
+		if (temp->value)
+			free(temp->value);
 		free(temp);
-		temp = NULL; // Set to NULL after free
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 12:23:44 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:35:53 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,17 +97,17 @@ int	execute_piped_commands(t_data *data)
 	pipe_count = cmd_count - 1;
 	if (create_pipes(data, pipe_count) != 0)
 	{
-		free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
+		free_pipes(data, pipe_count);
 		return (1);
 	}
 	result = exec_pipe(data, cmd_count, pipe_count);
 	if (result != 0)
 	{
-		free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
+		free_pipes(data, pipe_count);
 		if (WIFEXITED(result))
 			return (WEXITSTATUS(result));
 		return (result);
 	}
-	free_pipes(data, pipe_count); // Libère les pipes après exécution
+	free_pipes(data, pipe_count);
 	return (result);
 }

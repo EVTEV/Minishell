@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 14:13:01 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:48:34 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	value = equal_sign + 1;
 	if (is_valid_identifier(name))
 	{
-		handle_env_var(env, name, *value ? value : ""); // Ensure empty value is handled
+		handle_env_var(env, name, *value ? value : "");
 		*equal_sign = '=';
 		return (0);
 	}
@@ -52,7 +52,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(name, STDERR_FILENO);
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		*equal_sign = '='; // Restore the original argument
+		*equal_sign = '=';
 		return (1);
 	}
 }
@@ -64,15 +64,15 @@ static int	process_export_arg(char **args, int i, t_env **env)
 		return (0);
 	if (ft_strchr(args[i], '='))
 		return (process_export_with_equal(args[i], env));
-	else if (!is_valid_identifier(args[i])) // Handle invalid identifiers without '='
+	else if (!is_valid_identifier(args[i]))
 	{
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(args[i], STDERR_FILENO);
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		return (1); // Return error code for invalid identifier
+		return (1);
 	}
 	else
-		handle_env_var(env, args[i], ""); // Add variable with an empty value
+		handle_env_var(env, args[i], "");
 	return (0);
 }
 
@@ -81,8 +81,9 @@ int	ft_export(char **args, t_env **env)
 {
 	int	i;
 	int	status;
-	int	ret_code = 0;
+	int	ret_code;
 
+	ret_code = 0;
 	if (!args[1])
 		return (print_sorted_env(*env));
 	i = 1;

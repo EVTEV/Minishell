@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/07 15:20:51 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:34:19 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ static int	allocate_pipes(t_data *data, int pipe_count)
 		data->pipes[i] = (int *)malloc(sizeof(int) * 2);
 		if (!data->pipes[i])
 		{
-			free_pipes(data, i); // Free only the pipes allocated so far
-			free(data->pipes);   // Free the main array to avoid memory leak
-			data->pipes = NULL;  // Nullify the pointer to prevent dangling references
+			free_pipes(data, i);
+			free(data->pipes);
+			data->pipes = NULL;
 			return (1);
 		}
 		i++;
@@ -50,8 +50,8 @@ int	create_pipes(t_data *data, int pipe_count)
 	{
 		if (pipe(data->pipes[i]) < 0)
 		{
-			close_all_pipes(data, i); // Ferme les pipes ouverts
-			free_pipes(data, pipe_count); // Libère tous les pipes
+			close_all_pipes(data, i);
+			free_pipes(data, pipe_count);
 			return (0);
 		}
 		i++;
@@ -78,5 +78,5 @@ void	free_pids(pid_t *pids)
 {
 	if (pids)
 		free(pids);
-	pids = NULL; // Prevent double free by nullifying the pointer
+	pids = NULL;
 }

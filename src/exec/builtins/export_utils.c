@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:30:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/11 17:00:32 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ t_env	*copy_env_list(t_env *env)
 	while (current)
 	{
 		add_value(&env_copy, current->name, current->value);
+		if (!env_copy)
+			return (NULL);
 		current = current->next;
 	}
 	return (env_copy);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 12:24:18 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:56:31 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,61 +36,84 @@ static int	handle_fork_error(pid_t *pids, int i, t_data *data, int pipe_count)
 		waitpid(pids[i], NULL, 0);
 	free(pids);
 	close_all_pipes(data, pipe_count);
-	free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
+	free_pipes(data, pipe_count);
 	return (1);
 }
 
+/* Gère les erreurs de commande non trouvée */
+static void	handle_command_not_found(t_cmd *current, t_data *data, int pipe_count)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (current->args[0])
+		ft_putstr_fd(current->args[0], STDERR_FILENO);
+	ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	close_all_pipes(data, pipe_count);
+	free_pipes(data, pipe_count);
+	exit_clean(data, NULL, 127);
+}
+
+/* Configure et exécute une commande dans un processus enfant */
+static void	execute_child_command(t_cmd *current, t_data *data, int pipe_count, char *tmp)
+{
+	if (!tmp)
+		handle_command_not_found(current, data, pipe_count);
+	exec_cmd_in_child(current, data, tmp);
+	close_all_pipes(data, pipe_count);
+	exit_clean(data, NULL, 0);
+}
+
+/* Gère les commandes intégrées ou externes */
+static void	handle_command_execution(t_cmd *current, t_data *data, int pipe_count)
+{
+	char	*tmp;
+
+	if (is_builtin(current->args[0]))
+	{
+		int result = execute_builtin_with_redirections(current, data);
+		close_all_pipes(data, pipe_count);
+		free_pipes(data, pipe_count);
+		exit_clean(data, NULL, result);
+	}
+	if (!current->args || !current->args[0])
+		handle_command_not_found(current, data, pipe_count);
+	tmp = find_command_path(current->args[0], data);
+	execute_child_command(current, data, pipe_count, tmp);
+}
+
+/* Crée un processus enfant pour une commande */
+static int	create_child_process(t_data *data, t_cmd *current, int i, int cmd_count, int pipe_count)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		return (-1);
+	else if (pid == 0)
+	{
+		setup_child_pipes(data, i, cmd_count);
+		if (setup_redirections(current->redirections) != 0)
+		{
+			close_all_pipes(data, pipe_count);
+			exit_clean(data, NULL, 0);
+		}
+		handle_command_execution(current, data, pipe_count);
+	}
+	return (pid);
+}
+
 /* Crée les processus enfants pour chaque commande */
-static int	create_child_processes(t_data *data, pid_t *pids,
-									int cmd_count, int pipe_count)
+static int	create_child_processes(t_data *data, pid_t *pids, int cmd_count, int pipe_count)
 {
 	t_cmd	*current;
-	char	*tmp;
 	int		i;
 
 	current = data->cmd_list;
 	i = 0;
 	while (current && i < cmd_count)
 	{
-		pids[i] = fork();
+		pids[i] = create_child_process(data, current, i, cmd_count, pipe_count);
 		if (pids[i] < 0)
 			return (handle_fork_error(pids, i, data, pipe_count));
-		else if (pids[i] == 0)
-		{
-			setup_child_pipes(data, i, cmd_count);
-			if (setup_redirections(current->redirections) != 0) // Handle redirection errors
-			{
-				close_all_pipes(data, pipe_count);
-				exit_clean(data, NULL, 0); // Exit child process with error
-			}
-			if (is_builtin(current->args[0]))
-			{
-				int result = execute_builtin_with_redirections(current, data);
-				close_all_pipes(data, pipe_count);
-				free_pipes(data, pipe_count); // Free pipes after built-in execution
-				exit_clean(data, NULL, result);
-			}
-			if (!current->args || !current->args[0])
-			{
-				ft_putstr_fd("minishell: : command not found\n", STDERR_FILENO);
-				close_all_pipes(data, pipe_count);
-				exit_clean(data, NULL, 127);
-			}
-			tmp = find_command_path(current->args[0], data);
-			if (!tmp)
-			{
-				ft_putstr_fd("minishell: ", STDERR_FILENO);
-				if (current->args[0])
-					ft_putstr_fd(current->args[0], STDERR_FILENO);
-				ft_putstr_fd(": command not found\n", STDERR_FILENO);
-				close_all_pipes(data, pipe_count);
-				free_pipes(data, pipe_count); // Libère les pipes en cas d'erreur
-				exit_clean(data, NULL, 127);
-			}
-			exec_cmd_in_child(current, data, tmp);
-			close_all_pipes(data, pipe_count);
-			exit_clean(data, NULL, 0);
-		}
 		current = current->next;
 		i++;
 	}

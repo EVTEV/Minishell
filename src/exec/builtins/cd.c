@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 10:50:45 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:47:41 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,29 @@ static int	update_env_vars(char *old_dir, t_env *env)
 
 	old_pwd = ft_strdup(old_dir);
 	if (old_pwd == NULL)
-		return (perror("Error:cd:exec_cd"), 1);
-	update_value(env, "OLDPWD", old_pwd); // Ensure OLDPWD is updated
+		return (perror("Error:cd"), 1);
+	update_value(env, "OLDPWD", old_pwd);
 	free(old_pwd);
 	if (getcwd(current, PATH_MAX) == NULL)
-		return (perror("Error:cd:exec_cd"), 1);
-	update_value(env, "PWD", current); // Ensure PWD is updated
+		return (perror("Error:cd:"), 1);
+	update_value(env, "PWD", current);
 	return (0);
 }
 
 /* Exécute le changement de répertoire et met à jour l'environnement */
 static int	exec_cd(char *path, char *old_dir, t_env *env, char **args)
 {
+	char	*old_pwd;
+
+	old_pwd = NULL;
 	if (chdir(path) != 0)
-		return (printf("49"), handle_cd_error(path));
+		return (handle_cd_error(path));
 	if (update_env_vars(old_dir, env) != 0)
-		return (printf("51"), 1);
+		return (1);
 	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
 	{
-		char *old_pwd = get_value(*env, "OLDPWD");
-		if (old_pwd && old_pwd[0] != '\0') // Ensure OLDPWD is valid
+		old_pwd = get_value(*env, "OLDPWD");
+		if (old_pwd && old_pwd[0] != '\0')
 		{
 			ft_putstr_fd(old_pwd, 1);
 			ft_putchar_fd('\n', 1);
@@ -71,7 +74,8 @@ static char	*find_path(char **args, t_env *env)
 {
 	char	*path;
 
-	if (args[1] == NULL || !ft_strcmp(args[1], "~") || !ft_strcmp(args[1], "--"))
+	if (args[1] == NULL || !ft_strcmp(args[1], "~")
+		|| !ft_strcmp(args[1], "--"))
 	{
 		path = get_value(*env, "HOME");
 		if (!path || path[0] == '\0')
@@ -100,21 +104,11 @@ int	ft_cd(char **av, t_env *env)
 	char	*path;
 	char	current[PATH_MAX];
 
-	if (ft_tablen(av) > 2) // Check for too many arguments
+	if (ft_tablen(av) > 2)
 		return (0);
 	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
-			&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
+		&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
 		return (handle_cd_error(av[1]));
-	if (getcwd(current, PATH_MAX) == NULL)
-	{
-		if (!av[1])
-			av[1] = NULL;
-		else
-		{
-			ft_putstr_fd("minishell: cd: current directory invalid\n", 2);
-			return (1);
-		}
-	}
 	path = find_path(av, env);
 	if (!path)
 		return (1);
