@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 16:48:34 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:30:42 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,18 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	value = equal_sign + 1;
 	if (is_valid_identifier(name))
 	{
-		handle_env_var(env, name, *value ? value : "");
-		*equal_sign = '=';
-		return (0);
+		if (*value)
+			handle_env_var(env, name, value);
+		else
+			handle_env_var(env, name, "");
+		return (*equal_sign = '=', 0);
 	}
 	else
 	{
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(name, STDERR_FILENO);
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		*equal_sign = '=';
-		return (1);
+		return (*equal_sign = '=', 1);
 	}
 }
 
@@ -71,8 +72,6 @@ static int	process_export_arg(char **args, int i, t_env **env)
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 		return (1);
 	}
-	else
-		handle_env_var(env, args[i], "");
 	return (0);
 }
 

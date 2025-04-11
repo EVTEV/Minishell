@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 13:26:43 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:11:41 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,16 @@ typedef struct s_data
 	int				exit_status;
 	int				**pipes;
 }	t_data;
+
+typedef struct s_child
+{
+	t_data			*data;
+	t_cmd			*current;
+	int				i;
+	int				cmd_count;
+	int				pipe_count;
+}	t_child;
+
 
 // Prototypes des nouvelles fonctions de gestion des signaux
 void				reset_terminal_line(void);

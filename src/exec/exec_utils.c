@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:17:23 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/10 23:16:46 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:39:48 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,9 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-/* Exécute une commande interne */
-int	execute_builtin(t_cmd *cmd, t_data *data)
+/* Gère l'exécution des commandes internes spécifiques */
+static int	handle_builtin_command(t_cmd *cmd, t_data *data)
 {
-	if (!cmd || !cmd->args || !cmd->args[0])
-		return (0);
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (ft_echo(ft_tablen(cmd->args), cmd->args));
 	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
@@ -75,19 +73,29 @@ int	execute_builtin(t_cmd *cmd, t_data *data)
 		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 	{
-		ft_exit(cmd->args, data); // Pass arguments to the exit function
-		return (1); // This line won't be reached as ft_exit exits the program
+		ft_exit(cmd->args, data);
+		return (1);
 	}
-	else
+	return (-1);
+}
+
+/* Exécute une commande interne */
+int	execute_builtin(t_cmd *cmd, t_data *data)
+{
+	int result;
+
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (0);
+	result = handle_builtin_command(cmd, data);
+	if (result != -1)
+		return (result);
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (cmd->args[0])
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		if (cmd->args[0])
-		{
-			ft_putstr_fd(cmd->args[0], STDERR_FILENO);
-			ft_putstr_fd("\n", STDERR_FILENO);
-		}
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
 	}
+	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	return (0);
 }
 
@@ -104,11 +112,9 @@ int	execute_builtin_with_redirections(t_cmd *cmd, t_data *data)
 		return (1);
 	}
 	int result = execute_builtin(cmd, data);
-	restore_std_fds(std_fds); // Restaure les descripteurs après l'exécution
-
-	// Free resources related to the command after execution
+	restore_std_fds(std_fds);
 	if (cmd->redirections)
-		free_redirections(cmd->redirections); // Ensure redirections are freed
+		free_redirections(cmd->redirections);
 	cmd->redirections = NULL;
 
 	return (result);
@@ -119,7 +125,7 @@ int	execute_single_command(t_cmd *cmd, t_data *data)
 {
 	int	std_fds[2];
 
-	if (!cmd || !cmd->args || !cmd->args[0]) // Vérifie si cmd ou cmd->args est NULL
+	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
 	if (save_std_fds(std_fds) != 0)
 		return (1);
@@ -133,6 +139,6 @@ int	execute_single_command(t_cmd *cmd, t_data *data)
 		result = execute_builtin(cmd, data);
 	else
 		result = execute_external(cmd, data);
-	restore_std_fds(std_fds); // Restaure les descripteurs après l'exécution
+	restore_std_fds(std_fds);
 	return (result);
 }
