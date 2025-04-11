@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 18:49:08 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:56:05 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	print_sorted_env(t_env *env)
 	env_copy = copy_env_list(env);
 	if (!env_copy)
 	{
-		ft_putstr_fd("minishell: malloc failed\n", STDERR_FILENO); // Handle malloc failure
+		ft_putstr_fd("minishell: malloc failed\n", STDERR_FILENO);
 		return (1);
 	}
 	sort_env_list(&env_copy);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 18:49:05 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:56:17 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_env	*copy_env_list(t_env *env)
 	{
 		if (!add_value(&env_copy, current->name, current->value))
 		{
-			free_env_copy(env_copy); // Free already allocated nodes
+			free_env_copy(env_copy);
 			return (NULL);
 		}
 		current = current->next;

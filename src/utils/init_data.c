@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:29:35 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 18:53:05 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 18:59:17 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,32 +77,30 @@ t_env	*env_to_list(char **env)
 	return (env_list);
 }
 
-/* Trouve le chemin complet d'une commande dans le PATH */
-char	*find_command_path(char *cmd, t_data *data)
+/* Helper function to join a path and command */
+static char	*join_path_and_cmd(char *path, char *cmd)
 {
-	char	**paths;
 	char	*tmp;
+	char	*cmd_path;
+
+	tmp = ft_strjoin(path, "/");
+	if (!tmp)
+		return (NULL);
+	cmd_path = ft_strjoin(tmp, cmd);
+	free(tmp);
+	return (cmd_path);
+}
+
+/* Helper function to search for the command in the paths */
+static char	*search_command_in_paths(char **paths, char *cmd)
+{
 	char	*cmd_path;
 	int		i;
 
-	if (!cmd || !data || !data->path)
-		return (NULL);
-	if (cmd[0] == '/' || cmd[0] == '.')
-		return (ft_strdup(cmd));
-	paths = ft_split(data->path + 5, ':');
-	if (!paths)
-		return (NULL);
 	i = 0;
 	while (paths[i])
 	{
-		tmp = ft_strjoin(paths[i], "/");
-		if (!tmp)
-		{
-			free_tab(paths);
-			return (NULL);
-		}
-		cmd_path = ft_strjoin(tmp, cmd);
-		free(tmp);
+		cmd_path = join_path_and_cmd(paths[i], cmd);
 		if (!cmd_path)
 		{
 			free_tab(paths);
@@ -113,7 +111,22 @@ char	*find_command_path(char *cmd, t_data *data)
 		free(cmd_path);
 		i++;
 	}
-	return (free_tab(paths), NULL);
+	return (NULL);
+}
+
+/* Trouve le chemin complet d'une commande dans le PATH */
+char	*find_command_path(char *cmd, t_data *data)
+{
+	char	**paths;
+
+	if (!cmd || !data || !data->path)
+		return (NULL);
+	if (cmd[0] == '/' || cmd[0] == '.')
+		return (ft_strdup(cmd));
+	paths = ft_split(data->path + 5, ':');
+	if (!paths)
+		return (NULL);
+	return (search_command_in_paths(paths, cmd));
 }
 
 /* Initialise la structure data avec les paramètres du programme */

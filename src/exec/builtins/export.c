@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 18:48:59 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:04:57 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,31 @@ static int	handle_env_var(t_env **env, char *name, char *value)
 	if (existing)
 		update_value(*env, name, value);
 	else if (!add_value(env, name, value))
-		return (1); // Return error if malloc fails
+		return (1);
+	return (0);
+}
+
+/* Affiche un message d'erreur pour un identifiant invalide */
+static void	print_invalid_identifier_error(char *name)
+{
+	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+	ft_putstr_fd(name, STDERR_FILENO);
+	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+}
+
+/* Gère l'ajout ou mise à jour d'une variable avec une valeur */
+static int	handle_env_var_with_value(char *name, char *value, t_env **env)
+{
+	if (*value)
+	{
+		if (handle_env_var(env, name, value))
+			return (1);
+	}
+	else
+	{
+		if (handle_env_var(env, name, ""))
+			return (1);
+	}
 	return (0);
 }
 
@@ -34,6 +58,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	char	*equal_sign;
 	char	*name;
 	char	*value;
+	int		status;
 
 	equal_sign = ft_strchr(arg, '=');
 	if (!equal_sign)
@@ -42,26 +67,14 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	name = arg;
 	value = equal_sign + 1;
 	if (is_valid_identifier(name))
-	{
-		if (*value)
-		{
-			if (handle_env_var(env, name, value))
-				return (*equal_sign = '=', 1); // Handle malloc failure
-		}
-		else
-		{
-			if (handle_env_var(env, name, ""))
-				return (*equal_sign = '=', 1); // Handle malloc failure
-		}
-		return (*equal_sign = '=', 0);
-	}
+		status = handle_env_var_with_value(name, value, env);
 	else
 	{
-		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-		ft_putstr_fd(name, STDERR_FILENO);
-		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		return (*equal_sign = '=', 1);
+		print_invalid_identifier_error(name);
+		status = 1;
 	}
+	*equal_sign = '=';
+	return (status);
 }
 
 /* Traite un argument de la commande export */
