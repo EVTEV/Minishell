@@ -1,6 +1,4 @@
-#include <sys/stat.h>
-
-// ...existing code...
+#include "../../inc/minishell.h"
 
 /* Vérifie si un chemin est un répertoire */
 int	is_directory(const char *path)

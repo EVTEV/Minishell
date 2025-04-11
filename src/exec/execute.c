@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:24:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 10:26:23 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:58:31 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,18 @@ static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 {
 	if (setup_redirections(cmd->redirections) != 0)
 		exit_clean(data, NULL, 1);
+	if (access(cmd_path, F_OK) == -1)
+	{
+		ft_putchar_fd(' ', 2);
+		ft_putstr_fd(strerror(errno), 2);
+		exit_clean(data, NULL, 127);
+	}
+	if (access(cmd_path, X_OK) == -1)
+	{
+		ft_putchar_fd(' ', 2);
+		ft_putstr_fd(strerror(errno), 2);
+		exit_clean(data, NULL, 126);
+	}
 	if (execve(cmd_path, cmd->args, data->env) == -1)
 	{
 		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));

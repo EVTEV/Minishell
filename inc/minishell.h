@@ -20,7 +20,7 @@
 # define TOKEN_REDIR_IN 5
 # define TOKEN_REDIR_HEREDOC 6
 
-extern int	g_exit_status; // Variable globale pour gérer les signaux
+extern int			g_exit_status; // Variable globale pour gérer les signaux
 
 typedef struct s_env
 {

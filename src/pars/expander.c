@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/11 10:30:20 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 static char	*expand_variable(char *input, t_env *env_list, int *len)
 {
 	char	*name;
 	char	*value;
+	char	*result;
 	int		i;
 
 	i = 1;
@@ -11,120 +24,239 @@ static char	*expand_variable(char *input, t_env *env_list, int *len)
 		i++;
 	*len = i;
 	name = ft_substr(input, 1, i - 1);
-	if (!name || !*name)
+	if (!name)
+		return (NULL);
+	if (!*name)
 	{
 		free(name);
 		return (ft_strdup("$"));
 	}
 	value = get_value(*env_list, name);
 	free(name);
-	return (value ? ft_strdup(value) : ft_strdup(""));
+	if (!value)
+		return (ft_strdup(""));
+	result = ft_strdup(value);
+	if (!result)
+		return (NULL);
+	return (result);
+}
+
+static char	*append_char_to_result(char *result, char *tmp)
+{
+	char	*new_result;
+
+	new_result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!new_result)
+		return (free(result), NULL);
+	return (new_result);
+}
+
+static char	*process_dollar_in_quotes(char *input, int *i, t_data *data, char *result)
+{
+	char	*tmp;
+	int		len;
+
+	if (input[*i] == '$' && (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_'))
+		tmp = expand_variable(&input[*i], data->env_list, &len);
+	else if (input[*i] == '$' && input[*i + 1] == '?')
+		tmp = ft_itoa(data->exit_status);
+	else
+		tmp = ft_substr(input, (*i)++, 1);
+	if (!tmp)
+		return (free(result), NULL);
+	result = append_char_to_result(result, tmp);
+	if (!result)
+		return (NULL);
+	if (input[*i] == '$' && input[*i + 1] == '?')
+		*i += 2;
+	else
+		*i += len;
+	return (result);
+}
+
+static char	*process_double_quotes_content(char *input, int *i, t_data *data, char *result)
+{
+	char	*tmp;
+	char	*tmpp;
+
+	while (input[*i] && input[*i] != '"')
+	{
+		if (input[*i] == '$')
+			result = process_dollar_in_quotes(input, i, data, result);
+		else
+		{
+			tmp = ft_substr(input, (*i)++, 1);
+			if (!tmp)
+				return (free(result), NULL);
+			tmpp = ft_strjoin_free(result, tmp);
+			free(tmp);
+			if (!tmpp)
+				return (free(result), NULL);
+			result = ft_strdup(tmpp);
+			free(tmpp);
+			if (!result)
+				return (NULL);
+		}
+	}
+	return (result);
+}
+
+static char	*handle_double_quotes(char *input, int *i, t_data *data, char *result)
+{
+	char	*tmp;
+
+	tmp = ft_substr(input, (*i)++, 1);
+	if (!tmp)
+		return (free(result), NULL);
+	result = append_char_to_result(result, tmp);
+	if (!result)
+		return (NULL);
+	result = process_double_quotes_content(input, i, data, result);
+	if (!result)
+		return (NULL);
+	if (!input[*i])
+	{
+		ft_putstr_fd("minishell: syntax error: unclosed double quote\n",
+			STDERR_FILENO);
+		return (free(result), NULL);
+	}
+	tmp = ft_substr(input, (*i)++, 1);
+	if (!tmp)
+		return (free(result), NULL);
+	return (append_char_to_result(result, tmp));
+}
+
+static char	*process_single_quotes_content(char *input, int *i, char *result)
+{
+	char	*tmp;
+	int		start;
+
+	start = *i;
+	while (input[*i] && input[*i] != '\'')
+		(*i)++;
+	if (!input[*i])
+	{
+		ft_putstr_fd("minishell: syntax error: unclosed single quote\n",
+			STDERR_FILENO);
+		return (free(result), NULL);
+	}
+	tmp = ft_substr(input, start, *i - start);
+	if (!tmp)
+		return (free(result), NULL);
+	result = append_char_to_result(result, tmp);
+	if (!result)
+		return (NULL);
+	return (result);
+}
+
+static char	*handle_single_quotes(char *input, int *i, char *result)
+{
+	char	*tmp;
+
+	tmp = ft_substr(input, (*i)++, 1);
+	if (!tmp)
+		return (free(result), NULL);
+	result = append_char_to_result(result, tmp);
+	if (!result)
+		return (NULL);
+	result = process_single_quotes_content(input, i, result);
+	if (!result)
+		return (NULL);
+	tmp = ft_substr(input, (*i)++, 1);
+	if (!tmp)
+		return (free(result), NULL);
+	return (append_char_to_result(result, tmp));
+}
+
+static char	*handle_empty_dollar(char *result)
+{
+	char	*tmp;
+
+	tmp = ft_strdup("$");
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	return (result);
+}
+
+static char	*expand_dollar_variable(char *input, int *i, t_data *data, char *result)
+{
+	char	*tmp;
+	int		len;
+
+	if (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_')
+		tmp = expand_variable(&input[*i], data->env_list, &len);
+	else if (input[*i + 1] == '?')
+		tmp = ft_itoa(data->exit_status);
+	else
+		tmp = ft_strdup("$");
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	if (input[*i + 1] == '?')
+		*i += 2;
+	else
+		*i += len;
+	return (result);
+}
+
+static char	*handle_dollar_sign(char *input, int *i, t_data *data, char *result)
+{
+	if (!input[*i + 1])
+	{
+		result = handle_empty_dollar(result);
+		if (!result)
+			return (NULL);
+		(*i)++;
+		return (result);
+	}
+	return (expand_dollar_variable(input, i, data, result));
+}
+
+static char	*handle_plain_text(char *input, int *i, char *result)
+{
+	char	*tmp;
+	int		start;
+
+	start = *i;
+	while (input[*i] && input[*i] != '$' && input[*i] != '"' && input[*i] != '\'')
+		(*i)++;
+	tmp = ft_substr(input, start, *i - start);
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	return (result);
 }
 
 char	*expander(char *input, t_data *data)
 {
-	char	*result = NULL;
-	char	*tmp;
-	int		i = 0, start, len;
+	char	*result;
+	int		i;
 
+	result = NULL;
+	i = 0;
 	while (input[i])
 	{
-		if (input[i] == '"') // Handle double quotes
-		{
-			tmp = ft_substr(input, i++, 1);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			start = i;
-			while (input[i] && input[i] != '"')
-			{
-				if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
-				{
-					tmp = expand_variable(&input[i], data->env_list, &len);
-					result = ft_strjoin_free(result, tmp);
-					free(tmp);
-					i += len;
-				}
-				else if (input[i] == '$' && input[i + 1] == '?') // Gère "$?" (exit status)
-				{
-					tmp = ft_itoa(data->exit_status);
-					result = ft_strjoin_free(result, tmp);
-					free(tmp);
-					i += 2;
-				}
-				else
-				{
-					char *char_to_add = ft_substr(input, i++, 1); // Extract single character
-					result = ft_strjoin_free(result, char_to_add); // Append to result
-					free(char_to_add); // Free the temporary string
-				}
-			}
-			if (!input[i]) // If closing quote is missing
-			{
-				ft_putstr_fd("minishell: syntax error: unclosed double quote\n", STDERR_FILENO);
-				free(result);
-				return (NULL);
-			}
-			if (input[i] == '"')
-			{
-				char *closing_quote = ft_substr(input, i++, 1); // Extract closing quote
-				result = ft_strjoin_free(result, closing_quote); // Append to result
-				free(closing_quote); // Free the temporary string
-			}
-		}
-		else if (input[i] == '\'') // Handle single quotes
-		{
-			tmp = ft_substr(input, i++, 1); // Extract opening single quote
-			result = ft_strjoin_free(result, tmp); // Append to result
-			free(tmp);
-			start = i;
-			while (input[i] && input[i] != '\'')
-				i++;
-			if (!input[i]) // If closing quote is missing
-			{
-				ft_putstr_fd("minishell: syntax error: unclosed single quote\n", STDERR_FILENO);
-				free(result);
-				return (NULL);
-			}
-			tmp = ft_substr(input, start, i - start); // Extract content inside quotes
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			if (input[i] == '\'')
-			{
-				tmp = ft_substr(input, i++, 1); // Extract closing single quote
-				result = ft_strjoin_free(result, tmp); // Append to result
-				free(tmp);
-			}
-		}
-		else if (input[i] == '$' && (ft_isalnum(input[i + 1]) || input[i + 1] == '_'))
-		{
-			tmp = expand_variable(&input[i], data->env_list, &len);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			i += len;
-		}
-		else if (input[i] == '$' && input[i + 1] == '?') // Gère "$?" (exit status)
-		{
-			tmp = ft_itoa(data->exit_status);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-			i += 2;
-		}
-		else if (input[i] == '$' && (!input[i + 1] || input[i + 1] == ' ')) // Gère "$" seul
-		{
-			char *single_dollar = ft_strdup("$"); // Create a temporary string for "$"
-			result = ft_strjoin_free(result, single_dollar); // Append to result
-			free(single_dollar); // Free the temporary string
-			i++;
-		}
+		if (input[i] == '"')
+			result = handle_double_quotes(input, &i, data, result);
+		else if (input[i] == '\'')
+			result = handle_single_quotes(input, &i, result);
+		else if (input[i] == '$')
+			result = handle_dollar_sign(input, &i, data, result);
 		else
-		{
-			start = i;
-			while (input[i] && input[i] != '$' && input[i] != '"' && input[i] != '\'')
-				i++;
-			tmp = ft_substr(input, start, i - start);
-			result = ft_strjoin_free(result, tmp);
-			free(tmp);
-		}
+			result = handle_plain_text(input, &i, result);
+		if (!result)
+			return (NULL);
 	}
 	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/10 23:18:40 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:50:45 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static int	handle_cd_error(char *path)
 	ft_putstr_fd("minishell: cd: ", 2);
 	if (access(path, F_OK) != 0)
 		ft_putstr_fd("No such file or directory\n", 2);
-	//else if (access(path, X_OK) != 0)
-	//	ft_putstr_fd("Permission denied\n", 2);
+	else if (access(path, X_OK) != 0)
+		ft_putstr_fd("Permission denied\n", 2);
 	else
 		ft_putstr_fd("Not a directory\n", 2);
 	return (1);
