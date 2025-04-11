@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 20:11:14 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:22:56 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void				ft_exec_sig_handler(int sig);
 void				setup_signals(void);
 void				handle_parent_signals(void);
 void				handle_child_signals(void);
+void				setup_exec_signals(void);
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
 // ---------- cd.c ------------ //
@@ -221,7 +222,8 @@ int					handle_heredoc(char *delimiter, char **heredoc_file);
 int					create_pipes(t_data *data, int pipe_count);
 pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
 void				restore_std_fds(int std_fds[2]);
-void				cleanup_execution(t_data *data, pid_t *pids, int pipe_count);
+void				cleanup_execution(t_data *data,
+						pid_t *pids, int pipe_count);
 // ---------- pipe_processes.c ------------ //
 int					exec_pipe(t_data *data, int cmd_count, int pipe_count);
 int					wait_children(pid_t *pids, int cmd_count, int *exit_status);

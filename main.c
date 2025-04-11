@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 20:00:11 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:24:00 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,61 @@
 
 int	g_exit_status = 0;
 
-/* Gère SIGINT dans le parent pour ne pas quitter le shell */
-void	signal_handler_main(int signum)
+static int	process_input(t_data *data)
 {
-	if (signum == SIGINT)
+	char	*expanded_input;
+	t_token	*tokens;
+
+	setup_exec_signals();
+	expanded_input = expander(data->input, data);
+	free(data->input);
+	data->input = NULL;
+	tokens = lexer(expanded_input);
+	free(expanded_input);
+	if (!tokens)
+		return (0);
+	data->cmd_list = parser(tokens);
+	free_token(tokens);
+	if (!data->cmd_list || (data->cmd_list && data->cmd_list->interrupted))
 	{
-		ft_putchar_fd('\n', STDOUT_FILENO);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		g_exit_status = 130; // Code de sortie pour SIGINT
+		free_cmd_list(data->cmd_list);
+		data->cmd_list = NULL;
+		if (data->cmd_list)
+			data->exit_status = 1;
+		else
+			data->exit_status = 2;
+		return (0);
 	}
+	return (1);
 }
 
-void	setup_signals(void)
+static void	execute_and_cleanup(t_data *data)
 {
-	signal(SIGINT, signal_handler_main); // Gérer SIGINT dans le parent
-	signal(SIGQUIT, SIG_IGN); // Ignorer SIGQUIT dans le parent
+	data->exit_status = execute_commands(data);
+	free_cmd_list(data->cmd_list);
+	data->cmd_list = NULL;
 }
 
-static void	setup_exec_signals(void)
+static void	handle_input(t_data *data)
 {
-	signal(SIGINT, ft_exec_sig_handler);
+	data->input = read_input(data);
+	if (!data->input || ft_isspace(data->input))
+	{
+		free(data->input);
+		data->input = NULL;
+		return ;
+	}
+	if (process_input(data))
+		execute_and_cleanup(data);
+}
+
+static void	main_loop(t_data *data)
+{
+	while (1)
+	{
+		handle_input(data);
+		setup_signals();
+	}
 }
 
 int	main(int ac, char **av, char **env)
@@ -46,74 +79,6 @@ int	main(int ac, char **av, char **env)
 	load_history();
 	data = init_data(ac, av, env);
 	data->cmd_list = NULL;
-	while (1)
-	{
-		data->input = read_input(data);
-		if (data->input)
-		{
-			if (ft_isspace(data->input))
-			{
-				free(data->input);
-				data->input = NULL;
-				continue;
-			}
-			setup_exec_signals();
-			char *expanded_input = expander(data->input, data);
-			free(data->input);
-			data->input = NULL;
-			t_token *tokens = lexer(expanded_input);
-			if (!tokens)
-			{
-				free(expanded_input);
-				expanded_input = NULL;
-				continue ;
-			}
-			free(expanded_input);
-			expanded_input = NULL;
-			data->cmd_list = parser(tokens);
-			if (!data->cmd_list)
-			{
-				if (data->input)
-				{
-					free(data->input);
-					data->input = NULL;
-				}
-				free_token(tokens);
-				tokens = NULL;
-				data->exit_status = 2;
-				continue;
-			}
-			if (data->cmd_list && data->cmd_list->interrupted)
-			{
-				free_cmd_list(data->cmd_list);
-				data->cmd_list = NULL;
-				free(data->input);
-				data->input = NULL;
-				free_token(tokens);
-				tokens = NULL;
-				data->exit_status = 1;
-				continue ;
-			}
-			if (tokens)
-			{
-				free_token(tokens);
-				tokens = NULL;
-			}
-			if (data->cmd_list)
-			{
-				data->exit_status = execute_commands(data);
-				if (data && data->cmd_list)
-				{
-					free_cmd_list(data->cmd_list);
-					data->cmd_list = NULL;
-				}
-			}
-			else
-				free_cmd_list(data->cmd_list);
-			setup_signals();
-			free(data->input);
-			data->input = NULL;
-		}
-	}
+	main_loop(data);
 	return (0);
 }
