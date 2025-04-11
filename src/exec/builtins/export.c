@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 14:15:32 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:13:01 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	value = equal_sign + 1;
 	if (is_valid_identifier(name))
 	{
-		if (*value)
-			handle_env_var(env, name, value);
-		else
-			handle_env_var(env, name, NULL);
+		handle_env_var(env, name, *value ? value : ""); // Ensure empty value is handled
 		*equal_sign = '=';
 		return (0);
 	}
@@ -55,14 +52,16 @@ static int	process_export_with_equal(char *arg, t_env **env)
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(name, STDERR_FILENO);
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-		*equal_sign = '=';
-		return (1); // Return error code for invalid identifier
+		*equal_sign = '='; // Restore the original argument
+		return (1);
 	}
 }
 
 /* Traite un argument de la commande export */
 static int	process_export_arg(char **args, int i, t_env **env)
 {
+	if (!args[i])
+		return (0);
 	if (ft_strchr(args[i], '='))
 		return (process_export_with_equal(args[i], env));
 	else if (!is_valid_identifier(args[i])) // Handle invalid identifiers without '='
@@ -72,6 +71,8 @@ static int	process_export_arg(char **args, int i, t_env **env)
 		ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 		return (1); // Return error code for invalid identifier
 	}
+	else
+		handle_env_var(env, args[i], ""); // Add variable with an empty value
 	return (0);
 }
 
@@ -90,7 +91,7 @@ int	ft_export(char **args, t_env **env)
 	{
 		status = process_export_arg(args, i, env);
 		if (status != 0)
-			ret_code = 1; // Set return code to 1 if any argument is invalid
+			ret_code = 1;
 		i++;
 	}
 	return (ret_code);

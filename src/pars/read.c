@@ -6,24 +6,11 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 14:46:42 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/08 08:12:26 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:30:44 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include <signal.h>
-#include <termios.h> // Ajout pour gérer les attributs du terminal
-
-int	g_exit_status = 0; // Définition de la variable globale
-
-void	reset_terminal_line(void)
-{
-	struct termios	term;
-
-	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(STDIN_FILENO, TCSANOW, &term);
-}
 
 void	signal_handler_main(int signum)
 {
@@ -31,11 +18,11 @@ void	signal_handler_main(int signum)
 
 	if (signum == SIGINT)
 	{
-		rl_replace_line("", 0); // Efface la ligne courante
-		write(1, "\n", 1); // Affiche une nouvelle ligne
-		rl_on_new_line();   // Indique à readline qu'une nouvelle ligne commence
-		rl_redisplay();     // Réaffiche le prompt
-		g_exit_status = 1;  // Met à jour le statut global
+		rl_replace_line("", 0);
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_redisplay();
+		g_exit_status = 1;
 	}
 	tcgetattr(1, &term);
 	term.c_lflag &= ~ECHOCTL;
@@ -46,13 +33,8 @@ void	ft_exec_sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\n", 1); // Ajoute une nouvelle ligne pour éviter les doublons
+		write(1, "\n", 1);
 		g_exit_status = 130;
-	}
-	else if (sig == SIGQUIT)
-	{
-		write(2, "Quit: 3\n", 8);
-		g_exit_status = 131;
 	}
 }
 
@@ -73,7 +55,7 @@ void	load_history(void)
 		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
 		add_history(tmp);
 		free(tmp);
-		free(line); // Free the line after processing
+		free(line);
 		line = get_next_line(fd);
 	}
 	close(fd);

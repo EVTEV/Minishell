@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:10:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 16:25:42 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:14:12 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,40 @@ static void	add_cmd_to_list(t_cmd **cmd_list, t_cmd *new_cmd)
 	current->next = new_cmd;
 }
 
+static t_cmd	*initialize_new_cmd(char **tokens)
+{
+	t_cmd	*new_cmd;
+	int		i;
+
+	new_cmd = create_new_cmd();
+	if (!new_cmd)
+		return (NULL);
+	new_cmd->args = malloc(sizeof(char *) * (ft_tablen(tokens) + 1));
+	if (!new_cmd->args)
+		return (free_tab(tokens), free(new_cmd), NULL);
+	i = 0;
+	while (tokens[i])
+	{
+		new_cmd->args[i] = ft_strdup(tokens[i]);
+		if (!new_cmd->args[i])
+		{
+			free_tab(tokens);
+			free_tab(new_cmd->args);
+			free(new_cmd);
+			return (NULL);
+		}
+		i++;
+	}
+	new_cmd->args[i] = NULL;
+	return (new_cmd);
+}
+
 t_cmd	*parse_input(char *input, t_data *data)
 {
 	t_cmd	*cmd_list;
 	t_cmd	*new_cmd;
 	char	**tokens;
-	int		i;
 
-	i = 0;
 	cmd_list = NULL;
 	(void)data;
 	if (!input)
@@ -57,33 +83,10 @@ t_cmd	*parse_input(char *input, t_data *data)
 	tokens = ft_split(input, ' ');
 	if (!tokens)
 		return (NULL);
-	new_cmd = create_new_cmd();
+	new_cmd = initialize_new_cmd(tokens);
 	if (!new_cmd)
-	{
-		free_tab(tokens);
 		return (NULL);
-	}
-	new_cmd->args = malloc(sizeof(char *) * (ft_tablen(tokens) + 1)); // Allocate memory for args
-	if (!new_cmd->args)
-	{
-		free_tab(tokens);
-		free(new_cmd);
-		return (NULL);
-	}
-	while (tokens[i])
-	{
-		new_cmd->args[i] = ft_strdup(tokens[i]); // Use new_cmd->args instead of cmd_list->args
-		if (!new_cmd->args[i])
-		{
-			free_tab(tokens);
-			free_tab(new_cmd->args); // Free allocated args
-			free(new_cmd);
-			return (NULL);
-		}
-		i++;
-	}
-	new_cmd->args[i] = NULL; // Null-terminate the args array
 	add_cmd_to_list(&cmd_list, new_cmd);
-	free_tab(tokens); // Free tokens after use
+	free_tab(tokens);
 	return (cmd_list);
 }

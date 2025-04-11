@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 12:22:06 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:26:43 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 # include "../Libft/inc/libft.h"
 # include <sys/wait.h>
-# include <stdio.h> // Ajout pour résoudre les erreurs liées à FILE
+# include <termios.h>
+# include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <string.h>
@@ -32,7 +33,7 @@
 # define TOKEN_REDIR_IN 5
 # define TOKEN_REDIR_HEREDOC 6
 
-extern int			g_exit_status; // Variable globale pour gérer les signaux
+extern int			g_exit_status;
 
 typedef struct s_env
 {
@@ -61,8 +62,8 @@ typedef struct s_cmd
 	t_redir			*redirections;
 	int				pipe_in;
 	int				pipe_out;
-	int				interrupted; // Indique si un heredoc a été interrompu
-	char			*heredoc_file; // Fichier temporaire pour le heredoc
+	int				interrupted;
+	char			*heredoc_file;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -91,6 +92,21 @@ t_cmd				*parser(t_token *tokens);
 char				*expander(char *input, t_data *data);
 // --------------- Pars.c --------------- //
 t_cmd				*parse_input(char *input, t_data *data);
+int					handle_redirection_token(t_cmd *current_cmd,
+						t_token **tokens, t_cmd *cmd_list);
+int					handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
+						t_cmd *cmd_list);
+t_cmd				*initialize_command(t_cmd **current_cmd, t_cmd *cmd_list);
+int					process_token(t_cmd **current_cmd, t_cmd **cmd_list,
+						t_token **tokens);
+int					finalize_command(t_cmd *current_cmd, t_cmd *cmd_list);
+void				add_redirection(t_redir **redirections, int type,
+						char *file);
+int					handle_word_token(t_cmd *cmd, t_token *token,
+						t_cmd *cmd_list);
+int					handle_pipe_token(t_cmd **current_cmd, t_cmd *cmd_list);
+int					handle_redirection_file(t_cmd *current_cmd,
+						t_token **tokens, t_cmd *cmd_list);
 // --------------- Read.c --------------- //
 char				*read_input(t_data *data);
 void				save_history(char *input);
@@ -157,6 +173,7 @@ char				**ft_tabjoin(char **tab, char *new_elem);
 int					is_directory(const char *path);
 // ---------- free_cmd.c ------------ //
 void				free_cmd_list(t_cmd *cmd_list);
+t_cmd				*create_new_command(void);
 void				free_pids(pid_t *pids);
 void				free_token(t_token *tokens);
 void				free_redirections(t_redir *redirections);

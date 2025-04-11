@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_cmd.c                                         :+:      :+:    :+:   */
+/*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 15:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 12:16:03 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:13:15 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,6 @@ void	free_cmd_list(t_cmd *cmd_list)
 		free_tab(tmp->args);
 		free_redirections(tmp->redirections);
 		free(tmp);
-	}
-}
-
-/* Libère la liste d'environnement copiée */
-void	free_env_copy(t_env *env_copy)
-{
-	t_env	*current;
-
-	while (env_copy)
-	{
-		current = env_copy;
-		env_copy = env_copy->next;
-		free(current->name);
-		free(current->value);
-		free(current);
 	}
 }
 

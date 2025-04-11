@@ -1,4 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/11 14:31:27 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "inc/minishell.h"
+
+int	g_exit_status = 0;
 
 static void	setup_signals(void)
 {
@@ -9,7 +23,6 @@ static void	setup_signals(void)
 static void	setup_exec_signals(void)
 {
 	signal(SIGINT, ft_exec_sig_handler);
-	signal(SIGQUIT, ft_exec_sig_handler);
 }
 
 int	main(int ac, char **av, char **env)

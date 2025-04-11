@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_sort.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flash19 <flash19@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2023/03/27 14:30:42 by flash19          ###   ########.fr       */
+/*   Updated: 2025/04/11 14:12:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,22 @@ int	print_sorted_env(t_env *env)
 	print_sorted_vars(env_copy);
 	free_env_copy(copy_head);
 	return (0);
+}
+
+/* Libère la copie de la liste des variables d'environnement */
+void	free_env_copy(t_env *env_copy)
+{
+	t_env	*temp;
+
+	while (env_copy)
+	{
+		temp = env_copy;
+		env_copy = env_copy->next;
+		free(temp->name);
+		temp->name = NULL; // Set to NULL after free
+		free(temp->value);
+		temp->value = NULL; // Set to NULL after free
+		free(temp);
+		temp = NULL; // Set to NULL after free
+	}
 }

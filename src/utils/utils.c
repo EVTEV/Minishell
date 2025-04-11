@@ -9,3 +9,54 @@ int	is_directory(const char *path)
 		return (0);
 	return (S_ISDIR(path_stat.st_mode));
 }
+
+t_cmd	*create_new_command(void)
+{
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!cmd)
+	{
+		ft_putstr_fd("minishell: memory allocation error\n", STDERR_FILENO);
+		return (NULL);
+	}
+	ft_memset(cmd, 0, sizeof(t_cmd));
+	cmd->next = NULL;
+	return (cmd);
+}
+
+void	reset_terminal_line(void)
+{
+	struct termios	term;
+
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+char	**ft_tabjoin(char **tab, char *new_elem)
+{
+	int		len;
+	int		i;
+	char	**new_tab;
+
+	len = 0;
+	i = 0;
+	if (tab)
+		while (tab[len])
+			len++;
+	new_tab = (char **)malloc(sizeof(char *) * (len + 2));
+	if (!new_tab)
+		return (free_tab(tab), free(new_elem), NULL);
+	while (i < len)
+	{
+		new_tab[i] = tab[i];
+		i++;
+	}
+	new_tab[len] = ft_strdup(new_elem);
+	if (!new_tab[len])
+		return (free(new_tab), free_tab(tab), NULL);
+	free(new_elem);
+	new_tab[len + 1] = NULL;
+	return (free(tab), new_tab);
+}

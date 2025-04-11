@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 10:30:20 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:29:54 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ static char	*append_char_to_result(char *result, char *tmp)
 	return (new_result);
 }
 
-static char	*process_dollar_in_quotes(char *input, int *i, t_data *data, char *result)
+static char	*process_dollar_in_quotes(char *input, int *i,
+	t_data *data, char *result)
 {
 	char	*tmp;
 	int		len;
@@ -75,7 +76,8 @@ static char	*process_dollar_in_quotes(char *input, int *i, t_data *data, char *r
 	return (result);
 }
 
-static char	*process_double_quotes_content(char *input, int *i, t_data *data, char *result)
+static char	*process_double_quotes_content(char *input, int *i,
+	t_data *data, char *result)
 {
 	char	*tmp;
 	char	*tmpp;
@@ -102,7 +104,8 @@ static char	*process_double_quotes_content(char *input, int *i, t_data *data, ch
 	return (result);
 }
 
-static char	*handle_double_quotes(char *input, int *i, t_data *data, char *result)
+static char	*handle_double_quotes(char *input, int *i,
+	t_data *data, char *result)
 {
 	char	*tmp;
 
@@ -183,7 +186,8 @@ static char	*handle_empty_dollar(char *result)
 	return (result);
 }
 
-static char	*expand_dollar_variable(char *input, int *i, t_data *data, char *result)
+static char	*expand_dollar_variable(char *input, int *i,
+	t_data *data, char *result)
 {
 	char	*tmp;
 	int		len;
@@ -226,7 +230,8 @@ static char	*handle_plain_text(char *input, int *i, char *result)
 	int		start;
 
 	start = *i;
-	while (input[*i] && input[*i] != '$' && input[*i] != '"' && input[*i] != '\'')
+	while (input[*i] && input[*i] != '$'
+		&& input[*i] != '"' && input[*i] != '\'')
 		(*i)++;
 	tmp = ft_substr(input, start, *i - start);
 	if (!tmp)

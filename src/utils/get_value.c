@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 10:03:19 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:17:27 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,12 @@ void	add_value(t_env **env, char *name, char *value)
 	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
 		return ;
-	new->name = name;
-	new->value = value;
+	new->name = ft_strdup(name);
+	if (!new->name)
+		return (free(new));
+	new->value = ft_strdup(value);
+	if (!new->value)
+		return (free(new->name), free(new));
 	new->next = NULL;
 	if (*env == NULL)
 		*env = new;

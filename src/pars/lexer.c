@@ -1,50 +1,108 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/11 14:28:49 by lowatell          #+#    #+#             */
+/*   Updated: 2025/04/11 15:56:07 by lowatell         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 
 // Forward declaration for concatenate_parts
 static char	*concatenate_parts(char *part1, char *part2);
 
-static void	add_token(t_token **tokens, char *value, int type)
+static char	*process_quoted_part(char *value, size_t *i,
+	size_t len, char *processed)
+{
+	char	quote;
+	size_t	start;
+	char	*quoted_part;
+
+	quote = value[(*i)++];
+	start = *i;
+	while (*i < len && value[*i] != quote)
+		(*i)++;
+	quoted_part = ft_substr(value, start, *i - start);
+	if (!quoted_part)
+	{
+		free(processed);
+		return (NULL);
+	}
+	processed = concatenate_parts(processed, quoted_part);
+	if (!processed)
+		return (NULL);
+	(*i)++;
+	return (processed);
+}
+
+static char	*process_unquoted_part(char *value,
+	size_t *i, size_t len, char *processed)
+{
+	size_t	start;
+	char	*unquoted_part;
+
+	unquoted_part = NULL;
+	start = *i;
+	while (*i < len && value[*i] != '\'' && value[*i] != '\"')
+		(*i)++;
+	unquoted_part = ft_substr(value, start, *i - start);
+	if (!unquoted_part)
+	{
+		free(processed);
+		return (NULL);
+	}
+	processed = concatenate_parts(processed, unquoted_part);
+	if (!processed)
+		return (NULL);
+	return (processed);
+}
+
+static char	*process_value(char *value)
+{
+	char	*processed;
+	size_t	i;
+	size_t	len;
+
+	len = ft_strlen(value);
+	i = 0;
+	processed = NULL;
+	while (i < len)
+	{
+		if (value[i] == '\'' || value[i] == '\"')
+			processed = process_quoted_part(value, &i, len, processed);
+		else
+			processed = process_unquoted_part(value, &i, len, processed);
+		if (!processed)
+			return (NULL);
+	}
+	free(value);
+	return (processed);
+}
+
+static t_token	*create_new_token(char *value, int type)
 {
 	t_token	*new;
-	t_token	*tmp;
 
-	// Remove quotes for TOKEN_WORD and handle concatenation of quoted parts
-	if (type == TOKEN_WORD && value)
-	{
-		char *processed = NULL;
-		size_t i = 0, len = ft_strlen(value);
-
-		while (i < len)
-		{
-			if (value[i] == '\'' || value[i] == '\"')
-			{
-				char quote = value[i++];
-				size_t start = i;
-				while (i < len && value[i] != quote)
-					i++;
-				char *quoted_part = ft_substr(value, start, i - start);
-				processed = concatenate_parts(processed, quoted_part);
-				i++; // Skip closing quote
-			}
-			else
-			{
-				size_t start = i;
-				while (i < len && value[i] != '\'' && value[i] != '\"')
-					i++;
-				char *unquoted_part = ft_substr(value, start, i - start);
-				processed = concatenate_parts(processed, unquoted_part);
-			}
-		}
-		free(value);
-		value = processed;
-	}
-
-	new = malloc(sizeof(t_token));
+	new = (t_token *)malloc(sizeof(t_token));
 	if (!new)
-		return ;
+	{
+		free(value);
+		return (NULL);
+	}
 	new->value = value;
 	new->type = type;
 	new->next = NULL;
+	return (new);
+}
+
+static void	append_token(t_token **tokens, t_token *new)
+{
+	t_token	*tmp;
+
 	if (!*tokens)
 		*tokens = new;
 	else
@@ -56,14 +114,32 @@ static void	add_token(t_token **tokens, char *value, int type)
 	}
 }
 
+static void	add_token(t_token **tokens, char *value, int type)
+{
+	t_token	*new;
+
+	new = NULL;
+	if (type == TOKEN_WORD && value)
+	{
+		value = process_value(value);
+		if (!value)
+			return ;
+	}
+	new = create_new_token(value, type);
+	if (!new)
+		return ;
+	append_token(tokens, new);
+}
+
 static int	handle_quotes(char *input, int i, char quote)
 {
 	while (input[i] && input[i] != quote)
 		i++;
-	if (!input[i]) // If the quote is not closed
+	if (!input[i])
 	{
-		ft_putstr_fd("minishell: syntax error: unclosed quote\n", STDERR_FILENO);
-		return (-1); // Return -1 to indicate an error
+		ft_putstr_fd("minishell: syntax error: unclosed quote\n",
+			STDERR_FILENO);
+		return (-1);
 	}
 	return (i);
 }
@@ -77,96 +153,278 @@ static char	*concatenate_parts(char *part1, char *part2)
 	if (!part2)
 		return (part1);
 	result = ft_strjoin(part1, part2);
+	if (!result)
+	{
+		free(part1);
+		free(part2);
+		return (NULL);
+	}
 	free(part1);
 	free(part2);
 	return (result);
 }
 
-t_token	*lexer(char *input)
+static int	handle_escaped_characters(char *input, int *i,
+	char **current_part, t_token **tokens)
 {
-	t_token	*tokens = NULL;
-	int		i = 0;
 	int		start;
-	char	*current_part = NULL;
+	char	*escaped_part;
 
-	while (input && input[i])
+	start = ++(*i);
+	(*i)++;
+	escaped_part = ft_substr(input, start, 1);
+	if (!escaped_part)
+		return (free(*current_part), free_token(*tokens), -1);
+	*current_part = concatenate_parts(*current_part, escaped_part);
+	if (!*current_part)
+		return (free_token(*tokens), -1);
+	return (0);
+}
+
+static int	handle_whitespace(char **current_part, t_token **tokens)
+{
+	if (*current_part)
 	{
-		if (input[i] == '\\' && input[i + 1]) // Handle escaped characters
+		add_token(tokens, *current_part, TOKEN_WORD);
+		if (!*tokens)
+			return (free(*current_part), free_token(*tokens), -1);
+		*current_part = NULL;
+	}
+	return (0);
+}
+
+static int	handle_quotes_in_lexer(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	int		start;
+	char	*quoted_part;
+
+	start = (*i)++;
+	*i = handle_quotes(input, *i, input[start]);
+	if (*i == -1)
+		return (free(*current_part), free_token(*tokens), -1);
+	quoted_part = ft_substr(input, start, *i - start + 1);
+	if (!quoted_part)
+		return (free(*current_part), free_token(*tokens), -1);
+	*current_part = concatenate_parts(*current_part, quoted_part);
+	if (!*current_part)
+		return (free_token(*tokens), -1);
+	(*i)++;
+	return (0);
+}
+
+static int	handle_redirection_append(int *i, t_token **tokens)
+{
+	char	*append_redir;
+
+	append_redir = ft_strdup(">>");
+	if (!append_redir)
+		return (free_token(*tokens), -1);
+	add_token(tokens, append_redir, TOKEN_REDIR_APPEND);
+	if (!*tokens)
+		return (free_token(*tokens), -1);
+	*i += 2;
+	return (0);
+}
+
+static int	handle_redirection_heredoc(int *i, t_token **tokens)
+{
+	char	*heredoc_redir;
+
+	heredoc_redir = ft_strdup("<<");
+	if (!heredoc_redir)
+		return (free_token(*tokens), -1);
+	add_token(tokens, heredoc_redir, TOKEN_REDIR_HEREDOC);
+	if (!*tokens)
+		return (free_token(*tokens), -1);
+	*i += 2;
+	return (0);
+}
+
+static int	handle_redirection_out(int *i, t_token **tokens)
+{
+	char	*out_redir;
+
+	out_redir = ft_strdup(">");
+	if (!out_redir)
+		return (free_token(*tokens), -1);
+	add_token(tokens, out_redir, TOKEN_REDIR_OUT);
+	if (!*tokens)
+		return (free_token(*tokens), -1);
+	(*i)++;
+	return (0);
+}
+
+static int	handle_redirection_in(int *i, t_token **tokens)
+{
+	char	*in_redir;
+
+	in_redir = ft_strdup("<");
+	if (!in_redir)
+		return (free_token(*tokens), -1);
+	add_token(tokens, in_redir, TOKEN_REDIR_IN);
+	if (!*tokens)
+		return (free_token(*tokens), -1);
+	(*i)++;
+	return (0);
+}
+
+static int	handle_redirections(char *input, int *i, t_token **tokens)
+{
+	if (input[*i] == '>' && input[*i + 1] == '>')
+		return (handle_redirection_append(i, tokens));
+	else if (input[*i] == '<' && input[*i + 1] == '<')
+		return (handle_redirection_heredoc(i, tokens));
+	else if (input[*i] == '>')
+		return (handle_redirection_out(i, tokens));
+	else if (input[*i] == '<')
+		return (handle_redirection_in(i, tokens));
+	return (0);
+}
+
+static int	handle_pipe(char *input, int *i, t_token **tokens)
+{
+	char	*pipe_token;
+
+	pipe_token = NULL;
+	if (input[*i] == '|')
+	{
+		pipe_token = ft_strdup("|");
+		if (!pipe_token)
+			return (free_token(*tokens), -1);
+		add_token(tokens, pipe_token, TOKEN_PIPE);
+		if (!*tokens)
+			return (free_token(*tokens), -1);
+		(*i)++;
+	}
+	return (0);
+}
+
+static int	handle_special_characters(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (*current_part)
+	{
+		add_token(tokens, *current_part, TOKEN_WORD);
+		if (!*tokens)
+			return (free(*current_part), free_token(*tokens), -1);
+		*current_part = NULL;
+	}
+	if (handle_redirections(input, i, tokens) == -1)
+		return (-1);
+	if (handle_pipe(input, i, tokens) == -1)
+		return (-1);
+	return (0);
+}
+
+static int	handle_unquoted_part(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	int		start;
+	char	*unquoted_part;
+
+	start = *i;
+	while (input[*i] && input[*i] != ' ' && input[*i] != '\t'
+		&& input[*i] != '\'' && input[*i] != '\"'
+		&& input[*i] != '|' && input[*i] != '>' && input[*i] != '<')
+		(*i)++;
+	unquoted_part = ft_substr(input, start, *i - start);
+	if (!unquoted_part)
+		return (free(*current_part), free_token(*tokens), -1);
+	*current_part = concatenate_parts(*current_part, unquoted_part);
+	if (!*current_part)
+		return (free_token(*tokens), -1);
+	return (0);
+}
+
+static int	handle_escape_case(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (input[*i] == '\\' && input[*i + 1])
+		return (handle_escaped_characters(input, i, current_part, tokens));
+	return (0);
+}
+
+static int	handle_whitespace_case(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (input[*i] == ' ' || input[*i] == '\t')
+	{
+		if (handle_whitespace(current_part, tokens) == -1)
+			return (-1);
+		(*i)++;
+	}
+	return (0);
+}
+
+static int	handle_quote_case(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (input[*i] == '\'' || input[*i] == '\"')
+		return (handle_quotes_in_lexer(input, i, current_part, tokens));
+	return (0);
+}
+
+static int	handle_special_char_case(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (input[*i] == '|' || input[*i] == '<' || input[*i] == '>')
+		return (handle_special_characters(input, i, current_part, tokens));
+	return (0);
+}
+
+static int	handle_default_case(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	return (handle_unquoted_part(input, i, current_part, tokens));
+}
+
+static int	process_input_char(char *input, int *i,
+	char **current_part, t_token **tokens)
+{
+	if (handle_escape_case(input, i, current_part, tokens) == -1)
+		return (-1);
+	if (handle_whitespace_case(input, i, current_part, tokens) == -1)
+		return (-1);
+	if (handle_quote_case(input, i, current_part, tokens) == -1)
+		return (-1);
+	if (handle_special_char_case(input, i, current_part, tokens) == -1)
+		return (-1);
+	if (handle_default_case(input, i, current_part, tokens) == -1)
+		return (-1);
+	return (0);
+}
+
+static int	finalize_tokens(char **current_part, t_token **tokens)
+{
+	if (*current_part)
+	{
+		add_token(tokens, *current_part, TOKEN_WORD);
+		if (!*tokens)
 		{
-			start = ++i; // Skip the backslash
-			i++;
-			char *escaped_part = ft_substr(input, start, 1); // Extract the escaped character
-			current_part = concatenate_parts(current_part, escaped_part);
-		}
-		else if (input[i] == ' ' || input[i] == '\t')
-		{
-			if (current_part)
-			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
-			}
-			i++;
-		}
-		else if (input[i] == '\'' || input[i] == '\"')
-		{
-			start = i++;
-			i = handle_quotes(input, i, input[start]);
-			if (i == -1) // If an error occurred due to unclosed quotes
-			{
-				free(current_part); // Free any partially constructed token
-				free_token(tokens); // Free the token list
-				return (NULL);
-			}
-			char *quoted_part = ft_substr(input, start, i - start + 1); // Include quotes
-			current_part = concatenate_parts(current_part, quoted_part);
-			i++;
-		}
-		else if ((input[i] == '|' || input[i] == '<' || input[i] == '>') && 
-		         (!current_part || current_part[0] != '\'' || current_part[0] != '\"'))
-		{
-			if (current_part)
-			{
-				add_token(&tokens, current_part, TOKEN_WORD);
-				current_part = NULL;
-			}
-			if (input[i] == '>' && input[i + 1] == '>')
-			{
-				add_token(&tokens, ft_strdup(">>"), TOKEN_REDIR_APPEND);
-				i += 2;
-			}
-			else if (input[i] == '<' && input[i + 1] == '<')
-			{
-				add_token(&tokens, ft_strdup("<<"), TOKEN_REDIR_HEREDOC);
-				i += 2;
-			}
-			else if (input[i] == '>')
-			{
-				add_token(&tokens, ft_strdup(">"), TOKEN_REDIR_OUT);
-				i++;
-			}
-			else if (input[i] == '<')
-			{
-				add_token(&tokens, ft_strdup("<"), TOKEN_REDIR_IN);
-				i++;
-			}
-			else if (input[i] == '|')
-			{
-				add_token(&tokens, ft_strdup("|"), TOKEN_PIPE);
-				i++;
-			}
-		}
-		else
-		{
-			start = i;
-			while (input[i] && input[i] != ' ' && input[i] != '\t' && 
-			       input[i] != '\'' && input[i] != '\"' && 
-			       input[i] != '|' && input[i] != '>' && input[i] != '<')
-				i++;
-			char *unquoted_part = ft_substr(input, start, i - start);
-			current_part = concatenate_parts(current_part, unquoted_part);
+			free(*current_part);
+			free_token(*tokens);
+			return (-1);
 		}
 	}
-	if (current_part)
-		add_token(&tokens, current_part, TOKEN_WORD);
+	return (0);
+}
+
+t_token	*lexer(char *input)
+{
+	t_token	*tokens;
+	int		i;
+	char	*current_part;
+
+	tokens = NULL;
+	i = 0;
+	current_part = NULL;
+	while (input && input[i])
+	{
+		if (process_input_char(input, &i, &current_part, &tokens) == -1)
+			return (NULL);
+	}
+	if (finalize_tokens(&current_part, &tokens) == -1)
+		return (NULL);
 	return (tokens);
 }
