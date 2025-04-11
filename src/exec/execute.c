@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:24:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/10 23:16:15 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:26:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
-		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
 		free(cmd_path);
 		return (126); // Return error code for "Is a directory"
 	}

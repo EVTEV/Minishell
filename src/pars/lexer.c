@@ -58,7 +58,6 @@ static void	add_token(t_token **tokens, char *value, int type)
 
 static int	handle_quotes(char *input, int i, char quote)
 {
-	i++;
 	while (input[i] && input[i] != quote)
 		i++;
 	if (!input[i]) // If the quote is not closed

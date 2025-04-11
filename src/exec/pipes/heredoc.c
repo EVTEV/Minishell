@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 17:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/10 23:16:15 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:26:12 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <limits.h> // For PATH_MAX
+#include <limits.h>
 
 /* Gère le processus de heredoc complet */
 int	handle_heredoc(char *delimiter, char **heredoc_file)
