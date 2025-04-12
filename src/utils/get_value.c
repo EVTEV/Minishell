@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 06:39:03 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:01:23 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,12 @@ int	add_value(t_env **env, char *name, char *value)
 		return (0);
 	new->name = ft_strdup(name);
 	if (!new->name)
-		return (free(new), 0);
+		return (free(name), free(new), 0);
+	free(name);
 	new->value = ft_strdup(value);
 	if (!new->value)
 		return (free(new->name), free(new), 0);
+	free(value);
 	new->next = NULL;
 	if (*env == NULL)
 		*env = new;

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 16:34:19 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:31:31 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ int	create_pipes(t_data *data, int pipe_count)
 	int	i;
 
 	if (pipe_count <= 0)
-		return (0);
+		return (1);
 	if (allocate_pipes(data, pipe_count) != 0)
-		return (0);
+		return (free_pipes(data, pipe_count), 1);
 	i = 0;
 	while (i < pipe_count)
 	{
@@ -52,7 +52,7 @@ int	create_pipes(t_data *data, int pipe_count)
 		{
 			close_all_pipes(data, i);
 			free_pipes(data, pipe_count);
-			return (0);
+			return (1);
 		}
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 20:10:59 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:46:01 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static void	execute_child_command(t_cmd *current,
 		handle_command_not_found(current, data, pipe_count);
 	exec_cmd_in_child(current, data, tmp);
 	close_all_pipes(data, pipe_count);
+	free_pipes(data, pipe_count);
 	exit_clean(data, NULL, 0);
 }
 
@@ -34,6 +35,7 @@ static void	handle_command_execution(t_cmd *current,
 	int		result;
 
 	result = 0;
+	free_pipes(data, pipe_count);
 	if (is_builtin(current->args[0]))
 	{
 		result = execute_builtin_with_redirections(current, data);
@@ -100,11 +102,11 @@ int	exec_pipe(t_data *data, int cmd_count, int pipe_count)
 
 	pids = allocate_pids(cmd_count, pipe_count, data);
 	if (!pids)
-		return (0);
+		return (-1);
 	if (create_child_processes(data, pids, cmd_count, pipe_count) != 0)
 	{
 		cleanup_on_interrupt(data, pipe_count);
-		return (0);
+		return (-1);
 	}
 	close_all_pipes(data, pipe_count);
 	exit_status = 0;

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:49:33 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:50:03 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 13:21:11 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	validate_command(t_cmd *cmd, t_data *data, char **cmd_path)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
-		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
+		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
 		free(*cmd_path);
 		*cmd_path = NULL;
 		return (126);

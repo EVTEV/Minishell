@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 19:37:53 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:03:50 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,12 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	if (!equal_sign)
 		return (0);
 	*equal_sign = '\0';
-	name = arg;
-	value = equal_sign + 1;
+	name = ft_strdup(arg);
+	if (!name)
+		return (1);
+	value = ft_strdup(equal_sign + 1);
+	if (!value)
+		return (free(name), 1);
 	if (is_valid_identifier(name))
 		status = handle_env_var_with_value(name, value, env);
 	else
