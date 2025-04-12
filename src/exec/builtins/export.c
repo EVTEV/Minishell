@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 14:03:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 18:49:25 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	name = ft_strdup(arg);
 	if (!name)
 		return (1);
+	if (!equal_sign[1])
+		return (free(name), 0);
 	value = ft_strdup(equal_sign + 1);
 	if (!value)
 		return (free(name), 1);
@@ -67,6 +69,7 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	else
 	{
 		print_invalid_identifier_error(name);
+		free(name);
 		status = 1;
 	}
 	*equal_sign = '=';
@@ -78,7 +81,7 @@ static int	process_export_arg(char **args, int i, t_env **env)
 {
 	if (!args[i])
 		return (0);
-	if (ft_strchr(args[i], '='))
+	if (args[i][0] != '=' && ft_strchr(args[i], '='))
 		return (process_export_with_equal(args[i], env));
 	else if (!is_valid_identifier(args[i]))
 	{

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 19:47:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 19:42:00 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,13 @@ static int	open_redirection_file(char *file, int flags)
 
 	fd = open(file, flags, 0644);
 	if (fd == -1)
+	{
 		perror(file);
+		if (errno == ENOENT)
+			ft_putstr_fd("minishell: ", 2);
+		if (errno == EACCES)
+			g_exit_status = 1;
+	}
 	else
 		close(fd);
 	return (fd);
@@ -36,6 +42,8 @@ static int	create_redirection_files(t_redir *redirections)
 			flags = O_CREAT | O_WRONLY | O_TRUNC;
 		else if (redirections->type == TOKEN_REDIR_APPEND)
 			flags = O_CREAT | O_WRONLY | O_APPEND;
+		else if (redirections->type == TOKEN_REDIR_IN)
+			flags = O_RDONLY;
 		else
 		{
 			redirections = redirections->next;

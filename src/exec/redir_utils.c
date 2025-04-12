@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:48:00 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:48:39 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 19:43:16 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ int	handle_output_redirection(char *filename, int append)
 	if (fd == -1)
 	{
 		perror(filename);
+		if (errno == ENOENT)
+			ft_putstr_fd("minishell: ", 2);
+		else if (errno == EACCES)
+			g_exit_status = 1;
+		else
+			g_exit_status = 1;
 		return (-1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)

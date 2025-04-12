@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:17:39 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 14:38:07 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 19:20:48 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 	char	*cmd_path;
 
 	if (setup_redirections(cmd->redirections) != 0)
-		exit_clean(data, NULL, 0);
+		exit_clean(data, NULL, g_exit_status);
 	if (is_builtin(cmd->args[0]))
 		exit_clean(data, NULL, (execute_builtin(cmd, data)));
 	cmd_path = find_command_path(cmd->args[0], data);

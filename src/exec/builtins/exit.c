@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 13:20:04 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 18:41:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	ft_exit(char **args, t_data *data)
 {
 	int	exit_code;
 
-	ft_putstr_fd("exit\n", 1);
+
 	if (!args[1])
 		exit_clean(data, NULL, data->exit_status);
 	if (!is_numeric_argument(args[1]))
@@ -118,6 +118,7 @@ void	ft_exit(char **args, t_data *data)
 		data->exit_status = 1;
 		return ;
 	}
+	ft_putstr_fd("exit\n", 1);
 	exit_code = ft_atoi(args[1]) % 256;
 	if (exit_code < 0)
 		exit_code += 256;
