@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:25:20 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 01:31:35 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 06:37:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,42 @@
 char	*expand_dollar_variable(char *input, int *i,
 	t_data *data, char *result)
 {
-	char	*tmp;
 	int		len;
+	char	*tmp;
 
-	if (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_')
-		tmp = expand_variable(&input[*i], data->env_list, &len);
-	else if (input[*i + 1] == '?')
-		tmp = ft_itoa(data->exit_status);
-	else
-		tmp = ft_strdup("$");
-	if (!tmp)
-		return (free(result), NULL);
-	result = ft_strjoin_free(result, tmp);
-	free(tmp);
-	if (!result)
-		return (NULL);
 	if (input[*i + 1] == '?')
+	{
+		tmp = ft_itoa(data->exit_status);
+		if (!tmp)
+			return (free(result), NULL);
+		result = ft_strjoin_free(result, tmp);
+		free(tmp);
+		if (!result)
+			return (NULL);
 		*i += 2;
-	else
+	}
+	else if (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_')
+	{
+		tmp = expand_variable(&input[*i], data->env_list, &len);
+		if (!tmp)
+			return (free(result), NULL);
+		result = ft_strjoin_free(result, tmp);
+		free(tmp);
+		if (!result)
+			return (NULL);
 		*i += len;
+	}
+	else
+	{
+		tmp = ft_strdup("$");
+		if (!tmp)
+			return (free(result), NULL);
+		result = ft_strjoin_free(result, tmp);
+		free(tmp);
+		if (!result)
+			return (NULL);
+		(*i)++;
+	}
 	return (result);
 }
 

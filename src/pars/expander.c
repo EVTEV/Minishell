@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 01:35:35 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 06:37:02 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,25 +30,36 @@ char	*process_dollar_in_quotes(char *input, int *i,
 	int		len;
 
 	if (input[*i] == '$' && (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_'))
+	{
 		tmp = expand_variable(&input[*i], data->env_list, &len);
+		if (!tmp)
+			return (free(result), NULL);
+		*i += len;
+	}
 	else if (input[*i] == '$' && input[*i + 1] == '?')
+	{
 		tmp = ft_itoa(data->exit_status);
-	else if (input[*i] == '$' && (!input[*i + 1] || input[*i + 1] == ' ' ||
-		input[*i + 1] == '\t' || input[*i + 1] == '\n' || input[*i + 1] == '"'))
+		if (!tmp)
+			return (free(result), NULL);
+		*i += 2;
+	}
+	else if (input[*i] == '$' && (!input[*i + 1] || input[*i + 1] == ' '
+			|| input[*i + 1] == '\t' || input[*i + 1] == '\n' || input[*i + 1] == '"'))
 	{
 		tmp = ft_strdup("$");
 		if (!tmp)
 			return (free(result), NULL);
-		len = 1;
+		(*i)++;
 	}
 	else
+	{
 		tmp = ft_substr(input, (*i)++, 1);
-	if (!tmp)
-		return (free(result), NULL);
+		if (!tmp)
+			return (free(result), NULL);
+	}
 	result = append_char_to_result(result, tmp);
 	if (!result)
 		return (NULL);
-	*i += len;
 	return (result);
 }
 
