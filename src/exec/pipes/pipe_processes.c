@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 14:46:01 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 17:14:55 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,10 @@ static int	create_child_process(t_child *cp_data)
 		if (setup_redirections(cp_data->current->redirections) != 0)
 		{
 			close_all_pipes(cp_data->data, cp_data->pipe_count);
+			free_pipes(cp_data->data, cp_data->pipe_count);
 			exit_clean(cp_data->data, NULL, 0);
 		}
+		free_pipes(cp_data->data, cp_data->pipe_count);
 		handle_command_execution(cp_data->current,
 			cp_data->data, cp_data->pipe_count);
 	}
@@ -109,6 +111,7 @@ int	exec_pipe(t_data *data, int cmd_count, int pipe_count)
 		return (-1);
 	}
 	close_all_pipes(data, pipe_count);
+	free_pipes(data, pipe_count);
 	exit_status = 0;
 	wait_children(pids, cmd_count, &exit_status);
 	cleanup_execution(data, pids, pipe_count);
