@@ -6,58 +6,39 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 06:37:02 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 11:41:02 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-char	*append_char_to_result(char *result, char *tmp)
+static char	*handle_variable_expansion(char *input, int *i,
+		t_data *data, char *result)
 {
-	char	*new_result;
+	char	*tmp;
+	int		len;
 
-	new_result = ft_strjoin_free(result, tmp);
-	free(tmp);
-	if (!new_result)
+	tmp = expand_variable(&input[*i], data->env_list, &len);
+	if (!tmp)
 		return (free(result), NULL);
-	return (new_result);
+	*i += len;
+	result = append_char_to_result(result, tmp);
+	return (result);
 }
 
 char	*process_dollar_in_quotes(char *input, int *i,
 	t_data *data, char *result)
 {
-	char	*tmp;
-	int		len;
-
 	if (input[*i] == '$' && (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_'))
-	{
-		tmp = expand_variable(&input[*i], data->env_list, &len);
-		if (!tmp)
-			return (free(result), NULL);
-		*i += len;
-	}
+		result = handle_variable_expansion(input, i, data, result);
 	else if (input[*i] == '$' && input[*i + 1] == '?')
-	{
-		tmp = ft_itoa(data->exit_status);
-		if (!tmp)
-			return (free(result), NULL);
-		*i += 2;
-	}
+		result = handle_exit_status_expansion(i, data, result);
 	else if (input[*i] == '$' && (!input[*i + 1] || input[*i + 1] == ' '
-			|| input[*i + 1] == '\t' || input[*i + 1] == '\n' || input[*i + 1] == '"'))
-	{
-		tmp = ft_strdup("$");
-		if (!tmp)
-			return (free(result), NULL);
-		(*i)++;
-	}
+			|| input[*i + 1] == '\t' || input[*i + 1] == '\n'
+			|| input[*i + 1] == '"'))
+		result = handle_dollar(i, result);
 	else
-	{
-		tmp = ft_substr(input, (*i)++, 1);
-		if (!tmp)
-			return (free(result), NULL);
-	}
-	result = append_char_to_result(result, tmp);
+		result = handle_single_char(input, i, result);
 	if (!result)
 		return (NULL);
 	return (result);

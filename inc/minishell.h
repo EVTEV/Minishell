@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 00:18:54 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 11:41:42 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,10 @@ char				*process_double_quotes_content(char *input, int *i,
 						t_data *data, char *result);
 char				*process_single_quotes_content(char *input,
 						int *i, char *result);
+char				*handle_exit_status_expansion(int *i,
+						t_data *data, char *result);
+char				*handle_dollar(int *i, char *result);
+char				*handle_single_char(char *input, int *i, char *result);
 
 // --------------- Pars.c --------------- //
 t_cmd				*parse_input(char *input, t_data *data);

@@ -6,51 +6,67 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:25:20 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 06:37:38 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/12 11:42:55 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-char	*expand_dollar_variable(char *input, int *i,
-	t_data *data, char *result)
+char	*handle_exit_expansion(int *i, t_data *data, char *result)
 {
-	int		len;
 	char	*tmp;
 
+	tmp = ft_itoa(data->exit_status);
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	*i += 2;
+	return (result);
+}
+
+static char	*handle_variable_expansion(char *input,
+		int *i, t_data *data, char *result)
+{
+	char	*tmp;
+	int		len;
+
+	tmp = expand_variable(&input[*i], data->env_list, &len);
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	*i += len;
+	return (result);
+}
+
+char	*handle_dollar_literal(int *i, char *result)
+{
+	char	*tmp;
+
+	tmp = ft_strdup("$");
+	if (!tmp)
+		return (free(result), NULL);
+	result = ft_strjoin_free(result, tmp);
+	free(tmp);
+	if (!result)
+		return (NULL);
+	(*i)++;
+	return (result);
+}
+
+char	*expand_dollar_variable(char *input, int *i, t_data *data, char *result)
+{
 	if (input[*i + 1] == '?')
-	{
-		tmp = ft_itoa(data->exit_status);
-		if (!tmp)
-			return (free(result), NULL);
-		result = ft_strjoin_free(result, tmp);
-		free(tmp);
-		if (!result)
-			return (NULL);
-		*i += 2;
-	}
+		result = handle_exit_expansion(i, data, result);
 	else if (ft_isalnum(input[*i + 1]) || input[*i + 1] == '_')
-	{
-		tmp = expand_variable(&input[*i], data->env_list, &len);
-		if (!tmp)
-			return (free(result), NULL);
-		result = ft_strjoin_free(result, tmp);
-		free(tmp);
-		if (!result)
-			return (NULL);
-		*i += len;
-	}
+		result = handle_variable_expansion(input, i, data, result);
 	else
-	{
-		tmp = ft_strdup("$");
-		if (!tmp)
-			return (free(result), NULL);
-		result = ft_strjoin_free(result, tmp);
-		free(tmp);
-		if (!result)
-			return (NULL);
-		(*i)++;
-	}
+		result = handle_dollar_literal(i, result);
 	return (result);
 }
 
