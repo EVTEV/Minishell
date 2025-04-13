@@ -39,7 +39,8 @@ void	free_tab(char **tab)
 	i = 0;
 	while (tab[i])
 	{
-		free(tab[i]);
+		if (tab[i])
+			free(tab[i]);
 		tab[i] = NULL;
 		i++;
 	}
@@ -58,7 +59,8 @@ void	free_cmd_list(t_cmd *cmd_list)
 		if (tmp->heredoc_file)
 			unlink(tmp->heredoc_file);
 		free(tmp->heredoc_file);
-		free_tab(tmp->args);
+		if (tmp->args)
+			free_tab(tmp->args);
 		free_redirections(tmp->redirections);
 		free(tmp);
 	}

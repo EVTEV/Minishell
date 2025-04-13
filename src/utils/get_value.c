@@ -41,7 +41,7 @@ void	update_value(t_env *env, char *name, char *value)
 			new_value = ft_strdup(value);
 			if (!new_value)
 				return ;
-			free(current->value);
+			free(name);
 			current->value = new_value;
 			return ;
 		}
@@ -58,10 +58,10 @@ int	add_value(t_env **env, char *name, char *value)
 
 	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
-		return (0);
+		return (new->value = NULL, 0);
 	new->name = ft_strdup(name);
 	if (!new->name)
-		return (free(name), free(new), 0);
+		return (new->value = NULL, free(name), free(new), 0);
 	free(name);
 	new->value = ft_strdup(value);
 	if (!new->value)

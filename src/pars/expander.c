@@ -113,7 +113,7 @@ char	*expander(char *input, t_data *data)
 		else
 			result = handle_plain_text(input, &i, result);
 		if (!result)
-			return (NULL);
+			return (free_data_members(data), NULL);
 	}
 	return (result);
 }

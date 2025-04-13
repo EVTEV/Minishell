@@ -36,7 +36,7 @@ static void	handle_command_execution(t_cmd *current,
 
 	result = 0;
 	free_pipes(data, pipe_count);
-	if (is_builtin(current->args[0]))
+	if (current && current->args && is_builtin(current->args[0]))
 	{
 		result = execute_builtin_with_redirections(current, data);
 		close_all_pipes(data, pipe_count);

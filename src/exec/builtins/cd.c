@@ -28,17 +28,28 @@ static int	handle_cd_error(char *path)
 /* Met à jour les variables d'environnement après le changement de répertoire */
 static int	update_env_vars(char *old_dir, t_env *env)
 {
-	char	current[PATH_MAX];
+	char	*current;
 	char	*old_pwd;
+	char	*tmp;
 
+	old_pwd = NULL;
+	current = (char *)malloc(PATH_MAX);
+	if (current == NULL)
+		return (perror("Error:cd"), 1);
 	old_pwd = ft_strdup(old_dir);
 	if (old_pwd == NULL)
-		return (perror("Error:cd"), 1);
-	update_value(env, "OLDPWD", old_pwd);
-	free(old_pwd);
+		return (free(current), perror("Error:cd"), 1);
+	tmp = ft_strdup("OLDPWD");
+	if (tmp == NULL)
+		return (free(current), free(old_pwd), perror("Error:cd"), 1);
+	update_value(env, tmp, old_pwd);
 	if (getcwd(current, PATH_MAX) == NULL)
-		return (perror("Error:cd:"), 1);
-	update_value(env, "PWD", current);
+		return (free(current), free(old_pwd), perror("Error:cd:"), 1);
+	tmp = ft_strdup("PWD");
+	if (tmp == NULL)
+		return (free(current), free(old_pwd), perror("Error:cd"), 1);
+	update_value(env, tmp, current);
+	free(current);
 	return (0);
 }
 
@@ -102,20 +113,26 @@ static char	*find_path(char **args, t_env *env)
 int	ft_cd(char **av, t_env *env)
 {
 	char	*path;
-	char	current[PATH_MAX];
+	char	*current;
 
+	path = NULL;
+	current = (char *)malloc(PATH_MAX);
+	if (current == NULL)
+		return (perror("Error:cd"), 1);
+	current[0] = '\0';
 	if (ft_tablen(av) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		return (1);
+		return (free(current), 1);
 	}
 	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
 		&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
-		return (handle_cd_error(av[1]));
+		return (free(current), handle_cd_error(av[1]));
 	path = find_path(av, env);
 	if (!path)
-		return (1);
+		return (free(current),1);
 	if (exec_cd(path, current, env, av) != 0)
-		return (1);
+		return (free(current), 1);
+	free(current);
 	return (0);
 }

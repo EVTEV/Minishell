@@ -46,9 +46,11 @@ void	handle_command_not_found(t_cmd *current,
 	t_data *data, int pipe_count)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (current->args[0])
+	if (current && current->args && current->args[0])
+	{
 		ft_putstr_fd(current->args[0], STDERR_FILENO);
-	ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	}
 	close_all_pipes(data, pipe_count);
 	free_pipes(data, pipe_count);
 	exit_clean(data, NULL, 127);

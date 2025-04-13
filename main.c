@@ -26,7 +26,7 @@ static int	process_input(t_data *data)
 	tokens = lexer(expanded_input);
 	free(expanded_input);
 	if (!tokens)
-		return (0);
+		return (free_data_members(data), 0);
 	data->cmd_list = parser(tokens);
 	free_token(tokens);
 	if (!data->cmd_list || (data->cmd_list && data->cmd_list->interrupted))
