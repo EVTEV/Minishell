@@ -45,11 +45,12 @@ static int	update_env_vars(char *old_dir, t_env *env)
 	update_value(env, tmp, old_pwd);
 	if (getcwd(current, PATH_MAX) == NULL)
 		return (free(current), free(old_pwd), perror("Error:cd:"), 1);
+	//free(old_pwd);
 	tmp = ft_strdup("PWD");
 	if (tmp == NULL)
-		return (free(current), free(old_pwd), perror("Error:cd"), 1);
+		return (free(current), perror("Error:cd"), 1);
 	update_value(env, tmp, current);
-	free(current);
+	//free(current);
 	return (0);
 }
 
@@ -62,7 +63,7 @@ static int	exec_cd(char *path, char *old_dir, t_env *env, char **args)
 	if (chdir(path) != 0)
 		return (handle_cd_error(path));
 	if (update_env_vars(old_dir, env) != 0)
-		return (1);
+		return (free(old_dir), 1);
 	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
 	{
 		old_pwd = get_value(*env, "OLDPWD");
@@ -74,7 +75,7 @@ static int	exec_cd(char *path, char *old_dir, t_env *env, char **args)
 		else
 		{
 			ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
-			return (1);
+			return (free(old_dir), 1);
 		}
 	}
 	return (0);

@@ -43,6 +43,7 @@ void	update_value(t_env *env, char *name, char *value)
 				return ;
 			free(name);
 			current->value = new_value;
+			free(value);
 			return ;
 		}
 		current = current->next;

@@ -49,6 +49,7 @@ static void	execute_and_cleanup(t_data *data)
 	data->cmd_list = NULL;
 }
 
+
 static void	handle_input(t_data *data)
 {
 	data->input = read_input(data);

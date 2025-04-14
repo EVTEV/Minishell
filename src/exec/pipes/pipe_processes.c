@@ -107,9 +107,11 @@ int	exec_pipe(t_data *data, int cmd_count, int pipe_count)
 		return (-1);
 	if (create_child_processes(data, pids, cmd_count, pipe_count) != 0)
 	{
+		free_pids(pids);
 		cleanup_on_interrupt(data, pipe_count);
 		return (-1);
 	}
+	free_pids(pids);
 	close_all_pipes(data, pipe_count);
 	free_pipes(data, pipe_count);
 	exit_status = 0;
