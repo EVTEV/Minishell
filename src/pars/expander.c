@@ -59,7 +59,7 @@ char	*process_double_quotes_content(char *input, int *i,
 			tmp = ft_substr(input, (*i)++, 1);
 			if (!tmp)
 				return (free(result), NULL);
-			tmpp = ft_strjoin_free(result, tmp);
+			tmpp = ft_strjoin(result, tmp);
 			free(tmp);
 			if (!tmpp)
 				return (free(result), NULL);
@@ -113,7 +113,7 @@ char	*expander(char *input, t_data *data)
 		else
 			result = handle_plain_text(input, &i, result);
 		if (!result)
-			return (free_data_members(data), NULL);
+			return (NULL);
 	}
 	return (result);
 }

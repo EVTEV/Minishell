@@ -18,12 +18,18 @@ void	setup_child_pipes(t_data *data, int i, int cmd_count)
 	if (i > 0)
 	{
 		if (dup2(data->pipes[i - 1][0], STDIN_FILENO) < 0)
+		{
+			perror("dup2");
 			exit_clean(data, NULL, 0);
+		}
 	}
 	if (i < cmd_count - 1)
 	{
 		if (dup2(data->pipes[i][1], STDOUT_FILENO) < 0)
+		{
+			perror("dup2");
 			exit_clean(data, NULL, 0);
+		}
 	}
 	close_all_pipes(data, cmd_count - 1);
 }
@@ -35,7 +41,7 @@ int	handle_fork_error(pid_t *pids, int i,
 	perror("fork");
 	while (--i >= 0)
 		waitpid(pids[i], NULL, 0);
-	free(pids);
+	free_pids(pids);
 	close_all_pipes(data, pipe_count);
 	free_pipes(data, pipe_count);
 	return (1);

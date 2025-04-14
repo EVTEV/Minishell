@@ -92,6 +92,6 @@ int	execute_piped_commands(t_data *data)
 			return (WEXITSTATUS(result));
 		return (result);
 	}
-	free_pipes(data, pipe_count);
+	//free_pipes(data, pipe_count);
 	return (setup_signals(), result);
 }

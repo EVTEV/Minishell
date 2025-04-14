@@ -29,7 +29,7 @@ static void	execute_child_command(t_cmd *current,
 
 /* Gère les commandes intégrées ou externes */
 static void	handle_command_execution(t_cmd *current,
-	t_data *data, int pipe_count)
+	t_data *data, int pipe_count, pid_t *pids)
 {
 	char	*tmp;
 	int		result;
@@ -40,6 +40,7 @@ static void	handle_command_execution(t_cmd *current,
 	{
 		result = execute_builtin_with_redirections(current, data);
 		close_all_pipes(data, pipe_count);
+		free_pids(pids);
 		free_pipes(data, pipe_count);
 		exit_clean(data, NULL, result);
 	}
@@ -63,13 +64,14 @@ static int	create_child_process(t_child *cp_data)
 		handle_child_signals();
 		if (setup_redirections(cp_data->current->redirections) != 0)
 		{
+			free_pids(cp_data->pids);
 			close_all_pipes(cp_data->data, cp_data->pipe_count);
 			free_pipes(cp_data->data, cp_data->pipe_count);
 			exit_clean(cp_data->data, NULL, g_exit_status);
 		}
 		free_pipes(cp_data->data, cp_data->pipe_count);
 		handle_command_execution(cp_data->current,
-			cp_data->data, cp_data->pipe_count);
+			cp_data->data, cp_data->pipe_count, cp_data->pids);
 	}
 	return (pid);
 }
@@ -86,7 +88,7 @@ static int	create_child_processes(t_data *data,
 	i = 0;
 	while (current && i < cmd_count)
 	{
-		cp_data = (t_child){data, current, i, cmd_count, pipe_count};
+		cp_data = (t_child){data, current, pids, i, cmd_count, pipe_count};
 		pids[i] = create_child_process(&cp_data);
 		if (pids[i] < 0)
 			return (handle_fork_error(pids, i, data, pipe_count));
@@ -111,7 +113,6 @@ int	exec_pipe(t_data *data, int cmd_count, int pipe_count)
 		cleanup_on_interrupt(data, pipe_count);
 		return (-1);
 	}
-	free_pids(pids);
 	close_all_pipes(data, pipe_count);
 	free_pipes(data, pipe_count);
 	exit_status = 0;

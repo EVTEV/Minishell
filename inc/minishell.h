@@ -82,6 +82,7 @@ typedef struct s_child
 {
 	t_data			*data;
 	t_cmd			*current;
+	pid_t			*pids;
 	int				i;
 	int				cmd_count;
 	int				pipe_count;

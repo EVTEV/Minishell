@@ -21,6 +21,8 @@ static int	process_input(t_data *data)
 
 	setup_exec_signals();
 	expanded_input = expander(data->input, data);
+	if (!expanded_input)
+		return (0);
 	free(data->input);
 	data->input = NULL;
 	tokens = lexer(expanded_input);
@@ -31,13 +33,11 @@ static int	process_input(t_data *data)
 	free_token(tokens);
 	if (!data->cmd_list || (data->cmd_list && data->cmd_list->interrupted))
 	{
-		free_cmd_list(data->cmd_list);
-		data->cmd_list = NULL;
 		if (data->cmd_list)
 			data->exit_status = 1;
 		else
 			data->exit_status = 2;
-		return (0);
+		return (free_cmd_list(data->cmd_list), data->cmd_list = NULL, 0);
 	}
 	return (1);
 }

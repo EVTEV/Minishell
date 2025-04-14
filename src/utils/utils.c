@@ -20,17 +20,11 @@ int	ft_isspace(char *s)
 		return (0);
 	i = 0;
 	while (s[i] && s[i] == ' ')
-	{
 		i++;
-	}
 	if (s[i] == '\0')
-	{
 		return (1);
-	}
 	else
-	{
 		return (0);
-	}
 	return (0);
 }
 

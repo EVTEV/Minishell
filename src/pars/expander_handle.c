@@ -52,22 +52,26 @@ char	*handle_double_quotes(char *input, int *i,
 
 	tmp = ft_substr(input, (*i)++, 1);
 	if (!tmp)
-		return (free(result), NULL);
+		return (NULL);
 	result = append_char_to_result(result, tmp);
 	if (!result)
 		return (NULL);
-	result = process_double_quotes_content(input, i, data, result);
-	if (!result)
-		return (NULL);
+	tmp = process_double_quotes_content(input, i, data, result);
+	if (!tmp)
+		return (free(result), NULL);
 	if (!input[*i])
 	{
 		ft_putstr_fd("minishell: syntax error: unclosed double quote\n",
 			STDERR_FILENO);
-		return (free(result), NULL);
+		return (free(tmp), NULL);
 	}
+	result = ft_strdup(tmp);
+	if (!result)
+		return (free(tmp), NULL);
+	free(tmp);
 	tmp = ft_substr(input, (*i)++, 1);
 	if (!tmp)
-		return (free(result), NULL);
+		return (NULL);
 	return (append_char_to_result(result, tmp));
 }
 

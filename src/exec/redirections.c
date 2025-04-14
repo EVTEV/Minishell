@@ -15,16 +15,25 @@
 /* Ouvre un fichier pour une redirection donnée */
 static int	open_redirection_file(char *file, int flags)
 {
-	int	fd;
+	int		fd;
+	char	*tmp;
 
 	fd = open(file, flags, 0644);
 	if (fd == -1)
 	{
-		perror(file);
-		if (errno == ENOENT)
-			ft_putstr_fd("minishell: ", 2);
-		if (errno == EACCES)
+		tmp = ft_strjoin("minishell: ", file);
+		if (!tmp)
+			return (-1);
+		perror(tmp);
+		free(tmp);
+		if (is_directory(file) || errno == EISDIR)
+			g_exit_status = 126;
+		else if (errno == EROFS || errno == ENOSPC
+				|| errno == EEXIST || errno == EACCES
+				|| errno == ENOTDIR)
 			g_exit_status = 1;
+		else
+			g_exit_status = 0;
 	}
 	else
 		close(fd);

@@ -12,21 +12,18 @@
 
 #include "../../inc/minishell.h"
 
-/* Gère les signaux pour le processus parent */
 void	handle_parent_signals(void)
 {
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-/* Gère les signaux pour les processus enfants */
 void	handle_child_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
 
-/* Gère SIGINT dans le parent pour ne pas quitter le shell */
 void	signal_handler_main(int signum)
 {
 	if (signum == SIGINT)
