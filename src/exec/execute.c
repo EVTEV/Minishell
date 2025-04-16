@@ -19,20 +19,26 @@ static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 		exit_clean(data, NULL, 1);
 	if (access(cmd_path, F_OK) == -1)
 	{
-		ft_putchar_fd(' ', 2);
+		ft_printf("minishell: %s:", cmd->args[0]);
+		ft_putstr_fd(" ", 2);
 		ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd("\n", 2);
 		exit_clean(data, NULL, 127);
 	}
 	if (access(cmd_path, X_OK) == -1)
 	{
-		ft_putchar_fd(' ', 2);
+		ft_printf("minishell: %s:", cmd->args[0]);
+		ft_putstr_fd(" ", 2);
 		ft_putstr_fd(strerror(errno), 2);
+		ft_putstr_fd("\n", 2);
 		exit_clean(data, NULL, 126);
 	}
 	if (execve(cmd_path, cmd->args, data->env) == -1)
 	{
-		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
-		exit_clean(data, NULL, 126);
+		ft_printf("minishell: %s:", cmd->args[0]);
+		ft_putstr_fd(" ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		return (ft_putstr_fd("\n", 2), exit_clean(data, NULL, 126));
 	}
 }
 

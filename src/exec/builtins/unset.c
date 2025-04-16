@@ -26,12 +26,12 @@ static void	remove_env_var(t_env **env, char *name)
 	{
 		if (ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
 		{
+			free(current->name);
+			free(current->value);		
 			if (prev)
 				prev->next = current->next;
 			else
-				*env = current->next;
-			free(current->name);
-			free(current->value);
+				*env = (*env)->next;
 			free(current);
 			return ;
 		}
@@ -40,8 +40,28 @@ static void	remove_env_var(t_env **env, char *name)
 	}
 }
 
+/* Gère la suppression d'une variable d'environnement */
+static int	process_unset_arg(char *arg, t_env **env, t_data *data)
+{
+	if (is_valid_identifier(arg))
+	{
+		remove_env_var(env, arg);
+		if (!ft_strcmp(arg, "PATH"))
+		{
+			free(data->path);
+			data->path = NULL;
+		}
+		return (0);
+	}
+	else
+	{
+		ft_printf("minishell: unset: `%s`: not a valid identifier\n", arg);
+		return (1);
+	}
+}
+
 /* Supprime des variables de l'environnement */
-int	ft_unset(char **args, t_env **env)
+int	ft_unset(char **args, t_env **env, t_data *data)
 {
 	int	i;
 	int	status;
@@ -52,14 +72,7 @@ int	ft_unset(char **args, t_env **env)
 		return (0);
 	while (args[i])
 	{
-		if (is_valid_identifier(args[i]))
-			remove_env_var(env, args[i]);
-		else
-		{
-			ft_printf("minishell: unset: `%s`: not a valid identifier\n",
-				args[i]);
-			status = 1;
-		}
+		status |= process_unset_arg(args[i], env, data);
 		i++;
 	}
 	return (status);

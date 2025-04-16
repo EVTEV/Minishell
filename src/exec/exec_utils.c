@@ -37,7 +37,7 @@ static int	handle_builtin_command(t_cmd *cmd, t_data *data)
 	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
 		return (ft_export(cmd->args, &data->env_list));
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		return (ft_unset(cmd->args, &data->env_list));
+		return (ft_unset(cmd->args, &data->env_list, data));
 	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (print_list(data->env_list), 0);
 	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)

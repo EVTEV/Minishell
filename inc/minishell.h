@@ -210,7 +210,7 @@ int					create_env_node(t_env **env_list, char *env_var);
 // ---------- pwd.c ------------ //
 int					ft_pwd(void);
 // ---------- unset.c ------------ //
-int					ft_unset(char **args, t_env **env);
+int					ft_unset(char **args, t_env **env, t_data *data);
 // ------------------ pipes ------------------ //
 // ---------- child_processes.c ------------ //
 int					exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath);

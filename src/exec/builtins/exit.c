@@ -37,7 +37,7 @@ void	free_data_members(t_data *data)
 {
 	if (data->input)
 		free(data->input);
-	if (data->env)
+	if (data->env && data->env[0])
 		free_tab(data->env);
 	if (data->env_list)
 		free_env_copy(data->env_list);
@@ -102,7 +102,7 @@ void	ft_exit(char **args, t_data *data)
 {
 	int	exit_code;
 
-
+	exit_code = 0;
 	if (!args[1])
 		exit_clean(data, NULL, data->exit_status);
 	if (!is_numeric_argument(args[1]))

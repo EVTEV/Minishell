@@ -17,10 +17,13 @@ char	*get_value(t_env env, char *name)
 {
 	t_env	*current;
 
+	if (!name || !*name)
+		return (NULL);
 	current = &env;
 	while (current)
 	{
-		if (ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
+		if (current->name && ft_strlen(current->name) > 0 && current->value
+				&& ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
 			return (current->value);
 		current = current->next;
 	}
