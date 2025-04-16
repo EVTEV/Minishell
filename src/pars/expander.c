@@ -63,6 +63,7 @@ char	*process_double_quotes_content(char *input, int *i,
 			free(tmp);
 			if (!tmpp)
 				return (free(result), NULL);
+			free(result);
 			result = ft_strdup(tmpp);
 			free(tmpp);
 			if (!result)

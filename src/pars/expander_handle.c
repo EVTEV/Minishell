@@ -66,9 +66,9 @@ char	*handle_double_quotes(char *input, int *i,
 		return (free(tmp), NULL);
 	}
 	result = ft_strdup(tmp);
-	if (!result)
-		return (free(tmp), NULL);
 	free(tmp);
+	if (!result)
+		return (NULL);
 	tmp = ft_substr(input, (*i)++, 1);
 	if (!tmp)
 		return (NULL);
