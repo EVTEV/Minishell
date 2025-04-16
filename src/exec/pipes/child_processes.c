@@ -48,24 +48,3 @@ int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 		handle_execve_error(cmd_path, cmdpath, data);
 	return (0);
 }
-
-int	wait_for_children(pid_t *pids, int cmd_count)
-{
-	int	i;
-	int	status;
-	int	exit_status;
-
-	i = 0;
-	status = 0;
-	while (i < cmd_count)
-	{
-		waitpid(pids[i], &status, 0);
-		i++;
-	}
-	free(pids);
-	if (WIFEXITED(status))
-		exit_status = WEXITSTATUS(status);
-	else
-		exit_status = 1;
-	return (exit_status);
-}

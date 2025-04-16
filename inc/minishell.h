@@ -215,7 +215,6 @@ int					ft_unset(char **args, t_env **env);
 // ---------- child_processes.c ------------ //
 int					exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath);
 int					execute_builtin_with_redirections(t_cmd *cmd, t_data *data);
-int					wait_for_children(pid_t *pids, int cmd_count);
 void				setup_child_pipes(t_data *data, int i, int cmd_count);
 int					handle_fork_error(pid_t *pids, int i,
 						t_data *data, int pipe_count);
