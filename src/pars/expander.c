@@ -103,7 +103,7 @@ char	*expander(char *input, t_data *data)
 
 	result = NULL;
 	i = 0;
-	while (input[i])
+	while (i >= 0 && input[i])
 	{
 		if (input[i] == '"')
 			result = handle_double_quotes(input, &i, data, result);
