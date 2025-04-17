@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 14:26:48 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/17 13:33:08 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,11 @@ int	main(int ac, char **av, char **env)
 {
 	t_data	*data;
 
+	if (!env || !*env)
+	{
+		ft_putstr_fd("minishell: env not found\n", 2);
+		return (1);
+	}
 	setup_signals();
 	load_history();
 	data = init_data(ac, av, env);
