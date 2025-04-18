@@ -46,8 +46,12 @@ void	restore_std_fds(int std_fds[2])
 /* Attend la fin du processus enfant et retourne son statut */
 int	wait_for_child(pid_t pid)
 {
-	waitpid(pid, &g_exit_status, 0);
-	if (WIFEXITED(g_exit_status))
-		return (WEXITSTATUS(g_exit_status));
-	return (1);
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		g_exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		g_exit_status = 128 + WTERMSIG(status);
+	return (g_exit_status);
 }
