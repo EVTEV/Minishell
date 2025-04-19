@@ -45,6 +45,8 @@ void	update_value(t_env *env, char *name, char *value)
 			if (!new_value)
 				return ;
 			free(name);
+			if (current->value)
+				free(current->value);
 			current->value = new_value;
 			free(value);
 			return ;
