@@ -101,7 +101,7 @@ int	handle_redirection_file(t_cmd *current_cmd, t_token **tokens,
 	return (1);
 }
 
-t_cmd	*parser(t_token *tokens)
+t_cmd	*parser(t_token *tokens, t_data *data)
 {
 	t_cmd	*cmd_list;
 	t_cmd	*current_cmd;
@@ -116,7 +116,7 @@ t_cmd	*parser(t_token *tokens)
 			if (!cmd_list)
 				return (NULL);
 		}
-		if (!process_token(&current_cmd, &cmd_list, &tokens))
+		if (!process_token(&current_cmd, &cmd_list, &tokens, data))
 			return (NULL);
 		tokens = tokens->next;
 	}

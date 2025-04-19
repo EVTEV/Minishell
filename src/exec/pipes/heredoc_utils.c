@@ -37,7 +37,7 @@ int	create_tmp_file(char *tmp_file, char **heredoc_file, int *fd)
 	return (0);
 }
 
-int	handle_heredoc_in_fork(int fd, char *delimiter, size_t delimiter_len)
+int	handle_heredoc_in_fork(int *f, char *delimiter, t_data *data, char **heredoc_file)
 {
 	pid_t	pid;
 	int		status;
@@ -50,15 +50,16 @@ int	handle_heredoc_in_fork(int fd, char *delimiter, size_t delimiter_len)
 	}
 	if (pid == 0)
 	{
-		if (process_heredoc_in_child(fd, delimiter, delimiter_len))
-			exit(1);
-		exit(0);
+		if (process_heredoc_in_child(f[0], delimiter, f[1]))
+		{
+			free(*heredoc_file);
+			exit_clean(data, data->tokens, 1);
+		}
+		free(*heredoc_file);
+		exit_clean(data, data->tokens, 0);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
-	{
-		g_exit_status = 130;
-		return (1);
-	}
+		return (g_exit_status = 130, free_data_members(data), 1);
 	return (WEXITSTATUS(status));
 }

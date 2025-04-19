@@ -17,7 +17,6 @@ int	g_exit_status = 0;
 static int	process_input(t_data *data)
 {
 	char	*expanded_input;
-	t_token	*tokens;
 
 	setup_exec_signals();
 	expanded_input = expander(data->input, data);
@@ -25,12 +24,12 @@ static int	process_input(t_data *data)
 		return (0);
 	free(data->input);
 	data->input = NULL;
-	tokens = lexer(expanded_input);
+	data->tokens = lexer(expanded_input);
 	free(expanded_input);
-	if (!tokens)
+	if (!data->tokens)
 		return (0);
-	data->cmd_list = parser(tokens);
-	free_token(tokens);
+	data->cmd_list = parser(data->tokens, data);
+	free_token(data->tokens);
 	if (!data->cmd_list || (data->cmd_list && data->cmd_list->interrupted))
 	{
 		if (data->cmd_list)

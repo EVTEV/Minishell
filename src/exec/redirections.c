@@ -59,19 +59,19 @@ static int	create_redirection_files(t_redir *redirections)
 			continue ;
 		}
 		if (open_redirection_file(redirections->file, flags) == -1)
-			return (-1);
+			return (free(redirections->file), -1);
 		redirections = redirections->next;
 	}
 	return (0);
 }
 
 /* Gère la redirection heredoc */
-static int	handle_heredoc_redirection(t_redir *redirection)
+static int	handle_heredoc_redirection(t_redir *redirection, t_data *data)
 {
 	int		fd_in;
 	char	*heredoc_file;
 
-	if (handle_heredoc(redirection->file, &heredoc_file) != 0)
+	if (handle_heredoc(redirection->file, &heredoc_file, data) != 0)
 		return (1);
 	fd_in = open(heredoc_file, O_RDONLY);
 	free(heredoc_file);
@@ -91,7 +91,7 @@ static int	handle_heredoc_redirection(t_redir *redirection)
 }
 
 /* Gère une redirection spécifique */
-static int	handle_single_redirection(t_redir *redirection)
+static int	handle_single_redirection(t_redir *redirection, t_data *data)
 {
 	if (redirection->type == TOKEN_REDIR_IN)
 		return (handle_input_redirection(redirection->file));
@@ -100,18 +100,18 @@ static int	handle_single_redirection(t_redir *redirection)
 	else if (redirection->type == TOKEN_REDIR_APPEND)
 		return (handle_output_redirection(redirection->file, 1));
 	else if (redirection->type == TOKEN_REDIR_HEREDOC)
-		return (handle_heredoc_redirection(redirection));
+		return (handle_heredoc_redirection(redirection, data));
 	return (0);
 }
 
 /* Configure les redirections pour une commande */
-int	setup_redirections(t_redir *redirections)
+int	setup_redirections(t_redir *redirections, t_data *data)
 {
 	if (create_redirection_files(redirections) != 0)
 		return (1);
 	while (redirections)
 	{
-		if (handle_single_redirection(redirections) == -1)
+		if (handle_single_redirection(redirections, data) == -1)
 			return (1);
 		redirections = redirections->next;
 	}

@@ -44,6 +44,11 @@ static void	handle_command_execution(t_cmd *current,
 	if (!current->args || !current->args[0])
 		handle_command_not_found(current, data, pipe_count);
 	tmp = find_command_path(current->args[0], data);
+	if (!tmp)
+	{
+		free_pids(pids);
+		handle_command_not_found(current, data, pipe_count);
+	}
 	execute_child_command(current, data, pipe_count, tmp);
 }
 
@@ -59,7 +64,7 @@ static int	create_child_process(t_child *cp_data)
 	{
 		setup_child_pipes(cp_data->data, cp_data->i, cp_data->cmd_count);
 		handle_child_signals();
-		if (setup_redirections(cp_data->current->redirections))
+		if (setup_redirections(cp_data->current->redirections, cp_data->data))
 		{
 			free_pids(cp_data->pids);
 			close_all_pipes(cp_data->data, cp_data->pipe_count);

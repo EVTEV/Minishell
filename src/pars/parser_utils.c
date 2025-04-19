@@ -27,7 +27,7 @@ int	handle_redirection_token(t_cmd *current_cmd, t_token **tokens,
 }
 
 int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
-	t_cmd *cmd_list)
+	t_cmd *cmd_list, t_data *data)
 {
 	char	*heredoc_file;
 
@@ -39,8 +39,9 @@ int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
 		free_cmd_list(cmd_list);
 		return (g_exit_status = 2, 0);
 	}
-	if (handle_heredoc((*tokens)->next->value, &heredoc_file) != 0)
+	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data) != 0)
 	{
+		free(heredoc_file);
 		free_cmd_list(cmd_list);
 		return (0);
 	}
@@ -69,7 +70,7 @@ t_cmd	*initialize_command(t_cmd **current_cmd, t_cmd *cmd_list)
 }
 
 int	process_token(t_cmd **current_cmd, t_cmd **cmd_list,
-	t_token **tokens)
+	t_token **tokens, t_data *data)
 {
 	if ((*tokens)->type == TOKEN_WORD)
 	{
@@ -90,7 +91,7 @@ int	process_token(t_cmd **current_cmd, t_cmd **cmd_list,
 	}
 	else if ((*tokens)->type == TOKEN_REDIR_HEREDOC)
 	{
-		if (!handle_heredoc_token(*current_cmd, tokens, *cmd_list))
+		if (!handle_heredoc_token(*current_cmd, tokens, *cmd_list, data))
 			return (0);
 	}
 	return (1);

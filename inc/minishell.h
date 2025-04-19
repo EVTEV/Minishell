@@ -75,6 +75,7 @@ typedef struct s_data
 	t_env			*env_list;
 	char			*path;
 	t_cmd			*cmd_list;
+	t_token			*tokens;
 	int				exit_status;
 	int				**pipes;
 }	t_data;
@@ -133,7 +134,7 @@ int					process_input_char(char *input, int *i,
 int					finalize_tokens(char **current_part, t_token **tokens);
 
 // --------------- Parser.c --------------- //
-t_cmd				*parser(t_token *tokens);
+t_cmd				*parser(t_token *tokens, t_data *data);
 // --------------- Expander.c --------------- //
 char				*expander(char *input, t_data *data);
 char				*handle_empty_dollar(char *result);
@@ -164,10 +165,10 @@ t_cmd				*parse_input(char *input, t_data *data);
 int					handle_redirection_token(t_cmd *current_cmd,
 						t_token **tokens, t_cmd *cmd_list);
 int					handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
-						t_cmd *cmd_list);
+						t_cmd *cmd_list, t_data *data);
 t_cmd				*initialize_command(t_cmd **current_cmd, t_cmd *cmd_list);
 int					process_token(t_cmd **current_cmd, t_cmd **cmd_list,
-						t_token **tokens);
+						t_token **tokens, t_data *data);
 int					finalize_command(t_cmd *current_cmd, t_cmd *cmd_list);
 void				add_redirection(t_redir **redirections, int type,
 						char *file);
@@ -222,8 +223,9 @@ int					handle_fork_error(pid_t *pids, int i,
 void				handle_command_not_found(t_cmd *current,
 						t_data *data, int pipe_count);
 // ---------- heredoc.c ------------ //
-int					handle_heredoc(char *delimiter, char **heredoc_file);
-int					handle_heredoc_in_fork(int fd, char *delimiter, size_t delimiter_len);
+int					handle_heredoc(char *delimiter, char **heredoc_file, t_data *data);
+int					handle_heredoc_in_fork(int *f, char *delimiter, t_data *data,
+						char **heredoc_file);
 int					write_to_tmp_file(int fd, char *line);
 int					handle_delimiter_error(char *delimiter);
 int					generate_tmp_file(char *tmp_file, int *file_counter);
@@ -253,7 +255,7 @@ int					execute_commands(t_data *data);
 int					validate_command(t_cmd *cmd, t_data *data, char **cmd_path);
 int					wait_for_child(pid_t pid);
 // -------------- redirections.c -------------- //
-int					setup_redirections(t_redir *redirections);
+int					setup_redirections(t_redir *redirections, t_data *data);
 int					handle_output_redirection(char *filename, int append);
 int					handle_input_redirection(char *filename);
 

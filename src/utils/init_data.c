@@ -116,5 +116,6 @@ t_data	*init_data(int ac, char **av, char **env)
 	data->cmd_list = NULL;
 	data->exit_status = 0;
 	data->pipes = NULL;
+	data->tokens = NULL;
 	return (data);
 }

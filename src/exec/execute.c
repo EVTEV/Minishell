@@ -15,7 +15,7 @@
 /* Gère l'exécution dans le processus enfant */
 static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 {
-	if (setup_redirections(cmd->redirections) != 0)
+	if (setup_redirections(cmd->redirections, data) != 0)
 		exit_clean(data, NULL, 1);
 	if (access(cmd_path, F_OK) == -1)
 	{
@@ -43,9 +43,9 @@ static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 }
 
 /* Vérifie les redirections et retourne une erreur si nécessaire */
-static int	handle_redir(t_cmd *cmd)
+static int	handle_redir(t_cmd *cmd, t_data *data)
 {
-	if (setup_redirections(cmd->redirections) != 0)
+	if (setup_redirections(cmd->redirections, data) != 0)
 		return (1);
 	return (0);
 }
@@ -70,8 +70,8 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	int		validation_status;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (handle_redir(cmd));
-	if (handle_redir(cmd) != 0)
+		return (handle_redir(cmd, data));
+	if (handle_redir(cmd, data) != 0)
 		return (1);
 	validation_status = validate_command(cmd, data, &cmd_path);
 	if (validation_status != 0)
