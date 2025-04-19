@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
-#include <signal.h>
 
 /* Compte le nombre total de commandes dans la liste */
 int	count_commands(t_cmd *cmd_list)

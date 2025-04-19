@@ -11,12 +11,8 @@
 /* ************************************************************************** */
 
 #include "../../../inc/minishell.h"
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <limits.h>
 
-static int	write_to_tmp_file(int fd, char *line)
+int	write_to_tmp_file(int fd, char *line)
 {
 	char	*tmp;
 
@@ -28,7 +24,7 @@ static int	write_to_tmp_file(int fd, char *line)
 	return (0);
 }
 
-static int	handle_delimiter_error(char *delimiter)
+int	handle_delimiter_error(char *delimiter)
 {
 	if (!delimiter || !*delimiter)
 	{
@@ -40,7 +36,7 @@ static int	handle_delimiter_error(char *delimiter)
 	return (0);
 }
 
-static int	generate_tmp_file(char *tmp_file, int *file_counter)
+int	generate_tmp_file(char *tmp_file, int *file_counter)
 {
 	char	*tmp;
 
@@ -63,12 +59,13 @@ static int	generate_tmp_file(char *tmp_file, int *file_counter)
 	return (0);
 }
 
-static int	process_heredoc_input(int fd, char *delimiter, size_t delimiter_len)
+int	process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len)
 {
 	char	*line;
 
 	while (1)
 	{
+		handle_child_signals();
 		line = readline("> ");
 		if (!line || (ft_strncmp(line, delimiter, delimiter_len) == 0
 				&& (line[delimiter_len] == '\n'
@@ -78,7 +75,10 @@ static int	process_heredoc_input(int fd, char *delimiter, size_t delimiter_len)
 			break ;
 		}
 		if (write_to_tmp_file(fd, line))
-			return (handle_malloc_error(line, fd));
+		{
+			free(line);
+			return (1);
+		}
 		free(line);
 	}
 	return (0);
@@ -99,8 +99,13 @@ int	handle_heredoc(char *delimiter, char **heredoc_file)
 	if (create_tmp_file(tmp_file, heredoc_file, &fd))
 		return (1);
 	delimiter_len = ft_strlen(delimiter);
-	if (process_heredoc_input(fd, delimiter, delimiter_len))
+	if (handle_heredoc_in_fork(fd, delimiter, delimiter_len))
+	{
+		close(fd);
+		unlink(*heredoc_file);
+		free(*heredoc_file);
 		return (1);
+	}
 	close(fd);
 	return (0);
 }

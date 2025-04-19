@@ -36,3 +36,29 @@ int	create_tmp_file(char *tmp_file, char **heredoc_file, int *fd)
 	}
 	return (0);
 }
+
+int	handle_heredoc_in_fork(int fd, char *delimiter, size_t delimiter_len)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return (1);
+	}
+	if (pid == 0)
+	{
+		if (process_heredoc_in_child(fd, delimiter, delimiter_len))
+			exit(1);
+		exit(0);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+	{
+		g_exit_status = 130;
+		return (1);
+	}
+	return (WEXITSTATUS(status));
+}

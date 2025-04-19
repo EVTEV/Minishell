@@ -25,6 +25,7 @@
 # include <sys/stat.h>
 # include <dirent.h>
 # include <errno.h>
+# include <limits.h>
 
 # define TOKEN_WORD 1
 # define TOKEN_PIPE 2
@@ -222,6 +223,11 @@ void				handle_command_not_found(t_cmd *current,
 						t_data *data, int pipe_count);
 // ---------- heredoc.c ------------ //
 int					handle_heredoc(char *delimiter, char **heredoc_file);
+int					handle_heredoc_in_fork(int fd, char *delimiter, size_t delimiter_len);
+int					write_to_tmp_file(int fd, char *line);
+int					handle_delimiter_error(char *delimiter);
+int					generate_tmp_file(char *tmp_file, int *file_counter);
+int					process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len);
 // ---------- pipe_creation.c ------------ //
 int					create_pipes(t_data *data, int pipe_count);
 pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
@@ -267,6 +273,7 @@ void				free_pids(pid_t *pids);
 void				free_token(t_token *tokens);
 void				free_data_members(t_data *data);
 void				free_redirections(t_redir *redirections);
+void				cleanup_on_interrupt(t_data *data, int pipe_count);
 // ---------- get_value.c ------------ //
 char				*get_value(t_env env, char *name);
 void				update_value(t_env *env, char *name, char *value);

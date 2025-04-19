@@ -12,9 +12,6 @@
 
 #include "../../../inc/minishell.h"
 
-void	cleanup_on_interrupt(t_data *data, int pipe_count);
-void	handle_child_signals(void);
-
 /* Configure et exécute une commande dans un processus enfant */
 static void	execute_child_command(t_cmd *current,
 	t_data *data, int pipe_count, char *tmp)
