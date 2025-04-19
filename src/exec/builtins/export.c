@@ -51,7 +51,8 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	char	*name;
 	char	*value;
 	int		status;
-
+	
+	status = 1;
 	equal_sign = ft_strchr(arg, '=');
 	if (!equal_sign)
 		return (0);
@@ -67,11 +68,8 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	if (is_valid_identifier(name))
 		status = handle_env_var_with_value(name, value, env);
 	else
-	{
-		print_invalid_identifier_error(name);
-		free(name);
-		status = 1;
-	}
+		return (*equal_sign = '=', print_invalid_identifier_error(name),
+			free(name), free(value), 1);
 	*equal_sign = '=';
 	return (status);
 }
