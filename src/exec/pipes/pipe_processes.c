@@ -32,12 +32,12 @@ static void	handle_command_execution(t_cmd *current,
 	int		result;
 
 	result = 0;
+	free_pids(pids);
 	free_pipes(data, pipe_count);
 	if (current && current->args && is_builtin(current->args[0]))
 	{
 		result = execute_builtin_with_redirections(current, data);
 		close_all_pipes(data, pipe_count);
-		free_pids(pids);
 		free_pipes(data, pipe_count);
 		exit_clean(data, NULL, result);
 	}
@@ -45,10 +45,7 @@ static void	handle_command_execution(t_cmd *current,
 		handle_command_not_found(current, data, pipe_count);
 	tmp = find_command_path(current->args[0], data);
 	if (!tmp)
-	{
-		free_pids(pids);
 		handle_command_not_found(current, data, pipe_count);
-	}
 	execute_child_command(current, data, pipe_count, tmp);
 }
 
@@ -66,7 +63,6 @@ static int	create_child_process(t_child *cp_data)
 		handle_child_signals();
 		if (setup_redirections(cp_data->current->redirections, cp_data->data))
 		{
-			free_pids(cp_data->pids);
 			close_all_pipes(cp_data->data, cp_data->pipe_count);
 			free_pipes(cp_data->data, cp_data->pipe_count);
 			exit_clean(cp_data->data, NULL, g_exit_status);

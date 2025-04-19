@@ -59,13 +59,13 @@ int	generate_tmp_file(char *tmp_file, int *file_counter)
 	return (0);
 }
 
-int	process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len)
+int	process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len, t_data *data)
 {
 	char	*line;
 
 	while (1)
 	{
-		handle_child_signals();
+		signnn(data);
 		line = readline("> ");
 		if (!line || (ft_strncmp(line, delimiter, delimiter_len) == 0
 				&& (line[delimiter_len] == '\n'
@@ -75,10 +75,7 @@ int	process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len)
 			break ;
 		}
 		if (write_to_tmp_file(fd, line))
-		{
-			free(line);
-			return (1);
-		}
+			return (free(line), 1);
 		free(line);
 	}
 	return (0);
@@ -104,10 +101,7 @@ int	handle_heredoc(char *delimiter, char **heredoc_file, t_data *data)
 	delimiter_len = ft_strlen(delimiter);
 	f[1] = delimiter_len;
 	if (handle_heredoc_in_fork(f, delimiter, data, heredoc_file))
-	{
-		close(fd);
-		return (1);
-	}
+		return (close(fd), 1);
 	close(fd);
 	return (0);
 }

@@ -44,13 +44,10 @@ int	handle_heredoc_in_fork(int *f, char *delimiter, t_data *data, char **heredoc
 
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork");
-		return (1);
-	}
+		return (perror("fork"), 1);
 	if (pid == 0)
 	{
-		if (process_heredoc_in_child(f[0], delimiter, f[1]))
+		if (process_heredoc_in_child(f[0], delimiter, f[1], data))
 		{
 			free(*heredoc_file);
 			exit_clean(data, data->tokens, 1);
@@ -60,6 +57,6 @@ int	handle_heredoc_in_fork(int *f, char *delimiter, t_data *data, char **heredoc
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
-		return (g_exit_status = 130, free_data_members(data), 1);
+		return (g_exit_status = 130, 1);
 	return (WEXITSTATUS(status));
 }

@@ -87,7 +87,7 @@ static int	handle_heredoc_redirection(t_redir *redirection, t_data *data)
 		return (1);
 	}
 	close(fd_in);
-	return (0);
+	return (-1);
 }
 
 /* Gère une redirection spécifique */

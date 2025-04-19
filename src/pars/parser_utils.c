@@ -102,6 +102,7 @@ int	finalize_command(t_cmd *current_cmd, t_cmd *cmd_list)
 	if (current_cmd && !current_cmd->args && !current_cmd->redirections)
 	{
 		free_cmd_list(cmd_list);
+		free(current_cmd);
 		return (0);
 	}
 	return (1);
