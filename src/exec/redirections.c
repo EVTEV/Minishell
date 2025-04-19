@@ -59,7 +59,7 @@ static int	create_redirection_files(t_redir *redirections)
 			continue ;
 		}
 		if (open_redirection_file(redirections->file, flags) == -1)
-			return (free(redirections->file), -1);
+			return (-1);
 		redirections = redirections->next;
 	}
 	return (0);
