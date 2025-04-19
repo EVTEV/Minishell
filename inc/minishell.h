@@ -179,7 +179,6 @@ char				*read_input(t_data *data);
 void				save_history(char *input);
 void				load_history(void);
 // -------------- Signal.c --------------- //
-void				reset_terminal_line(void);
 void				signal_handler_main(int signum);
 void				ft_exec_sig_handler(int sig);
 void				setup_signals(void);

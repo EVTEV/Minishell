@@ -78,17 +78,15 @@ char	*expand_variable(char *input, t_env *env_list, int *len)
 	int		i;
 
 	i = 1;
-	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_'))
+	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_')
+			&& !ft_isdigit(input[i - 1]))
 		i++;
 	*len = i;
 	name = ft_substr(input, 1, i - 1);
 	if (!name)
 		return (NULL);
 	if (!*name)
-	{
-		free(name);
-		return (ft_strdup("$"));
-	}
+		return (free(name), ft_strdup("$"));
 	value = get_value(*env_list, name);
 	free(name);
 	if (!value)

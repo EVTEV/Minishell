@@ -53,15 +53,6 @@ t_cmd	*create_new_command(void)
 	return (cmd);
 }
 
-void	reset_terminal_line(void)
-{
-	struct termios	term;
-
-	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(STDIN_FILENO, TCSANOW, &term);
-}
-
 char	**ft_tabjoin(char **tab, char *new_elem)
 {
 	int		len;

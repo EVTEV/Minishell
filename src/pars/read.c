@@ -68,7 +68,6 @@ char	*read_input(t_data *data)
 {
 	char	*input;
 
-	reset_terminal_line();
 	input = readline("minishell$ ");
 	if (!input)
 	{
