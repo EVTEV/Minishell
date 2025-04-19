@@ -79,7 +79,7 @@ int	main(int ac, char **av, char **env)
 	data = NULL;
 	if (!env || !*env)
 	{
-		ft_putstr_fd("minishell: env not found\n", 2);
+		ft_putstr_fd("minishell: env not found\nexit\n", 2);
 		return (1);
 	}
 	setup_signals(data);

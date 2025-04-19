@@ -55,6 +55,11 @@ static int	generate_tmp_file(char *tmp_file, int *file_counter)
 		return (1);
 	ft_strlcat(tmp_file, tmp, PATH_MAX);
 	free(tmp);
+	if (access(tmp_file, F_OK) == 0)
+	{
+		ft_bzero(tmp_file, PATH_MAX);
+		return (generate_tmp_file(tmp_file, file_counter));
+	}
 	return (0);
 }
 
