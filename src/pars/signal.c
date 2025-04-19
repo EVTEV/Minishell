@@ -36,9 +36,11 @@ void	signal_handler_main(int signum)
 	}
 }
 
-void	setup_signals(void)
+void	setup_signals(t_data *data)
 {
 	signal(SIGINT, signal_handler_main);
+	if (g_exit_status == 130)
+		data->exit_status = 130;
 	signal(SIGQUIT, SIG_IGN);
 }
 

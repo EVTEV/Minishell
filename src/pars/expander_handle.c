@@ -63,7 +63,7 @@ char	*handle_double_quotes(char *input, int *i,
 	{
 		ft_putstr_fd("minishell: syntax error: unclosed double quote\n",
 			STDERR_FILENO);
-		return (free(tmp), NULL);
+		return (g_exit_status = 2, free(tmp), NULL);
 	}
 	result = ft_strdup(tmp);
 	free(tmp);

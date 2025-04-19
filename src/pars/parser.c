@@ -66,7 +66,7 @@ int	handle_pipe_token(t_cmd **current_cmd, t_cmd *cmd_list)
 		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n",
 			STDERR_FILENO);
 		free_cmd_list(cmd_list);
-		return (0);
+		return (g_exit_status = 2, 0);
 	}
 	(*current_cmd)->next = create_new_command();
 	if (!(*current_cmd)->next)

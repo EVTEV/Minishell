@@ -93,5 +93,5 @@ int	execute_piped_commands(t_data *data)
 		return (result);
 	}
 	//free_pipes(data, pipe_count);
-	return (setup_signals(), result);
+	return (setup_signals(data), result);
 }

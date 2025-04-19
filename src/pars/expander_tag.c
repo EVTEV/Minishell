@@ -28,7 +28,8 @@ char	*handle_exit_status_expansion(int *i,
 {
 	char	*tmp;
 
-	tmp = ft_itoa(data->exit_status);
+	(void)data;
+	tmp = ft_itoa(g_exit_status);
 	if (!tmp)
 		return (free(result), NULL);
 	*i += 2;
@@ -57,4 +58,20 @@ char	*handle_single_char(char *input, int *i, char *result)
 		return (free(result), NULL);
 	result = append_char_to_result(result, tmp);
 	return (result);
+}
+
+int	check_after_pipe(char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i])
+		i++;
+	i--;
+	while (i >= 0 && (input[i] == ' ' || input[i] == '\t'
+			|| input[i] == '\n'))
+		i--;
+	if (i < 0 || input[i] != '|')
+		return (1);
+	return (0);
 }

@@ -156,6 +156,7 @@ char				*handle_exit_status_expansion(int *i,
 						t_data *data, char *result);
 char				*handle_dollar(int *i, char *result);
 char				*handle_single_char(char *input, int *i, char *result);
+int					check_after_pipe(char *input);
 
 // --------------- Pars.c --------------- //
 t_cmd				*parse_input(char *input, t_data *data);
@@ -181,7 +182,7 @@ void				load_history(void);
 // -------------- Signal.c --------------- //
 void				signal_handler_main(int signum);
 void				ft_exec_sig_handler(int sig);
-void				setup_signals(void);
+void				setup_signals(t_data *data);
 void				handle_parent_signals(void);
 void				handle_child_signals(void);
 void				setup_exec_signals(void);

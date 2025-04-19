@@ -35,7 +35,7 @@ static int	handle_delimiter_error(char *delimiter)
 		ft_putstr_fd(
 			"minishell: syntax error near unexpected token `newline'\n",
 			STDERR_FILENO);
-		return (1);
+		return (g_exit_status = 2, 1);
 	}
 	return (0);
 }

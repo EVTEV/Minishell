@@ -68,7 +68,7 @@ static void	main_loop(t_data *data)
 	while (1)
 	{
 		handle_input(data);
-		setup_signals();
+		setup_signals(data);
 	}
 }
 
@@ -76,12 +76,13 @@ int	main(int ac, char **av, char **env)
 {
 	t_data	*data;
 
+	data = NULL;
 	if (!env || !*env)
 	{
 		ft_putstr_fd("minishell: env not found\n", 2);
 		return (1);
 	}
-	setup_signals();
+	setup_signals(data);
 	load_history();
 	data = init_data(ac, av, env);
 	if (!data)

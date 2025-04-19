@@ -32,7 +32,7 @@ int	handle_quotes(char *input, int i, char quote)
 	{
 		ft_putstr_fd("minishell: syntax error: unclosed quote\n",
 			STDERR_FILENO);
-		return (-1);
+		return (g_exit_status = 2, -1);
 	}
 	return (i);
 }

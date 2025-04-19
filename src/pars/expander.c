@@ -85,7 +85,7 @@ char	*process_single_quotes_content(char *input, int *i, char *result)
 	{
 		ft_putstr_fd("minishell: syntax error: unclosed single quote\n",
 			STDERR_FILENO);
-		return (free(result), NULL);
+		return (g_exit_status = 2, free(result), NULL);
 	}
 	tmp = ft_substr(input, start, *i - start);
 	if (!tmp)
@@ -103,6 +103,12 @@ char	*expander(char *input, t_data *data)
 
 	result = NULL;
 	i = 0;
+	if (!check_after_pipe(input))
+	{
+		ft_putstr_fd("minishell: syntax error: expected command after `|'\n",
+			STDERR_FILENO);
+		return (g_exit_status = 2, NULL);
+	}
 	while (i >= 0 && input[i])
 	{
 		if (input[i] == '"')
