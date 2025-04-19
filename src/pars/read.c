@@ -36,9 +36,14 @@ void	load_history(void)
 	while (line)
 	{
 		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
+		if (!tmp)
+		{
+			free(line);
+			break ;
+		}
+		free(line);
 		add_history(tmp);
 		free(tmp);
-		free(line);
 		line = get_next_line(fd);
 	}
 	close(fd);

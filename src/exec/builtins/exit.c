@@ -13,7 +13,7 @@
 #include "../../../inc/minishell.h"
 
 /* Supprime tous les fichiers commençant par .minishell_ */
-static void	delete_temp_files(void)
+void	delete_temp_files(void)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -53,7 +53,7 @@ void	free_data_members(t_data *data)
 /* Nettoie et libère toutes les ressources avant de quitter le programme */
 void	exit_clean(t_data *data, t_token *tokens, int i)
 {
-	delete_temp_files();
+	//delete_temp_files();
 	if (!data && !tokens)
 		exit(i);
 	if (tokens)

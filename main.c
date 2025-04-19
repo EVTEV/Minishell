@@ -69,6 +69,7 @@ static void	main_loop(t_data *data)
 	{
 		handle_input(data);
 		setup_signals(data);
+		delete_temp_files();
 	}
 }
 

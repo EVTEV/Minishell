@@ -37,10 +37,6 @@ static char	*ft_copy(const char *s, char c)
 	int		i;
 	int		l;	
 
-	if (ft_strncmp(s, "<", 1) == 0 || ft_strncmp(s, "|", 1) == 0
-		|| ft_strncmp(s, ">", 1) == 0 || ft_strncmp(s, ">>", 2) == 0
-		|| ft_strncmp(s, "<<", 2) == 0)
-		return ("");
 	i = 0;
 	l = 0;
 	while (s[l] && s[l] != c)

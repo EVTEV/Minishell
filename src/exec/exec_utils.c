@@ -97,11 +97,12 @@ int	execute_single_command(t_cmd *cmd, t_data *data)
 	int	result;
 
 	result = 0;
-	if (!cmd || !cmd->args || !cmd->args[0])
+	if (!cmd)
 		return (1);
 	if (save_std_fds(std_fds) != 0)
 		return (1);
-	if (setup_redirections(cmd->redirections) != 0)
+	if (setup_redirections(cmd->redirections) != 0 || !cmd->args
+		|| !cmd->args[0])
 	{
 		restore_std_fds(std_fds);
 		return (1);

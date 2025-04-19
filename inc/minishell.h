@@ -259,6 +259,7 @@ int					is_directory(const char *path);
 int					ft_isspace(char *s);
 int					create_tmp_file(char *tmp_file,
 						char **heredoc_file, int *fd);
+void				delete_temp_files(void);
 // ---------- free_cmd.c ------------ //
 void				free_cmd_list(t_cmd *cmd_list);
 t_cmd				*create_new_command(void);
