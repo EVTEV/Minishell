@@ -76,6 +76,7 @@ char	*find_command_path(char *cmd, t_data *data)
 	char	**paths;
 	char	*tmp;
 
+	tmp = NULL;
 	if (!cmd || !data || !data->path)
 		return (NULL);
 	if (cmd[0] == '/' || cmd[0] == '.')
