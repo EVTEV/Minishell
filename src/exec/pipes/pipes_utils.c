@@ -89,5 +89,5 @@ int	wait_children(pid_t *pids, int cmd_count, int *exit_status)
 			*exit_status = WEXITSTATUS(status);
 		i++;
 	}
-	return (*exit_status);
+	return (g_exit_status = *exit_status, *exit_status);
 }

@@ -67,7 +67,6 @@ int	handle_pipe_token(t_cmd **current_cmd, t_cmd *cmd_list)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n",
 			STDERR_FILENO);
-		free_cmd_list(cmd_list);
 		return (g_exit_status = 2, 0);
 	}
 	(*current_cmd)->next = create_new_command();
@@ -89,7 +88,6 @@ int	handle_redirection_file(t_cmd *current_cmd, t_token **tokens,
 	if (!file)
 	{
 		ft_putstr_fd("minishell: memory allocation error\n", STDERR_FILENO);
-		free_cmd_list(cmd_list);
 		return (0);
 	}
 	add_redirection(&current_cmd->redirections, (*tokens)->type, file);

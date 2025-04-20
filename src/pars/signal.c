@@ -40,7 +40,10 @@ void	setup_signals(t_data *data)
 {
 	signal(SIGINT, signal_handler_main);
 	if (g_exit_status == 130)
+	{
 		data->exit_status = 130;
+		g_exit_status = 0;
+	}
 	signal(SIGQUIT, SIG_IGN);
 }
 

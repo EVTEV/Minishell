@@ -81,3 +81,18 @@ int	create_env_node(t_env **env_list, char *env_var)
 		return (free(name), free(value), 1);
 	return (0);
 }
+
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*result;
+
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	result = ft_strjoin(s1, s2);
+	free(s1);
+	return (result);
+}

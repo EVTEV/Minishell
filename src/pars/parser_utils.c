@@ -20,7 +20,6 @@ int	handle_redirection_token(t_cmd *current_cmd, t_token **tokens,
 		ft_putstr_fd(
 			"minishell: syntax error near unexpected token `newline'\n",
 			STDERR_FILENO);
-		free_cmd_list(cmd_list);
 		return (g_exit_status = 2, 0);
 	}
 	return (handle_redirection_file(current_cmd, tokens, cmd_list));
@@ -36,13 +35,11 @@ int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
 		ft_putstr_fd(
 			"minishell: syntax error near unexpected token `newline'\n",
 			STDERR_FILENO);
-		free_cmd_list(cmd_list);
 		return (g_exit_status = 2, 0);
 	}
 	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data, cmd_list) != 0)
 	{
 		free(heredoc_file);
-		//free_cmd_list(cmd_list);
 		return (0);
 	}
 	add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, heredoc_file);

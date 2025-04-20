@@ -62,5 +62,5 @@ int	ft_echo(int ac, char **av)
 	}
 	newline = !check_args(av, &start);
 	write_args(av, start, newline);
-	return (0);
+	return (g_exit_status = 0, 0);
 }

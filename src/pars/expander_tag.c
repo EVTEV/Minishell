@@ -28,8 +28,7 @@ char	*handle_exit_status_expansion(int *i,
 {
 	char	*tmp;
 
-	(void)data;
-	tmp = ft_itoa(g_exit_status);
+	tmp = ft_itoa(data->exit_status);
 	if (!tmp)
 		return (free(result), NULL);
 	*i += 2;
