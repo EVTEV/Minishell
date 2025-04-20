@@ -42,7 +42,7 @@ int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
 	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data, cmd_list) != 0)
 	{
 		free(heredoc_file);
-		free_cmd_list(cmd_list);
+		//free_cmd_list(cmd_list);
 		return (0);
 	}
 	add_redirection(&current_cmd->redirections, TOKEN_REDIR_IN, heredoc_file);

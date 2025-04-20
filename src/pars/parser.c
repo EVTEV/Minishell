@@ -118,7 +118,7 @@ t_cmd	*parser(t_token *tokens, t_data *data)
 				return (free_cmd_list(cmd_list), free(current_cmd), NULL);
 		}
 		if (!process_token(&current_cmd, &cmd_list, &tokens, data))
-			return (free_cmd_list(cmd_list), free(current_cmd), NULL);
+			return (NULL);
 		tokens = tokens->next;
 	}
 	if (!finalize_command(current_cmd, cmd_list))
