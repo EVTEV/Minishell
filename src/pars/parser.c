@@ -41,6 +41,7 @@ void	add_redirection(t_redir **redirections, int type, char *file)
 int	handle_word_token(t_cmd *cmd, t_token *token, t_cmd *cmd_list)
 {
 	char	*dup_value;
+	char	**tmp;
 
 	dup_value = ft_strdup(token->value);
 	if (!dup_value)
@@ -49,14 +50,14 @@ int	handle_word_token(t_cmd *cmd, t_token *token, t_cmd *cmd_list)
 		free_cmd_list(cmd_list);
 		return (0);
 	}
-	cmd->args = ft_tabjoin(cmd->args, dup_value);
-	if (!cmd->args)
+	tmp = ft_tabjoin(cmd->args, dup_value);
+	if (!tmp)
 	{
 		ft_putstr_fd("minishell: memory allocation error\n", STDERR_FILENO);
-		free(dup_value);
 		free_cmd_list(cmd_list);
 		return (0);
 	}
+	cmd->args = tmp;
 	return (1);
 }
 
@@ -118,7 +119,7 @@ t_cmd	*parser(t_token *tokens, t_data *data)
 				return (free_cmd_list(cmd_list), free(current_cmd), NULL);
 		}
 		if (!process_token(&current_cmd, &cmd_list, &tokens, data))
-			return (NULL);
+			return (free_cmd_list(cmd_list), NULL);
 		tokens = tokens->next;
 	}
 	if (!finalize_command(current_cmd, cmd_list))

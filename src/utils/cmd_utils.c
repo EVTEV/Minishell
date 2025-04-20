@@ -55,15 +55,23 @@ void	free_cmd_list(t_cmd *cmd_list)
 	while (cmd_list)
 	{
 		tmp = cmd_list;
+		if (!tmp)
+			break ;
 		cmd_list = cmd_list->next;
-		if (tmp->heredoc_file)
+		if (tmp && tmp->heredoc_file)
+		{
 			unlink(tmp->heredoc_file);
-		free(tmp->heredoc_file);
-		if (tmp->args)
+			free(tmp->heredoc_file);
+		}
+		if (tmp && tmp->args)
 			free_tab(tmp->args);
-		free_redirections(tmp->redirections);
-		free(tmp);
+		if (tmp && tmp->redirections)
+			free_redirections(tmp->redirections);
+		if (tmp)
+			free(tmp);
+		tmp = NULL;
 	}
+	cmd_list = NULL;
 }
 
 void	free_token(t_token *tokens)

@@ -92,7 +92,7 @@ int	process_token(t_cmd **current_cmd, t_cmd **cmd_list,
 	else if ((*tokens)->type == TOKEN_REDIR_HEREDOC)
 	{
 		if (!handle_heredoc_token(*current_cmd, tokens, *cmd_list, data))
-			return (free_cmd_list(*current_cmd), 0);
+			return (0);
 	}
 	return (1);
 }
