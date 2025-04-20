@@ -47,9 +47,8 @@ int	handle_heredoc_in_fork(int f[3], char *delimiter, t_data *data, char **hered
 		return (perror("fork"), 1);
 	if (pid == 0)
 	{
-		free_cmd_list((t_cmd *)(long)f[2]);
 		data->input = *heredoc_file;
-		if (process_heredoc_in_child(f[0], delimiter, f[1], data))
+		if (process_heredoc_in_child(f, delimiter, data))
 			exit_clean(data, data->tokens, 1);
 		exit_clean(data, data->tokens, 0);
 	}
