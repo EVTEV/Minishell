@@ -61,7 +61,8 @@ static int	create_child_process(t_child *cp_data)
 	{
 		setup_child_pipes(cp_data->data, cp_data->i, cp_data->cmd_count);
 		handle_child_signals();
-		if (setup_redirections(cp_data->current->redirections, cp_data->data))
+		if (setup_redirections(cp_data->current->redirections,
+				cp_data->data, cp_data->current))
 		{
 			close_all_pipes(cp_data->data, cp_data->pipe_count);
 			free_pipes(cp_data->data, cp_data->pipe_count);

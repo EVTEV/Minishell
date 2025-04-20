@@ -223,8 +223,8 @@ int					handle_fork_error(pid_t *pids, int i,
 void				handle_command_not_found(t_cmd *current,
 						t_data *data, int pipe_count);
 // ---------- heredoc.c ------------ //
-int					handle_heredoc(char *delimiter, char **heredoc_file, t_data *data);
-int					handle_heredoc_in_fork(int *f, char *delimiter, t_data *data,
+int					handle_heredoc(char *delimiter, char **heredoc_file, t_data *data, t_cmd *cmd_list);
+int					handle_heredoc_in_fork(int f[3], char *delimiter, t_data *data,
 						char **heredoc_file);
 int					write_to_tmp_file(int fd, char *line);
 int					handle_delimiter_error(char *delimiter);
@@ -255,7 +255,7 @@ int					execute_commands(t_data *data);
 int					validate_command(t_cmd *cmd, t_data *data, char **cmd_path);
 int					wait_for_child(pid_t pid);
 // -------------- redirections.c -------------- //
-int					setup_redirections(t_redir *redirections, t_data *data);
+int					setup_redirections(t_redir *redirections, t_data *data, t_cmd *cmd);
 int					handle_output_redirection(char *filename, int append);
 int					handle_input_redirection(char *filename);
 

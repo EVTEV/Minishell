@@ -37,7 +37,7 @@ int	create_tmp_file(char *tmp_file, char **heredoc_file, int *fd)
 	return (0);
 }
 
-int	handle_heredoc_in_fork(int *f, char *delimiter, t_data *data, char **heredoc_file)
+int	handle_heredoc_in_fork(int f[3], char *delimiter, t_data *data, char **heredoc_file)
 {
 	pid_t	pid;
 	int		status;
@@ -47,6 +47,8 @@ int	handle_heredoc_in_fork(int *f, char *delimiter, t_data *data, char **heredoc
 		return (perror("fork"), 1);
 	if (pid == 0)
 	{
+		free_cmd_list(data->cmd_list);
+		data->cmd_list = (t_cmd *)(long)f[2];
 		data->input = *heredoc_file;
 		if (process_heredoc_in_child(f[0], delimiter, f[1], data))
 			exit_clean(data, data->tokens, 1);

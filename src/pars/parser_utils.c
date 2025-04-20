@@ -39,7 +39,7 @@ int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
 		free_cmd_list(cmd_list);
 		return (g_exit_status = 2, 0);
 	}
-	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data) != 0)
+	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data, cmd_list) != 0)
 	{
 		free(heredoc_file);
 		free_cmd_list(cmd_list);

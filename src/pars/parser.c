@@ -20,6 +20,7 @@ void	add_redirection(t_redir **redirections, int type, char *file)
 	new = malloc(sizeof(t_redir));
 	if (!new)
 	{
+		*redirections = NULL;
 		ft_putstr_fd("minishell: memory allocation error\n", STDERR_FILENO);
 		return ;
 	}
@@ -114,13 +115,13 @@ t_cmd	*parser(t_token *tokens, t_data *data)
 		{
 			cmd_list = initialize_command(&current_cmd, cmd_list);
 			if (!cmd_list)
-				return (NULL);
+				return (free_cmd_list(cmd_list), free(current_cmd), NULL);
 		}
 		if (!process_token(&current_cmd, &cmd_list, &tokens, data))
-			return (NULL);
+			return (free_cmd_list(cmd_list), free(current_cmd), NULL);
 		tokens = tokens->next;
 	}
 	if (!finalize_command(current_cmd, cmd_list))
-		return (NULL);
+		return (free_cmd_list(cmd_list), free(current_cmd), NULL);
 	return (cmd_list);
 }

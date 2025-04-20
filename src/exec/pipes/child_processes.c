@@ -31,7 +31,7 @@ int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 {
 	char	*cmd_path;
 
-	if (setup_redirections(cmd->redirections, data) != 0)
+	if (setup_redirections(cmd->redirections, data, cmd) != 0)
 		exit_clean(data, NULL, g_exit_status);
 	if (is_builtin(cmd->args[0]))
 		exit_clean(data, NULL, (execute_builtin(cmd, data)));

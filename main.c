@@ -36,7 +36,7 @@ static int	process_input(t_data *data)
 			data->exit_status = 1;
 		else
 			data->exit_status = 2;
-		return (free_cmd_list(data->cmd_list), data->cmd_list = NULL, 0);
+		return (data->cmd_list = NULL, 0);
 	}
 	return (1);
 }

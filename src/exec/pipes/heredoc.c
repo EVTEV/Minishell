@@ -81,11 +81,11 @@ int	process_heredoc_in_child(int fd, char *delimiter, size_t delimiter_len, t_da
 	return (0);
 }
 
-int	handle_heredoc(char *delimiter, char **heredoc_file, t_data *data)
+int	handle_heredoc(char *delimiter, char **heredoc_file, t_data *data, t_cmd *cmd_list)
 {
 	int			fd;
 	size_t		delimiter_len;
-	int			f[2];
+	int			f[3];
 	static int	file_counter;
 	char		tmp_file[PATH_MAX];
 
@@ -100,6 +100,7 @@ int	handle_heredoc(char *delimiter, char **heredoc_file, t_data *data)
 	f[0] = fd;
 	delimiter_len = ft_strlen(delimiter);
 	f[1] = delimiter_len;
+	f[2] = (int)(long)cmd_list;
 	if (handle_heredoc_in_fork(f, delimiter, data, heredoc_file))
 		return (close(fd), 1);
 	close(fd);

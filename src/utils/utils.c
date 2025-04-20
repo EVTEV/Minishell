@@ -50,6 +50,9 @@ t_cmd	*create_new_command(void)
 	}
 	ft_memset(cmd, 0, sizeof(t_cmd));
 	cmd->next = NULL;
+	cmd->args = NULL;
+	cmd->redirections = NULL;
+	cmd->heredoc_file = NULL;
 	return (cmd);
 }
 

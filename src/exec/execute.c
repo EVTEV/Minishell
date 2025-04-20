@@ -15,7 +15,7 @@
 /* Gère l'exécution dans le processus enfant */
 static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 {
-	if (setup_redirections(cmd->redirections, data) != 0)
+	if (setup_redirections(cmd->redirections, data, cmd) != 0)
 		exit_clean(data, NULL, 1);
 	if (access(cmd_path, F_OK) == -1)
 	{
@@ -45,7 +45,7 @@ static void	execute_child_process(t_cmd *cmd, t_data *data, char *cmd_path)
 /* Vérifie les redirections et retourne une erreur si nécessaire */
 static int	handle_redir(t_cmd *cmd, t_data *data)
 {
-	if (setup_redirections(cmd->redirections, data) != 0)
+	if (setup_redirections(cmd->redirections, data, cmd) != 0)
 		return (1);
 	return (0);
 }
