@@ -59,7 +59,6 @@ static int	create_child_process(t_child *cp_data)
 		return (-1);
 	else if (pid == 0)
 	{
-
 		setup_child_pipes(cp_data->data, cp_data->i, cp_data->cmd_count);
 		handle_child_signals();
 		if (setup_redirections(cp_data->current->redirections,

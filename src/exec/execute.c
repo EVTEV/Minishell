@@ -69,6 +69,7 @@ int	execute_external(t_cmd *cmd, t_data *data)
 	char	*cmd_path;
 	int		validation_status;
 
+	signal(SIGQUIT, ft_quit);
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (handle_redir(cmd, data));
 	if (handle_redir(cmd, data) != 0)

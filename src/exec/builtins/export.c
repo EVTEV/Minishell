@@ -32,6 +32,7 @@ static int	handle_env_var(t_env **env, char *name, char *value)
 static int	handle_env_var_with_value(char *name, char *value, t_env **env)
 {
 	char	*existing_value;
+
 	if (value && *value)
 	{
 		if (handle_env_var(env, name, value))

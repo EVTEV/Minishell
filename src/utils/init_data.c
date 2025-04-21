@@ -74,10 +74,12 @@ static char	*search_command_in_paths(char **paths, char *cmd)
 char	*find_command_path(char *cmd, t_data *data)
 {
 	char	**paths;
+	t_env	*temp;
 	char	*tmp;
 
 	tmp = NULL;
-	if (!cmd || !data || !data->path)
+	temp = data->env_list;
+	if (!cmd || !data)
 		return (NULL);
 	if (cmd[0] == '/' || cmd[0] == '.')
 	{
@@ -86,7 +88,10 @@ char	*find_command_path(char *cmd, t_data *data)
 			return (NULL);
 		return (tmp);
 	}
-	paths = ft_split(data->path + 5, ':');
+	tmp = get_value(*temp, "PATH");
+	if (!tmp)
+		return (NULL);
+	paths = ft_split(tmp, ':');
 	if (!paths)
 		return (NULL);
 	return (search_command_in_paths(paths, cmd));

@@ -1,5 +1,14 @@
 #include "../../inc/minishell.h"
 
+void    ft_quit(int sig)
+{
+    if (sig == SIGQUIT)
+    {
+        g_exit_status = 131;
+        ft_putstr_fd("Quit: 3\n", STDOUT_FILENO);
+    }
+}
+
 void    ft_clean_all(int sig)
 {
     t_data *data;

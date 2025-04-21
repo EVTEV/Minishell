@@ -44,6 +44,7 @@ int	exec_cmd_in_child(t_cmd *cmd, t_data *data, char *cmdpath)
 		ft_printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 		exit_clean(data, NULL, 127);
 	}
+	signal(SIGQUIT, ft_quit);
 	if (execve(cmd_path, cmd->args, data->env) < 0)
 		handle_execve_error(cmd_path, cmdpath, data);
 	return (0);

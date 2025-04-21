@@ -189,6 +189,7 @@ void				setup_signals(t_data *data);
 void				handle_parent_signals(void);
 void				handle_child_signals(void);
 void				setup_exec_signals(void);
+void    			ft_quit(int sig);
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
 // ---------- cd.c ------------ //

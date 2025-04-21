@@ -19,7 +19,7 @@ static int	handle_cd_error(char *path)
 	ft_putstr_fd(path, 2);
 	if (access(path, F_OK) != 0)
 		ft_putstr_fd(" No such file or directory\n", 2);
-	else if (access(path, X_OK) != 0)
+	else if (access(path, X_OK) != 0 && is_directory(path))
 		ft_putstr_fd(" Permission denied\n", 2);
 	else
 		ft_putstr_fd(" Not a directory\n", 2);
@@ -99,10 +99,7 @@ static char	*find_path(char **args, t_env *env)
 	{
 		path = get_value(*env, "OLDPWD");
 		if (!path || path[0] == '\0')
-		{
-			ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
-			return (NULL);
-		}
+			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), NULL);
 	}
 	else
 		path = args[1];
@@ -119,7 +116,8 @@ int	ft_cd(char **av, t_env *env)
 	current = (char *)malloc(PATH_MAX);
 	if (current == NULL)
 		return (1);
-	current[0] = '\0';
+	if (getcwd(current, PATH_MAX) == NULL)
+		return (free(current), 1);
 	if (ft_tablen(av) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
@@ -132,8 +130,7 @@ int	ft_cd(char **av, t_env *env)
 	if (!path)
 		return (free(current),1);
 	if (exec_cd(path, current, env, av) != 0)
-		return (ft_putstr_fd("minishell: ", 2),
-			perror("cd"), free(current), 1);
+		return (free(current), 1);
 	free(current);
 	return (0);
 }
