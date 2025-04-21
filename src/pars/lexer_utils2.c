@@ -84,7 +84,7 @@ int	handle_whitespace(char **current_part, t_token **tokens)
 	{
 		add_token(tokens, *current_part, TOKEN_WORD);
 		if (!*tokens)
-			return (free(*current_part), free_token(*tokens), -1);
+			return (free_token(*tokens), -1);
 		*current_part = NULL;
 	}
 	return (0);
