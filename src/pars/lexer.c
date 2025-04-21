@@ -54,8 +54,10 @@ t_token	*lexer(char *input)
 	tokens = NULL;
 	i = 0;
 	current_part = NULL;
-	while (input && input[i] == ' ')
+	while (input && (input[i] == ' ' || input[i] == '\t'))
 		i++;
+	if (input && input[i] == '\0')
+		g_exit_status = 0;
 	while (input && input[i])
 	{
 		if (process_input_char(input, &i, &current_part, &tokens) == -1)

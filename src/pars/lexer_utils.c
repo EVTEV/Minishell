@@ -56,7 +56,7 @@ char	*process_unquoted_part(char *value,
 	(*i)++;
 	return (free(tmp), processed);
 }
-
+			
 char	*process_value(char *value)
 {
 	char	*processed;

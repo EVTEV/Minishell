@@ -16,7 +16,7 @@ void	ft_exec_sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\n", 1);
+		write(2, "\n", 1);
 		g_exit_status = 130;
 	}
 }

@@ -21,16 +21,15 @@ void	handle_parent_signals(void)
 void	handle_child_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
 }
 
 void	signal_handler_main(int signum)
 {
 	if (signum == SIGINT)
 	{
+		rl_replace_line("", 0);
 		ft_putstr_fd("\n", STDOUT_FILENO);
 		rl_on_new_line();
-		rl_replace_line("", 0);
 		rl_redisplay();
 		g_exit_status = 130;
 	}

@@ -72,7 +72,7 @@ int	execute_piped_commands(t_data *data)
 	int		pipe_count;
 	int		result;
 
-	handle_parent_signals();
+	//handle_parent_signals();
 	cmd_count = count_commands(data->cmd_list);
 	result = check_cmd_count(data, cmd_count);
 	if (result > 0)

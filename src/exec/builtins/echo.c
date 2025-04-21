@@ -12,24 +12,32 @@
 
 #include "../../../inc/minishell.h"
 
+static int	is_flag_n(char *arg)
+{
+	int	i;
+
+	i = 1;
+	if (arg[0] != '-')
+		return (0);
+	while (arg[i] == 'n')
+		i++;
+	if (arg[i] == '\0')
+		return (1);
+	return (0);
+}
+
 /* Vérifie les arguments de la commande echo pour l'option -n */
 static int	check_args(char **args, int *start)
 {
 	int	i;
-	int	j;
 
 	i = 1;
-	while (args[i] && args[i][0] == '-' && args[i][1])
-	{
-		j = 0;
-		while (args[i][j] && args[i][j] == 'n')
-			j++;
+	while (args[i] && is_flag_n(args[i]))
 		i++;
-	}
 	*start = i;
 	if (i > 1)
-		return (1);
-	return (0);
+		return (0);
+	return (1);
 }
 
 /* Écrit les arguments de la commande echo avec ou sans retour à la ligne */
@@ -55,12 +63,13 @@ int	ft_echo(int ac, char **av)
 	int	newline;
 	int	start;
 
+	start = 1;
 	if (ac < 2)
 	{
 		ft_printf("\n");
 		return (0);
 	}
-	newline = !check_args(av, &start);
+	newline = check_args(av, &start);
 	write_args(av, start, newline);
 	return (g_exit_status = 0, 0);
 }

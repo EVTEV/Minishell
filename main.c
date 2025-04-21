@@ -27,7 +27,7 @@ static int	process_input(t_data *data)
 	data->tokens = lexer(expanded_input);
 	free(expanded_input);
 	if (!data->tokens)
-		return (0);
+		return (data->exit_status = 0, 0);
 	data->cmd_list = parser(data->tokens, data);
 	free_token(data->tokens);
 	if (!data->cmd_list || (data->cmd_list && data->cmd_list->interrupted))
@@ -66,8 +66,8 @@ static void	main_loop(t_data *data)
 {
 	while (1)
 	{
-		handle_input(data);
 		setup_signals(data);
+		handle_input(data);
 		delete_temp_files();
 	}
 }
@@ -82,7 +82,6 @@ int	main(int ac, char **av, char **env)
 		ft_putstr_fd("minishell: env not found\nexit\n", 2);
 		return (1);
 	}
-	setup_signals(data);
 	load_history();
 	data = init_data(ac, av, env);
 	if (!data)

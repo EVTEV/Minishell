@@ -16,12 +16,13 @@
 static int	handle_cd_error(char *path)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
+	ft_putstr_fd(path, 2);
 	if (access(path, F_OK) != 0)
-		ft_putstr_fd("No such file or directory\n", 2);
+		ft_putstr_fd(" No such file or directory\n", 2);
 	else if (access(path, X_OK) != 0)
-		ft_putstr_fd("Permission denied\n", 2);
+		ft_putstr_fd(" Permission denied\n", 2);
 	else
-		ft_putstr_fd("Not a directory\n", 2);
+		ft_putstr_fd(" Not a directory\n", 2);
 	return (1);
 }
 
@@ -35,20 +36,19 @@ static int	update_env_vars(char *old_dir, t_env *env)
 	old_pwd = NULL;
 	current = (char *)malloc(PATH_MAX);
 	if (current == NULL)
-		return (perror("Error:cd"), 1);
+		return (1);
 	old_pwd = ft_strdup(old_dir);
 	if (old_pwd == NULL)
-		return (free(current), perror("Error:cd"), 1);
+		return (free(current), 1);
 	tmp = ft_strdup("OLDPWD");
 	if (tmp == NULL)
-		return (free(current), free(old_pwd), perror("Error:cd"), 1);
+		return (free(current), free(old_pwd), 1);
 	update_value(env, tmp, old_pwd);
 	if (getcwd(current, PATH_MAX) == NULL)
-		return (free(current), perror("Error:cd:"), 1);
-	//free(old_pwd);
+		return (free(current), 1);
 	tmp = ft_strdup("PWD");
 	if (tmp == NULL)
-		return (free(current), perror("Error:cd"), 1);
+		return (free(current), 1);
 	update_value(env, tmp, current);
 	return (0);
 }
@@ -118,7 +118,7 @@ int	ft_cd(char **av, t_env *env)
 	path = NULL;
 	current = (char *)malloc(PATH_MAX);
 	if (current == NULL)
-		return (perror("Error:cd"), 1);
+		return (1);
 	current[0] = '\0';
 	if (ft_tablen(av) > 2)
 	{
@@ -132,7 +132,8 @@ int	ft_cd(char **av, t_env *env)
 	if (!path)
 		return (free(current),1);
 	if (exec_cd(path, current, env, av) != 0)
-		return (free(current), 1);
+		return (ft_putstr_fd("minishell: ", 2),
+			perror("cd"), free(current), 1);
 	free(current);
 	return (0);
 }

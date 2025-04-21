@@ -31,14 +31,18 @@ static int	handle_env_var(t_env **env, char *name, char *value)
 /* Gère l'ajout ou mise à jour d'une variable avec une valeur */
 static int	handle_env_var_with_value(char *name, char *value, t_env **env)
 {
-	if (*value)
+	char	*existing_value;
+	if (value && *value)
 	{
 		if (handle_env_var(env, name, value))
 			return (1);
 	}
 	else
 	{
-		if (handle_env_var(env, name, ""))
+		existing_value = ft_strdup("");
+		if (!existing_value)
+			return (1);
+		if (handle_env_var(env, name, existing_value))
 			return (1);
 	}
 	return (0);
@@ -50,28 +54,27 @@ static int	process_export_with_equal(char *arg, t_env **env)
 	char	*equal_sign;
 	char	*name;
 	char	*value;
-	int		status;
-	
-	status = 1;
+
+	value = NULL;
 	equal_sign = ft_strchr(arg, '=');
-	if (!equal_sign)
-		return (0);
-	*equal_sign = '\0';
+	if (equal_sign && *equal_sign)
+		*equal_sign = '\0';
 	name = ft_strdup(arg);
 	if (!name)
 		return (1);
-	if (!equal_sign[1])
-		return (free(name), 0);
-	value = ft_strdup(equal_sign + 1);
-	if (!value)
-		return (free(name), 1);
+	if (equal_sign && equal_sign[1])
+	{
+		value = ft_strdup(equal_sign + 1);
+		if (!value)
+			return (free(name), 1);
+		*equal_sign = '=';
+	}
 	if (is_valid_identifier(name))
-		status = handle_env_var_with_value(name, value, env);
+		return (handle_env_var_with_value(name, value, env));
 	else
-		return (*equal_sign = '=', print_invalid_identifier_error(name),
+		return (print_invalid_identifier_error(name),
 			free(name), free(value), 1);
-	*equal_sign = '=';
-	return (status);
+	return (1);
 }
 
 /* Traite un argument de la commande export */
@@ -79,7 +82,7 @@ static int	process_export_arg(char **args, int i, t_env **env)
 {
 	if (!args[i])
 		return (0);
-	if (args[i][0] != '=' && ft_strchr(args[i], '='))
+	if (args[i][0] != '=')
 		return (process_export_with_equal(args[i], env));
 	else if (!is_valid_identifier(args[i]))
 	{

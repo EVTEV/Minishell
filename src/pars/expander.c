@@ -104,11 +104,9 @@ char	*expander(char *input, t_data *data)
 	result = NULL;
 	i = 0;
 	if (!check_after_pipe(input))
-	{
-		ft_putstr_fd("minishell: syntax error: expected command after `|'\n",
-			STDERR_FILENO);
-		return (g_exit_status = 2, NULL);
-	}
+		return (ft_putstr_fd(
+			"minishell: syntax error near unexpected token `|'\n",
+			STDERR_FILENO), g_exit_status = 2, NULL);
 	while (i >= 0 && input[i])
 	{
 		if (input[i] == '"')

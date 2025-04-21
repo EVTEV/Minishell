@@ -41,14 +41,20 @@ int	compare_env_vars(t_env *a, t_env *b)
 t_env	*copy_env_list(t_env *env)
 {
 	t_env	*env_copy;
+	char	*name_copy;
+	char	*value_copy;
 	t_env	*current;
 
 	env_copy = NULL;
 	current = env;
 	while (current)
 	{
-		if (!add_value(&env_copy, current->name, current->value))
+		name_copy = ft_strdup(current->name);
+		value_copy = ft_strdup(current->value);
+		if (!name_copy || !value_copy || !add_value(&env_copy, name_copy, value_copy))
 		{
+			free(name_copy);
+			free(value_copy);
 			free_env_copy(env_copy);
 			return (NULL);
 		}

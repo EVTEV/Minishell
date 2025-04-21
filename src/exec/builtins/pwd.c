@@ -24,6 +24,7 @@ int	ft_pwd(void)
 	}
 	else
 	{
+		perror("getcwd");
 		ft_printf("minishell: pwd: %s\n", strerror(errno));
 		return (1);
 	}
