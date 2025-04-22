@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 09:30:34 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 11:41:02 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:51:01 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ char	*expander(char *input, t_data *data)
 	i = 0;
 	if (!check_after_pipe(input))
 		return (ft_putstr_fd(
-			"minishell: syntax error near unexpected token `|'\n",
-			STDERR_FILENO), g_exit_status = 2, NULL);
+				"minishell: syntax error near unexpected token `|'\n",
+				STDERR_FILENO), g_exit_status = 2, NULL);
 	while (i >= 0 && input[i])
 	{
 		if (input[i] == '"')

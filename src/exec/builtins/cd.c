@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/17 11:33:37 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:59:02 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,14 +121,14 @@ int	ft_cd(char **av, t_env *env)
 	if (ft_tablen(av) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		return (free(current), 1);
+		return (free(current), 0);
 	}
 	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
 		&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
 		return (free(current), handle_cd_error(av[1]));
 	path = find_path(av, env);
 	if (!path)
-		return (free(current),1);
+		return (free(current), 1);
 	if (exec_cd(path, current, env, av) != 0)
 		return (free(current), 1);
 	free(current);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 19:40:59 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:52:28 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ t_env	*copy_env_list(t_env *env)
 	{
 		name_copy = ft_strdup(current->name);
 		value_copy = ft_strdup(current->value);
-		if (!name_copy || !value_copy || !add_value(&env_copy, name_copy, value_copy))
+		if (!name_copy || !value_copy
+			|| !add_value(&env_copy, name_copy, value_copy))
 		{
 			free(name_copy);
 			free(value_copy);

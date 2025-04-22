@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:50:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 18:11:53 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:54:37 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_value(t_env env, char *name)
 	while (current)
 	{
 		if (current->name && ft_strlen(current->name) > 0 && current->value
-				&& ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
+			&& ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
 			return (current->value);
 		current = current->next;
 	}

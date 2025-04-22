@@ -63,7 +63,8 @@ int	handle_word_token(t_cmd *cmd, t_token *token, t_cmd *cmd_list)
 
 int	handle_pipe_token(t_cmd **current_cmd, t_cmd *cmd_list)
 {
-	if (!*current_cmd || (!(*current_cmd)->args && !(*current_cmd)->redirections))
+	if (!*current_cmd || (!(*current_cmd)->args
+			&& !(*current_cmd)->redirections))
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n",
 			STDERR_FILENO);

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:13:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 13:14:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:49:31 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int	handle_heredoc_token(t_cmd *current_cmd, t_token **tokens,
 			STDERR_FILENO);
 		return (g_exit_status = 2, 0);
 	}
-	if (handle_heredoc((*tokens)->next->value, &heredoc_file, data, cmd_list) != 0)
+	if (handle_heredoc((*tokens)->next->value,
+			&heredoc_file, data, cmd_list) != 0)
 	{
 		free(heredoc_file);
 		return (0);

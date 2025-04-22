@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:35:50 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 19:35:55 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:51:51 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int	create_tmp_file(char *tmp_file, char **heredoc_file, int *fd)
 	return (0);
 }
 
-int	handle_heredoc_in_fork(int f[3], char *delimiter, t_data *data, char **heredoc_file)
+int	handle_heredoc_in_fork(int f[3], char *delimiter,
+		t_data *data, char **heredoc_file)
 {
 	pid_t	pid;
 	int		status;

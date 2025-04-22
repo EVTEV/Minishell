@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:32:22 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/11 20:11:02 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:51:12 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	handle_fork_error(pid_t *pids, int i,
 void	handle_command_not_found(t_cmd *current,
 	t_data *data, int pipe_count)
 {
-	
 	if (current && current->args && current->args[0])
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);

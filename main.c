@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 13:00:26 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/17 13:33:08 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:55:03 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ static void	execute_and_cleanup(t_data *data)
 	free_cmd_list(data->cmd_list);
 	data->cmd_list = NULL;
 }
-
 
 static void	handle_input(t_data *data)
 {

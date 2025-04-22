@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:18:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 01:00:57 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:47:26 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*process_unquoted_part(char *value,
 	(*i)++;
 	return (free(tmp), processed);
 }
-			
+
 char	*process_value(char *value)
 {
 	char	*processed;

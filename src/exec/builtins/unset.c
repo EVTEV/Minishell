@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:30:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/04 11:24:54 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:53:53 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	remove_env_var(t_env **env, char *name)
 		if (ft_strncmp(current->name, name, ft_strlen(name) + 1) == 0)
 		{
 			free(current->name);
-			free(current->value);		
+			free(current->value);
 			if (prev)
 				prev->next = current->next;
 			else

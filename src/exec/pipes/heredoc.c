@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 17:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/11 19:35:20 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:51:38 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ int	process_heredoc_in_child(int f[3], char *delimiter, t_data *data)
 	return (0);
 }
 
-int	handle_heredoc(char *delimiter, char **heredoc_file, t_data *data, t_cmd *cmd_list)
+int	handle_heredoc(char *delimiter, char **heredoc_file,
+		t_data *data, t_cmd *cmd_list)
 {
 	int			fd;
 	size_t		delimiter_len;
 	int			f[3];
 	static int	file_counter;
 	char		tmp_file[PATH_MAX];
-
 
 	file_counter = 0;
 	if (handle_delimiter_error(delimiter))

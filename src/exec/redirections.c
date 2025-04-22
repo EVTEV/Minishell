@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 14:40:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/12 19:42:00 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:54:26 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ static int	open_redirection_file(char *file, int flags)
 		if (is_directory(file) || errno == EISDIR)
 			g_exit_status = 126;
 		else if (errno == EROFS || errno == ENOSPC
-				|| errno == EEXIST || errno == EACCES
-				|| errno == ENOTDIR)
+			|| errno == EEXIST || errno == EACCES
+			|| errno == ENOTDIR)
 			g_exit_status = 1;
 		else
 			g_exit_status = 0;
@@ -66,7 +66,8 @@ static int	create_redirection_files(t_redir *redirections)
 }
 
 /* Gère la redirection heredoc */
-static int	handle_heredoc_redirection(t_redir *redirection, t_data *data, t_cmd *cmd)
+static int	handle_heredoc_redirection(t_redir *redirection,
+		t_data *data, t_cmd *cmd)
 {
 	int		fd_in;
 	char	*heredoc_file;
@@ -91,7 +92,8 @@ static int	handle_heredoc_redirection(t_redir *redirection, t_data *data, t_cmd 
 }
 
 /* Gère une redirection spécifique */
-static int	handle_single_redirection(t_redir *redirection, t_data *data, t_cmd *cmd)
+static int	handle_single_redirection(t_redir *redirection,
+		t_data *data, t_cmd *cmd)
 {
 	if (redirection->type == TOKEN_REDIR_IN)
 		return (handle_input_redirection(redirection->file));

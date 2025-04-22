@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:16:18 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/12 11:41:42 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:56:10 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ void				setup_signals(t_data *data);
 void				handle_parent_signals(void);
 void				handle_child_signals(void);
 void				setup_exec_signals(void);
-void    			ft_quit(int sig);
+void				ft_quit(int sig);
 // ==================== Exec ==================== //
 // ------------------ builtins --------------- //
 // ---------- cd.c ------------ //
@@ -225,13 +225,15 @@ int					handle_fork_error(pid_t *pids, int i,
 void				handle_command_not_found(t_cmd *current,
 						t_data *data, int pipe_count);
 // ---------- heredoc.c ------------ //
-int					handle_heredoc(char *delimiter, char **heredoc_file, t_data *data, t_cmd *cmd_list);
-int					handle_heredoc_in_fork(int f[3], char *delimiter, t_data *data,
-						char **heredoc_file);
+int					handle_heredoc(char *delimiter, char **heredoc_file,
+						t_data *data, t_cmd *cmd_list);
+int					handle_heredoc_in_fork(int f[3], char *delimiter,
+						t_data *data, char **heredoc_file);
 int					write_to_tmp_file(int fd, char *line);
 int					handle_delimiter_error(char *delimiter);
 int					generate_tmp_file(char *tmp_file, int *file_counter);
-int					process_heredoc_in_child(int f[3], char *delimiter, t_data *data);
+int					process_heredoc_in_child(int f[3],
+						char *delimiter, t_data *data);
 // ---------- pipe_creation.c ------------ /
 int					create_pipes(t_data *data, int pipe_count);
 pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
@@ -257,7 +259,8 @@ int					execute_commands(t_data *data);
 int					validate_command(t_cmd *cmd, t_data *data, char **cmd_path);
 int					wait_for_child(pid_t pid);
 // -------------- redirections.c -------------- //
-int					setup_redirections(t_redir *redirections, t_data *data, t_cmd *cmd);
+int					setup_redirections(t_redir *redirections,
+						t_data *data, t_cmd *cmd);
 int					handle_output_redirection(char *filename, int append);
 int					handle_input_redirection(char *filename);
 
