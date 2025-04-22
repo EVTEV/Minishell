@@ -49,11 +49,13 @@ int	handle_heredoc_in_fork(int f[3], char *delimiter,
 	if (pid == 0)
 	{
 		data->input = *heredoc_file;
-		if (process_heredoc_in_child(f, delimiter, data))
+		if (process_heredoc_in_child(f, delimiter))
 			exit_clean(data, data->tokens, 1);
-		exit_clean(data, data->tokens, 0);
+		else
+			exit_clean(data, data->tokens, 0);
 	}
-	waitpid(pid, &status, 0);
+	else
+		waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
 		return (g_exit_status = 130, 1);
 	return (WEXITSTATUS(status));

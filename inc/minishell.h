@@ -232,8 +232,7 @@ int					handle_heredoc_in_fork(int f[3], char *delimiter,
 int					write_to_tmp_file(int fd, char *line);
 int					handle_delimiter_error(char *delimiter);
 int					generate_tmp_file(char *tmp_file, int *file_counter);
-int					process_heredoc_in_child(int f[3],
-						char *delimiter, t_data *data);
+int					process_heredoc_in_child(int f[3], char *delimiter);
 // ---------- pipe_creation.c ------------ /
 int					create_pipes(t_data *data, int pipe_count);
 pid_t				*allocate_pids(int cmd_count, int pipe_count, t_data *data);
@@ -281,7 +280,7 @@ void				free_token(t_token *tokens);
 void				free_data_members(t_data *data);
 void				free_redirections(t_redir *redirections);
 void				cleanup_on_interrupt(t_data *data, int pipe_count);
-void				signnn(t_data *data, int i);
+void				signnn(void);
 // ---------- get_value.c ------------ //
 char				*get_value(t_env env, char *name);
 void				update_value(t_env *env, char *name, char *value);

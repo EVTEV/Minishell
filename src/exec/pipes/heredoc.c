@@ -59,15 +59,20 @@ int	generate_tmp_file(char *tmp_file, int *file_counter)
 	return (0);
 }
 
-int	process_heredoc_in_child(int f[3], char *delimiter, t_data *data)
+int	process_heredoc_in_child(int f[3], char *delimiter)
 {
 	char	*line;
 
 	while (1)
 	{
-		signnn(data, f[2]);
+		signnn();
 		line = readline("> ");
-		if (!line || (ft_strncmp(line, delimiter, f[1]) == 0
+		if (!line || g_exit_status == 130 || g_exit_status == 131)
+		{
+			free(line);
+			return (free_cmd_list((t_cmd *)(long)f[2]), 1);
+		}
+		if ((ft_strncmp(line, delimiter, f[1]) == 0
 				&& (line[f[1]] == '\n'
 					|| line[f[1]] == '\0')))
 		{
