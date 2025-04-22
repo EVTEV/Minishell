@@ -50,7 +50,7 @@ static t_cmd	*initialize_new_cmd(char **tokens)
 	new_cmd = create_new_cmd();
 	if (!new_cmd)
 		return (NULL);
-	new_cmd->args = malloc(sizeof(char *) * (ft_tablen(tokens) + 1));
+	new_cmd->args = (char **)malloc(sizeof(char *) * (ft_tablen(tokens) + 1));
 	if (!new_cmd->args)
 		return (free_tab(tokens), free(new_cmd), NULL);
 	i = 0;

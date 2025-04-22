@@ -17,7 +17,7 @@ void	add_redirection(t_redir **redirections, int type, char *file)
 	t_redir	*new;
 	t_redir	*tmp;
 
-	new = malloc(sizeof(t_redir));
+	new = (t_redir *)malloc(sizeof(t_redir));
 	if (!new)
 	{
 		*redirections = NULL;
