@@ -47,7 +47,6 @@ $(OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC) $(INC_LIBFT)
 
 $(LIBFT):
-	echo "CREATING LIBFT"
 	$(MAKE) -C $(LIBFT_DIR)
 
 clean:

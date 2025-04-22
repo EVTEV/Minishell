@@ -16,13 +16,14 @@
 static int	handle_cd_error(char *path)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
-	ft_putstr_fd(path, 2);
+	ft_putstr_fd(path, 1);
+	ft_putstr_fd(" ", 1);
 	if (access(path, F_OK) != 0)
-		ft_putstr_fd(" No such file or directory\n", 2);
+		ft_putstr_fd("No such file or directory\n", 2);
 	else if (access(path, X_OK) != 0 && is_directory(path))
-		ft_putstr_fd(" Permission denied\n", 2);
+		ft_putstr_fd("Permission denied\n", 2);
 	else
-		ft_putstr_fd(" Not a directory\n", 2);
+		ft_putstr_fd("Not a directory\n", 2);
 	return (1);
 }
 
@@ -121,7 +122,7 @@ int	ft_cd(char **av, t_env *env)
 	if (ft_tablen(av) > 2)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		return (free(current), 0);
+		return (free(current), 1);
 	}
 	if (av[1] && ft_strcmp(av[1], "-") && ft_strcmp(av[1], "~")
 		&& ft_strcmp(av[1], "--") && access(av[1], F_OK) != 0)
