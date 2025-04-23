@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:32:22 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/22 10:51:12 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:14:49 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,9 @@ int	wait_children(pid_t *pids, int cmd_count, int *exit_status)
 			*exit_status = 130;
 			break ;
 		}
-		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-			*exit_status = WEXITSTATUS(status);
+		if (WIFEXITED(status))
+			if (WEXITSTATUS(status) != *exit_status)
+				*exit_status = WEXITSTATUS(status);
 		i++;
 	}
 	return (g_exit_status = *exit_status, *exit_status);
