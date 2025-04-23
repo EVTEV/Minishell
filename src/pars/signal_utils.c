@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 10:48:03 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/22 10:50:52 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/23 07:00:27 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,5 @@ void	ft_clean_all(int sig)
 void	signnn(void)
 {
 	signal(SIGINT, ft_clean_all);
+	signal(SIGQUIT, ft_quit);
 }
