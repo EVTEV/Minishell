@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:18:49 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/23 15:32:50 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:06:04 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	*process_unquoted_part(char *value,
 	processed = ft_strdup(tmp);
 	if (!processed)
 		return (free(tmp), NULL);
-	if (value[*i] != '\'' && value[*i] != '\"')	
+	if (value[*i] != '\'' && value[*i] != '\"')
 		(*i)++;
 	return (free(tmp), processed);
 }

@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/27 17:00:42 by flash19           #+#    #+#             */
-/*   Updated: 2025/04/23 07:05:23 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:05:47 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	process_heredoc_in_child(int f[3], char *delimiter)
 		if (!line || (ft_strncmp(line, delimiter, f[1]) == 0
 				&& (line[f[1]] == '\n'
 					|| line[f[1]] == '\0'))
-					|| g_exit_status == 131)
+			|| g_exit_status == 131)
 		{
 			free(line);
 			free_cmd_list((t_cmd *)(long)f[2]);
