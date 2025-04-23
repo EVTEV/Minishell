@@ -6,7 +6,7 @@
 /*   By: lowatell <lowatell@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 19:25:20 by lowatell          #+#    #+#             */
-/*   Updated: 2025/04/22 10:48:46 by lowatell         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:18:35 by lowatell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,10 @@ char	*expand_variable(char *input, t_env *env_list, int *len)
 	int		i;
 
 	i = 1;
+	if (input[i] && ft_isdigit(input[i]))
+		i++;
 	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_')
-		&& !ft_isdigit(input[i - 1]))
+		&& !ft_isdigit(input[1]))
 		i++;
 	*len = i;
 	name = ft_substr(input, 1, i - 1);
